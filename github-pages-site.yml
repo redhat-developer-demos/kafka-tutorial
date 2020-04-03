@@ -4,7 +4,6 @@ runtime:
 site:
   title: Template Tutorial
   url: https://redhat-developer-demos.github.io/template-tutorial
-  start_page: template-tutorial::index.adoc
 
 content:
   sources:

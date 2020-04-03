@@ -1,0 +1,20 @@
+Fork this repo and adjust the next content:
+
+_In all `/*-site.yml`_
+
+`site.title` [*]
+
+`site.url`
+
+`content.sources.tags`, usually as a first version you should remove this section, but you can leave it as well if you plan to use tags for releasing.
+
+_`supplemental-ui/`_
+
+`img/favicon.ico` to your icon. Now it uses the RHD icon.
+
+`partials/header-content` change the *Template Tutorial* to the name of the tutorial.
+
+_`documentation/antora.yml`_
+
+`site.title` to [*]
+`site.name` to the name of the tutorial

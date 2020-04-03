@@ -9,7 +9,7 @@ You can package the next bash script:
 [#servicebash]
 [source,bash,subs="+macros,+attributes"]
 ----
-include::example$apps/app1/run.sh[]
+include::example$run.sh[]
 ----
 copyToClipboard::servicebash[]
 
@@ -19,5 +19,7 @@ copyToClipboard::servicebash[]
 And then you can deploy the service and execute commands inside:
 
 :podname: apps
+
 include::partial$exec_pod.adoc[]
+
 :!podname:
