@@ -1,0 +1,18 @@
+Check that the pod is up and running:
+
+[source, shell-session, subs="+macros,+attributes"]
+----
+kubectl get pods
+
+NAME                        READY   STATUS    RESTARTS   AGE
+{podname}   1/1     Running   0          5s
+----
+
+Then let's go into the running pod to execute some commands:
+
+[source, shell-session, subs="+macros,+attributes"]
+----
+kubectl exec -ti {podname} /bin/bash
+----
+
+NOTE: Change the pod name with your pod name.

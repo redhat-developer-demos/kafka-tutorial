@@ -1,0 +1,60 @@
+= Setup
+include::_attributes.adoc[]
+
+[#prerequisite]
+== Prerequisite CLI tools
+
+You will need in this tutorial:
+
+* `minikube` v1.6.2 (or any other Kubernetes cluster local or not).
+* `kubectl` v1.17.0
+
+Optional:
+
+* `httpie`
+* `base64` (in MacOS and Linux are already installed).
+
+[#minikube]
+== Setup Minikube
+
+Assuming you've got https://kubernetes.io/docs/setup/learning-environment/minikube/[Minikube installed].
+
+[tabs]
+====
+Windows::
++
+--
+[source, bash-shell]
+----
+minikube start -p windows --memory=8192 --vm-driver=virtualbox 
+
+🙄  [vault] minikube v1.6.2 on Darwin 10.15.3
+✨  Selecting 'virtualbox' driver from user configuration (alternates: [hyperkit])
+🔄  Starting existing virtualbox VM for "vault" ...
+⌛  Waiting for the host to be provisioned ...
+🐳  Preparing Kubernetes v1.17.0 on Docker '19.03.5' ...
+🚀  Launching Kubernetes ...
+🏄  Done! kubectl is now configured to use "vault"
+----
+--
+Mac OSx::
++
+--
+[source, bash-shell]
+----
+minikube start -p mac --memory=8192 --vm-driver=virtualbox 
+
+🙄  [vault] minikube v1.6.2 on Darwin 10.15.3
+✨  Selecting 'virtualbox' driver from user configuration (alternates: [hyperkit])
+🔄  Starting existing virtualbox VM for "vault" ...
+⌛  Waiting for the host to be provisioned ...
+🐳  Preparing Kubernetes v1.17.0 on Docker '19.03.5' ...
+🚀  Launching Kubernetes ...
+🏄  Done! kubectl is now configured to use "vault"
+----
+--
+====
+
+And then you are ready for start using Kubernetes:
+
+image::kubelogo.png[]

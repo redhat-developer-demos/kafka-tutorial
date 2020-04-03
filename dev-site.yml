@@ -1,0 +1,29 @@
+runtime:
+  cache_dir: ./.cache/antora
+
+site:
+  title: Template Tutorial
+  url: https://redhat-developer-demos.github.io/template-tutorial
+
+content:
+  sources:
+    - url: .
+      branches: HEAD
+      start_path: documentation
+asciidoc:
+  attributes:
+  extensions:
+    - ./lib/copy-to-clipboard.js
+    - ./lib/tab-block.js
+
+ui:
+  bundle:
+    url: https://github.com/redhat-developer-demos/rhd-tutorial-ui/releases/download/v0.0.4/ui-bundle.zip
+  supplemental_files:
+    - path: ./supplemental-ui
+    - path: .nojekyll
+    - path: ui.yml
+      contents: "static_files: [ .nojekyll ]"
+
+output:
+  dir: ./gh-pages
