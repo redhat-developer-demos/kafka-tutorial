@@ -1,0 +1,9 @@
+<script src="https://unpkg.com/clipboard@2/dist/clipboard.min.js"></script>
+{{#if site.keys.googleAnalytics}}
+{{#with site.keys.googleAnalytics}}
+<script async src="https://www.googletagmanager.com/gtag/js?id={{this}}"></script>
+<script>dataLayer = window.dataLayer || []; function gtag() { dataLayer.push(arguments) }; gtag('js', new Date()); gtag('config', '{{this}}')</script>
+{{/with}}
+{{/if}}
+
+<script src="{{uiRootPath}}/js/clipboard.js"></script>

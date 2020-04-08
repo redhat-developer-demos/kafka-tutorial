@@ -7,11 +7,10 @@ include::_attributes.adoc[]
 You can package the next bash script:
 
 [#servicebash]
-[source,bash,subs="+macros,+attributes"]
+[source,bash,subs="+macros,+attributes", copy]
 ----
 include::example$run.sh[]
 ----
-copyToClipboard::servicebash[]
 
 [#deploy]
 == Deploy the Service

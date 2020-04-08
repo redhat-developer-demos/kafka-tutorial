@@ -1,1 +1,3 @@
-../../../../apps/app1/run.sh
+#!/bin/sh
+
+echo "Hello World"
