@@ -63,7 +63,47 @@
             clearTooltip(this)
           })
   
-          var clipboardSnippets = new ClipboardJS($el);
+          var clipboardSnippets = new ClipboardJS($el, {
+            text: function(trigger) {
+              var codePre = trigger.nextElementSibling;
+              var code = codePre.firstChild
+
+              var divCode = trigger.parentNode.parentNode
+              var classDocCode = divCode.classList
+
+              for (var index=0;index<classDocCode.length;index++) {
+                var attribute = classDocCode[index];
+                if (attribute === 'lines_space') {
+                  var lines = codePre.innerText.split("\n")
+                  var command = [];
+                  for (var index in lines) {
+                    if (!(lines[index].trim().length == 0)) {
+                      command.push(lines[index]);
+                    } else {
+                      // When an empty line is found we can stop copying
+                      break;
+                    }
+                  }
+
+                  return command.join("\n")
+                } else {
+                  if (attribute.startsWith('lines')) {
+                    var lastLine = attribute.substring(attribute.indexOf('_') + 1);
+                    var lastLineIndex = parseInt(lastLine)
+
+                    var command = [];
+                    var lines = codePre.innerText.split("\n")
+                    for (var i=0; i<lastLineIndex; i++) {
+                      command.push(lines[i]);
+                    }
+                    return command.join("\n")
+                  }
+                }
+              }
+
+              return trigger.nextElementSibling.innerText
+          }
+          });
 
           clipboardSnippets.on('success', function (e) {
             e.clearSelection()

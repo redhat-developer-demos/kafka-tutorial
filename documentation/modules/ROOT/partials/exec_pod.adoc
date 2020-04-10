@@ -1,6 +1,7 @@
 Check that the pod is up and running:
 
-[source, shell-session, subs="+macros,+attributes"]
+[.lines_space]
+[source,bash, subs="+macros,+attributes"]
 ----
 kubectl get pods
 
@@ -10,7 +11,7 @@ NAME                        READY   STATUS    RESTARTS   AGE
 
 Then let's go into the running pod to execute some commands:
 
-[source, shell-session, subs="+macros,+attributes"]
+[source,bash, subs="+macros,+attributes"]
 ----
 kubectl exec -ti {podname} /bin/bash
 ----

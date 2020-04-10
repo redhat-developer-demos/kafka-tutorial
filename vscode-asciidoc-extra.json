@@ -16,18 +16,6 @@
         ],
         "description": "Add Tabs macro"
     },
-    "Add clipboard": {
-        "prefix": "clipboard",
-        "body": [
-            "[#${1:clipboardid}]",
-            "[source,${2:bash},subs=\"+macros,+attributes\"]",
-            "----",
-            "${3}",
-            "----",
-            "copyToClipboard::$1[]"
-        ],
-        "description": "Add Source with Clipboard"
-    },
     "Add Navigation": {
         "prefix": "nav",
         "body": [

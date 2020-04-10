@@ -1,13 +1,31 @@
 = Deploy Service
 include::_attributes.adoc[]
 
+[#service]
+== The Service
+
+The code:
+
+[.lines_7]
+[source, java,subs="+macros,+attributes"]
+----
+public class Main {
+
+    public static void main(String[] args) {
+
+    } 
+
+}
+
+./mvnw compile
+----
+
 [#package]
 == Packaging the Service
 
 You can package the next bash script:
 
-[#servicebash]
-[source,bash,subs="+macros,+attributes", copy]
+[source,bash,subs="+macros,+attributes"]
 ----
 include::example$run.sh[]
 ----
