@@ -1,20 +1,26 @@
-= Welcome to Template Tutorial
+= Welcome to Kafka Tutorial
 :page-layout: home
 :!sectids:
 
 [.text-center.strong]
-== Publish Services to Kubernetes
+== Kafka
 
-A Kubernetes tutorial to show how you can deploy a Java service to a Kubernetes cluster as it was a child game.
+A Kafka tutorial to show you the basic concepts of Kafka, how to deploy it to Kubernetes, develop services that consumes and produces to Kafka topic in Java and how to stream data with KStreams and KSQL.
 
 [.tiles.browse]
 == Browse modules
 
 [.tile]
 .xref:01-setup.adoc[Get Started]
-* xref:01-setup.adoc#minikube[Minikube]
+* xref:01-setup.adoc#kafka[Install Kafka]
 
 [.tile]
-.xref:02-deploy.adoc[Deploying]
-* xref:02-deploy.adoc#package[Package the Application]
-* xref:02-deploy.adoc#deploy[Deploy the Application]
+.xref:02-topic-partitions.adoc[Topics & Partitions]
+* xref:02-topics-partitions.adoc#topics[Topics]
+* xref:02-topics-partitions.adoc#partitions[Partitions]
+* xref:02-topics-partitions.adoc#messages[Messages]
+* xref:03-topics-creation.adoc#topic-creation[Create a Topic]
+* xref:04-consumers-producers.adoc#producer[Producer]
+* xref:04-consumers-producers.adoc#consumer[Consumer]
+* xref:05-consumes-produces.adoc#consume-kafkacat[Kafkacat Consumer]
+* xref:05-consumes-produces.adoc#produce-kafkacat[Kafkacat Producer]

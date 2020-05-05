@@ -1,0 +1,34 @@
+version: '2.1'
+
+services:
+
+  # Install zookeeper. 
+  zookeeper:
+    image: debezium/zookeeper:1.0
+    network_mode: bridge
+    ports:
+      - '2181:2181'
+      - '2888:2888'
+      - '3888:3888'
+  # Install kafka and create needed topics. 
+  kafka:
+    image: strimzi/kafka:0.17.0-kafka-2.4.0
+    network_mode: bridge
+    hostname: kafka
+    container_name: kafka
+    command: [
+      "sh", "-c",
+      "bin/kafka-server-start.sh config/server.properties --override inter.broker.listener.name=$${KAFKA_INTER_BROKER_LISTENER_NAME} --override listener.security.protocol.map=$${KAFKA_LISTENER_SECURITY_PROTOCOL_MAP} --override listeners=$${KAFKA_LISTENERS} --override advertised.listeners=$${KAFKA_ADVERTISED_LISTENERS} --override zookeeper.connect=$${KAFKA_ZOOKEEPER_CONNECT}"
+    ]
+    ports:
+      - '9092:9092'
+      - '29092:29092'
+    links:
+      - zookeeper
+    environment:
+      - KAFKA_ADVERTISED_LISTENERS=LISTENER_KAFKA://kafka:9092,LISTENER_LOCAL://localhost:29092
+      - KAFKA_LISTENERS=LISTENER_KAFKA://kafka:9092,LISTENER_LOCAL://0.0.0.0:29092
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=LISTENER_KAFKA:PLAINTEXT,LISTENER_LOCAL:PLAINTEXT
+      - KAFKA_INTER_BROKER_LISTENER_NAME=LISTENER_KAFKA
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_GROUP_MIN_SESSION_TIMEOUT_MS=250

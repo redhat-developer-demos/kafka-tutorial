@@ -1,0 +1,2 @@
+Rememeber to have Zookeeper and Apache Kafka up and running.
+If not, you can follow <<Setup Kafka>> section to learn how to do it using _docker-compose_.

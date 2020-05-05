@@ -1,0 +1,50 @@
+= Topics and Partitions
+include::_attributes.adoc[]
+
+Apache Kafka is a distributed roubust publish/subscribe system.
+It acts as a message queue but it offers two major advantages over traditional pub/sub systems.
+
+. Storing records with Fault Tolerance.
+. Processing streams (data-streams) as they occurs in real-time instead of in batch.
+
+<<image C-B-P>>
+
+One of the main difference between Apache Kafka and SQL databases, is that in the first case the main concept that it is stored is an event meanwhile in the later on is an entity.
+
+<<image SQL user vs Kafka user>>
+
+[#topics]
+== What are Topics?
+
+A topic is an ordered collection of events that are persisted to disk, replicated for fault-tolerance and they have a duration, as an event can be available for just some minutes or forever.
+
+<<image C-B-T-P>>
+
+[#partitions]
+== What are Partitions?
+
+A topic might be divided into several partitions to improve the performance in cases of heavy load.
+
+The partitions of a topic are distributed across all the Apache Kafka brokers to maximize the parallelism when working with topics.
+
+The sum of all events of all the partitions is what conforms a topic.
+
+<<image C-B-T-P-P>>
+
+Each partition can be configured to be replicated across a number of Kafka brokers.
+
+<<image P-B>>
+
+[#messages]
+== What are Messages?
+
+A message is a Key/Value pair that is stored inside a topic.
+This message is persisted and durable during the configured lifespan.
+
+A message is typical small chunk of data where the key is used to identify the message and it is used by default to decide in which partition the message is stored, and the value which is the content of the message which can be in any format.
+
+Moreover, each message contains a meta data timestap attribute that is either set by the producer at creation time or by the broker on insertion time.
+
+IMPORTANT: Although you can configure Apache Kafka to work with large messages, the default max size is `1 MB`, being `1KB` the recommendaed maximum size of a message.
+
+<<image P-K-P>>

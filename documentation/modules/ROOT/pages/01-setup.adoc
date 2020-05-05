@@ -6,55 +6,64 @@ include::_attributes.adoc[]
 
 You will need in this tutorial:
 
-* `minikube` v1.6.2 (or any other Kubernetes cluster local or not).
-* `kubectl` v1.17.0
+* `docker`
+* `docker-compose`
+* `kafkacat` v1.5.0
+* `minikube`
+* `kubectl`
 
 Optional:
 
-* `httpie`
-* `base64` (in MacOS and Linux are already installed).
+* `Apache Maven`
+* `Java 11`.
 
-[#minikube]
-== Setup Minikube
+[#kafka]
+== Setup Kafka
 
-Assuming you've got https://kubernetes.io/docs/setup/learning-environment/minikube/[Minikube installed].
+Assuming you've got https://docs.docker.com/get-docker/[Docker & Docker Compose installed].
 
-[tabs]
-====
-Windows::
-+
---
+[.lines_2]
 [source, bash-shell]
 ----
-minikube start -p windows --memory=8192 --vm-driver=virtualbox 
+cd $TUTORIAL_HOME/apps/it
+docker-compose up --remove-orphans
 
-🙄  [vault] minikube v1.6.2 on Darwin 10.15.3
-✨  Selecting 'virtualbox' driver from user configuration (alternates: [hyperkit])
-🔄  Starting existing virtualbox VM for "vault" ...
-⌛  Waiting for the host to be provisioned ...
-🐳  Preparing Kubernetes v1.17.0 on Docker '19.03.5' ...
-🚀  Launching Kubernetes ...
-🏄  Done! kubectl is now configured to use "vault"
+...
+
+kafka_1      | [2020-04-27 05:51:56,560] INFO [Transaction Marker Channel Manager 0]: Starting (kafka.coordinator.transaction.TransactionMarkerChannelManager)
+kafka_1      | [2020-04-27 05:51:56,561] INFO [TransactionCoordinator id=0] Startup complete. (kafka.coordinator.transaction.TransactionCoordinator)
+kafka_1      | [2020-04-27 05:51:56,597] INFO [ExpirationReaper-0-AlterAcls]: Starting (kafka.server.DelayedOperationPurgatory$ExpiredOperationReaper)
+kafka_1      | [2020-04-27 05:51:56,641] INFO [/config/changes-event-process-thread]: Starting (kafka.common.ZkNodeChangeNotificationListener$ChangeEventProcessThread)
+kafka_1      | [2020-04-27 05:51:56,656] INFO [SocketServer brokerId=0] Started data-plane processors for 1 acceptors (kafka.network.SocketServer)
+kafka_1      | [2020-04-27 05:51:56,666] INFO Kafka version: 2.4.0 (org.apache.kafka.common.utils.AppInfoParser)
+kafka_1      | [2020-04-27 05:51:56,666] INFO Kafka commitId: 77a89fcf8d7fa018 (org.apache.kafka.common.utils.AppInfoParser)
+kafka_1      | [2020-04-27 05:51:56,667] INFO Kafka startTimeMs: 1587966716657 (org.apache.kafka.common.utils.AppInfoParser)
+kafka_1      | [2020-04-27 05:51:56,669] INFO [KafkaServer id=0] started (kafka.server.KafkaServer)
 ----
---
-Mac OSx::
-+
---
+
+Open a new terminal to run Kafka commands:
+
+Verify that Zookeeper and Apache Kafka containers are up and running:
+
+[.lines_1]
 [source, bash-shell]
 ----
-minikube start -p mac --memory=8192 --vm-driver=virtualbox 
+docker ps
 
-🙄  [vault] minikube v1.6.2 on Darwin 10.15.3
-✨  Selecting 'virtualbox' driver from user configuration (alternates: [hyperkit])
-🔄  Starting existing virtualbox VM for "vault" ...
-⌛  Waiting for the host to be provisioned ...
-🐳  Preparing Kubernetes v1.17.0 on Docker '19.03.5' ...
-🚀  Launching Kubernetes ...
-🏄  Done! kubectl is now configured to use "vault"
+CONTAINER ID        IMAGE                              COMMAND                  CREATED             STATUS              PORTS                                                                                        NAMES
+65659ad17d07        strimzi/kafka:0.17.0-kafka-2.4.0   "sh -c 'bin/kafka-se…"   2 hours ago         Up 2 hours          0.0.0.0:9092->9092/tcp                                                                       it_kafka_1
+9bfdd117f957        debezium/zookeeper:1.0             "/docker-entrypoint.…"   2 hours ago         Up 2 hours          0.0.0.0:2181->2181/tcp, 0.0.0.0:2888->2888/tcp, 8778/tcp, 0.0.0.0:3888->3888/tcp, 9779/tcp   it_zookeeper_1
 ----
---
-====
 
-And then you are ready for start using Kubernetes:
+Verify that Kafka cluster is correctly started and configured by running the following command:
 
-image::kubelogo.png[]
+[.lines_1]
+[source, bash-shell]
+----
+kafkacat -b localhost:9092 -L
+
+Metadata for all topics (from broker 0: localhost:9092/0):
+ 1 brokers:
+  broker 0 at localhost:9092 (controller)
+ 0 topics:
+----

@@ -1,0 +1,26 @@
+To restart Kafka (and Zookeeper) go to `docker-compose` terminal and stop the process by typing kbd:[Ctrl + C].
+
+Then run:
+
+[.lines_1]
+[source, bash-session]
+----
+docker-compose rm 
+
+Going to remove kafka, it_zookeeper_1
+Are you sure? [yN] y
+Removing kafka          ... done
+Removing it_zookeeper_1 ... done
+----
+
+[.lines_1]
+[source, bash-session]
+----
+docker-compose up --remove-orphans
+
+kafka        | [2020-05-04 11:30:27,392] INFO [SocketServer brokerId=0] Started data-plane processors for 2 acceptors (kafka.network.SocketServer)
+kafka        | [2020-05-04 11:30:27,396] INFO Kafka version: 2.4.0 (org.apache.kafka.common.utils.AppInfoParser)
+kafka        | [2020-05-04 11:30:27,397] INFO Kafka commitId: 77a89fcf8d7fa018 (org.apache.kafka.common.utils.AppInfoParser)
+kafka        | [2020-05-04 11:30:27,397] INFO Kafka startTimeMs: 1588591827393 (org.apache.kafka.common.utils.AppInfoParser)
+kafka        | [2020-05-04 11:30:27,398] INFO [KafkaServer id=0] started (kafka.server.KafkaServer)
+----

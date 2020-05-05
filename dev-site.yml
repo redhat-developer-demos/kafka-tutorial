@@ -2,7 +2,7 @@ runtime:
   cache_dir: ./.cache/antora
 
 site:
-  title: Template Tutorial
+  title: Kafka Tutorial
   url: https://redhat-developer-demos.github.io/template-tutorial
 
 content:
@@ -14,6 +14,7 @@ asciidoc:
   attributes:
   extensions:
     - ./lib/tab-block.js
+    - ./lib/remote-include-processor.js
     
 ui:
   bundle:
