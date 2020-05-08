@@ -1,0 +1,165 @@
+= Developing Kafka Streams in Java
+include::_attributes.adoc[]
+
+In this example, we are going to develop an example to build a music chart to see the number of times that a song has been played.
+
+There is one service (`player-app`) that it is periodically producing played songs to the `played-songs` topic.
+This service is not using Kafka Streams.
+
+The second service is a Kafka Stream service that join `songs` and `played-songs` topics, to get the song name, and finally it updates the number of times that the song has been played.
+
+<<image>>
+
+include::partial$kafka-up-dc.adoc[]
+
+You need to open 2 terminal windows to run this example, one for each service.
+
+[#player-songs-java]
+== Player Service
+
+The producer code is at {github-repo}/{apps-folder}/player-app[Player Service, window=_blank].
+
+[#deploying-player-app]
+=== Deploying Player Service
+
+In this case, the Quarkus service is deployed to produce played songs.
+You've got two options, using Docker or building yourself the service.
+In terminal 1, run one of these two options:
+
+[#deploying-player-app-java]
+==== Building the Player Service
+
+[.lines_4]
+[source, bash-shell,subs="+macros,+attributes"]
+----
+cd $TUTORIAL_HOME/apps/player-app/player/song-app
+./mvnw clean package
+docker build -f src/main/docker/Dockerfile.jvm -t quay.io/rhdevelopers/kafka-tutorial-player-app:quarkus .
+docker run --rm -ti -p 8080:8080 --link=kafka:kafka quay.io/rhdevelopers/kafka-tutorial-player-app:quarkus
+
+exec java -Dquarkus.http.host=0.0.0.0 -Djava.util.logging.manager=org.jboss.logmanager.LogManager -XX:+UseParallelGC -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90 -XX:MinHeapFreeRatio=20 -XX:MaxHeapFreeRatio=40 -XX:+ExitOnOutOfMemoryError -cp . -jar /deployments/app.jar
+__  ____  __  _____   ___  __ ____  ______
+ --/ __ \/ / / / _ | / _ \/ //_/ / / / __/
+ -/ /_/ / /_/ / __ |/ , _/ ,< / /_/ /\ \
+--\___\_\____/_/ |_/_/|_/_/|_|\____/___/
+2020-05-06 10:36:57,049 INFO  [io.sma.rea.mes.ext.MediatorManager] (main) Deployment done... start processing
+2020-05-06 10:36:57,092 INFO  [io.sma.rea.mes.imp.ConfiguredChannelFactory] (main) Found incoming connectors: [smallrye-kafka]
+2020-05-06 10:36:57,093 INFO  [io.sma.rea.mes.imp.ConfiguredChannelFactory] (main) Found outgoing connectors: [smallrye-kafka]
+2020-05-06 10:36:57,093 INFO  [io.sma.rea.mes.imp.ConfiguredChannelFactory] (main) Channel manager initializing...
+...
+
+2020-05-06 10:36:57,460 INFO  [org.acm.PlaySongsGenerator] (main) Registered: {"author":"Ennio Morricone","id":1,"name":"The Good The Bad And The Ugly"}
+2020-05-06 10:36:57,465 INFO  [org.acm.PlaySongsGenerator] (main) Registered: {"author":"Cher","id":2,"name":"Believe"}
+2020-05-06 10:36:57,473 INFO  [org.acm.PlaySongsGenerator] (main) Registered: {"author":"Scorpions","id":3,"name":"Still Loving You"}
+2020-05-06 10:36:57,485 INFO  [org.acm.PlaySongsGenerator] (main) Registered: {"author":"Queen","id":4,"name":"Bohemian Rhapsody"}
+...
+2020-05-06 10:37:02,657 INFO  [org.acm.PlaySongsGenerator] (RxComputationThreadPool-1) song 8: Perfect played.
+----
+
+[#running-player-app-java-docker]
+==== Running Player using Docker
+
+[.lines_1]
+[source, bash-shell,subs="+macros,+attributes"]
+----
+docker run --rm -ti -p 8080:8080 --link=kafka:kafka quay.io/rhdevelopers/kafka-tutorial-player-app:quarkus
+
+exec java -Dquarkus.http.host=0.0.0.0 -Djava.util.logging.manager=org.jboss.logmanager.LogManager -XX:+UseParallelGC -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90 -XX:MinHeapFreeRatio=20 -XX:MaxHeapFreeRatio=40 -XX:+ExitOnOutOfMemoryError -cp . -jar /deployments/app.jar
+__  ____  __  _____   ___  __ ____  ______
+ --/ __ \/ / / / _ | / _ \/ //_/ / / / __/
+ -/ /_/ / /_/ / __ |/ , _/ ,< / /_/ /\ \
+--\___\_\____/_/ |_/_/|_/_/|_|\____/___/
+2020-05-06 10:36:57,049 INFO  [io.sma.rea.mes.ext.MediatorManager] (main) Deployment done... start processing
+2020-05-06 10:36:57,092 INFO  [io.sma.rea.mes.imp.ConfiguredChannelFactory] (main) Found incoming connectors: [smallrye-kafka]
+2020-05-06 10:36:57,093 INFO  [io.sma.rea.mes.imp.ConfiguredChannelFactory] (main) Found outgoing connectors: [smallrye-kafka]
+2020-05-06 10:36:57,093 INFO  [io.sma.rea.mes.imp.ConfiguredChannelFactory] (main) Channel manager initializing...
+...
+
+2020-05-06 10:36:57,460 INFO  [org.acm.PlaySongsGenerator] (main) Registered: {"author":"Ennio Morricone","id":1,"name":"The Good The Bad And The Ugly"}
+2020-05-06 10:36:57,465 INFO  [org.acm.PlaySongsGenerator] (main) Registered: {"author":"Cher","id":2,"name":"Believe"}
+2020-05-06 10:36:57,473 INFO  [org.acm.PlaySongsGenerator] (main) Registered: {"author":"Scorpions","id":3,"name":"Still Loving You"}
+2020-05-06 10:36:57,485 INFO  [org.acm.PlaySongsGenerator] (main) Registered: {"author":"Queen","id":4,"name":"Bohemian Rhapsody"}
+...
+2020-05-06 10:37:02,657 INFO  [org.acm.PlaySongsGenerator] (RxComputationThreadPool-1) song 8: Perfect played.
+----
+
+[#music-chart-java]
+== Kafka Streams with Java
+
+The KStreams code is at {github-repo}/{apps-folder}/music-chart-app[Music Chart Service, window=_blank].
+
+[#deploying-music-chart]
+=== Deploying Music Chart Service
+
+In this case, the Quarkus service is deployed to use Kakfa Streams.
+You've got two options, using Docker or building yourself the service.
+In terminal 2, run one of these two options:
+
+[#deploying-music-chart-app-java]
+==== Building the Music Chart Service
+
+[.lines_4]
+[source, bash-shell,subs="+macros,+attributes"]
+----
+cd $TUTORIAL_HOME/apps/player-app/player/song-app
+./mvnw clean package
+docker build -f src/main/docker/Dockerfile.jvm -t quay.io/rhdevelopers/kafka-tutorial-music-chart-app:quarkus .
+docker run --rm -ti -p 9090:8080 --link=kafka:kafka quay.io/rhdevelopers/kafka-tutorial-music-chart-app:quarkus
+
+exec java -Dquarkus.http.host=0.0.0.0 -Djava.util.logging.manager=org.jboss.logmanager.LogManager -XX:+UseParallelGC -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90 -XX:MinHeapFreeRatio=20 -XX:MaxHeapFreeRatio=40 -XX:+ExitOnOutOfMemoryError -cp . -jar /deployments/app.jar
+__  ____  __  _____   ___  __ ____  ______
+ --/ __ \/ / / / _ | / _ \/ //_/ / / / __/
+ -/ /_/ / /_/ / __ |/ , _/ ,< / /_/ /\ \
+--\___\_\____/_/ |_/_/|_/_/|_|\____/___/
+2020-05-06 11:12:25,856 INFO  [org.apa.kaf.str.StreamsConfig] (main) StreamsConfig values:
+	application.id = music-chart
+	application.server = localhost:9090
+...
+2020-05-06 11:12:27,705 INFO  [org.apa.kaf.str.pro.int.StreamThread] (music-chart-97e40fb8-ef19-4bd5-8a1f-e7bd4b391e1a-StreamThread-1) stream-thread [music-chart-97e40fb8-ef19-4bd5-8a1f-e7bd4b391e1a-StreamThread-1] State transition from PARTITIONS_ASSIGNED to RUNNING
+2020-05-06 11:12:27,707 INFO  [org.apa.kaf.str.KafkaStreams] (music-chart-97e40fb8-ef19-4bd5-8a1f-e7bd4b391e1a-StreamThread-1) stream-client [music-chart-97e40fb8-ef19-4bd5-8a1f-e7bd4b391e1a] State transition from REBALANCING to RUNNING
+[KTABLE-TOSTREAM-0000000006]: 2, PlayedSong [count=1, songName=Believe]
+[KTABLE-TOSTREAM-0000000006]: 1, PlayedSong [count=1, songName=The Good The Bad And The Ugly]
+[KTABLE-TOSTREAM-0000000006]: 5, PlayedSong [count=1, songName=Sometimes]
+[KTABLE-TOSTREAM-0000000006]: 2, PlayedSong [count=2, songName=Believe]
+[KTABLE-TOSTREAM-0000000006]: 1, PlayedSong [count=2, songName=The Good The Bad And The Ugly]
+[KTABLE-TOSTREAM-0000000006]: 2, PlayedSong [count=3, songName=Believe]
+----
+
+[#running-music-chart-app-java-docker]
+==== Running Music Chart using Docker
+
+[.lines_1]
+[source, bash-shell,subs="+macros,+attributes"]
+----
+docker run --rm -ti -p 9090:8080 --link=kafka:kafka quay.io/rhdevelopers/kafka-tutorial-music-chart-app:quarkus
+
+exec java -Dquarkus.http.host=0.0.0.0 -Djava.util.logging.manager=org.jboss.logmanager.LogManager -XX:+UseParallelGC -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90 -XX:MinHeapFreeRatio=20 -XX:MaxHeapFreeRatio=40 -XX:+ExitOnOutOfMemoryError -cp . -jar /deployments/app.jar
+__  ____  __  _____   ___  __ ____  ______
+ --/ __ \/ / / / _ | / _ \/ //_/ / / / __/
+ -/ /_/ / /_/ / __ |/ , _/ ,< / /_/ /\ \
+--\___\_\____/_/ |_/_/|_/_/|_|\____/___/
+2020-05-06 11:12:25,856 INFO  [org.apa.kaf.str.StreamsConfig] (main) StreamsConfig values:
+	application.id = music-chart
+	application.server = localhost:9090
+...
+2020-05-06 11:12:27,705 INFO  [org.apa.kaf.str.pro.int.StreamThread] (music-chart-97e40fb8-ef19-4bd5-8a1f-e7bd4b391e1a-StreamThread-1) stream-thread [music-chart-97e40fb8-ef19-4bd5-8a1f-e7bd4b391e1a-StreamThread-1] State transition from PARTITIONS_ASSIGNED to RUNNING
+2020-05-06 11:12:27,707 INFO  [org.apa.kaf.str.KafkaStreams] (music-chart-97e40fb8-ef19-4bd5-8a1f-e7bd4b391e1a-StreamThread-1) stream-client [music-chart-97e40fb8-ef19-4bd5-8a1f-e7bd4b391e1a] State transition from REBALANCING to RUNNING
+[KTABLE-TOSTREAM-0000000006]: 2, PlayedSong [count=1, songName=Believe]
+[KTABLE-TOSTREAM-0000000006]: 1, PlayedSong [count=1, songName=The Good The Bad And The Ugly]
+[KTABLE-TOSTREAM-0000000006]: 5, PlayedSong [count=1, songName=Sometimes]
+[KTABLE-TOSTREAM-0000000006]: 2, PlayedSong [count=2, songName=Believe]
+[KTABLE-TOSTREAM-0000000006]: 1, PlayedSong [count=2, songName=The Good The Bad And The Ugly]
+[KTABLE-TOSTREAM-0000000006]: 2, PlayedSong [count=3, songName=Believe]
+----
+
+[#music-chart-result]
+=== Music Chart Result
+
+If you inspect the output of Musci Chart service, you see how many times a concrete song has been played, and everytime a new song is played, the counter is updated.
+
+[#kstreams-cleanup]
+== Clean Up
+
+Stop both services by typing kbd:[Ctrl + C] in both terminals 1 and 2.
+
+include::partial$kafka-restart.adoc[]

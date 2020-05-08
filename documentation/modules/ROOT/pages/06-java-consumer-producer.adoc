@@ -32,9 +32,9 @@ In terminal 1, run one of these two options:
 [.lines_4]
 [source, bash-shell,subs="+macros,+attributes"]
 ----
-cd $TUTORIAL_HOME/apps/song-app/springboot/song-app && \
-./mvnw clean package -DskipTests && \
-docker build -t quay.io/rhdevelopers/kafka-tutorial-song-app:springboot . && \
+cd $TUTORIAL_HOME/apps/song-app/springboot/song-app
+./mvnw clean package -DskipTests
+docker build -t quay.io/rhdevelopers/kafka-tutorial-song-app:springboot .
 docker run --rm -ti -p 8080:8080 --link=kafka:kafka quay.io/rhdevelopers/kafka-tutorial-song-app:springboot
 
 2020-04-29 09:38:23.290  INFO 3309 --- [main] o.s.web.context.ContextLoader            : Root WebApplicationContext: initialization completed in 921 ms
@@ -75,9 +75,9 @@ In terminal 2, run one of these two options:
 [.lines_4]
 [source, bash-shell,subs="+macros,+attributes"]
 ----
-cd $TUTORIAL_HOME/apps/song-indexer-app/springboot/song-indexer-app && \
-./mvnw clean package -DskipTests && \
-docker build -t quay.io/rhdevelopers/kafka-tutorial-song-indexer-app:springboot . && \
+cd $TUTORIAL_HOME/apps/song-indexer-app/springboot/song-indexer-app
+./mvnw clean package -DskipTests
+docker build -t quay.io/rhdevelopers/kafka-tutorial-song-indexer-app:springboot .
 docker run --rm -ti -p 9090:8080 --link=kafka:kafka quay.io/rhdevelopers/kafka-tutorial-song-indexer-app:springboot
 
 2020-04-29 14:37:03.530  INFO 1 --- [ntainer#0-0-C-1] o.a.k.c.c.internals.AbstractCoordinator  : [Consumer clientId=consumer-1, groupId=G1] Successfully joined group with generation 3

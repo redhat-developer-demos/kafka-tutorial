@@ -1,5 +1,5 @@
-name: template-tutorial
-title: Template Tutorial
+name: kafka-tutorial
+title: Kafka Tutorial
 version: '1.0.x'
 nav:
 - modules/ROOT/nav.adoc
