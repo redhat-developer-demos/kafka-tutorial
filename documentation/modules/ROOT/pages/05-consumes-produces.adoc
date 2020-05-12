@@ -10,11 +10,15 @@ Before digging into how to produce and consume data from Java, let's see how to 
 
 Open a new terminal, _terminal 1_, and run the following command:
 
-[.lines_1]
+[.console-input]
 [source, bash-shell]
 ----
 kafkacat -b localhost:29092 -t songs -C -K:
+----
 
+[.console-output]
+[source, bash-shell]
+----
 % Reached end of topic songs [0] at offset 0
 ----
 
@@ -23,6 +27,7 @@ kafkacat -b localhost:29092 -t songs -C -K:
 
 Open a new terminal, _terminal 2_, and create a new file with the next content:
 
+[.console-input]
 [source, json]
 .initial_songs
 ----
@@ -32,17 +37,19 @@ include::example$initial_songs.json[]
 Then insert each of this line as a new message.
 The number before the `:` is taken as an id.
 
-[.lines_1]
+[.console-input]
 [source, bash-shell]
 ----
 kafkacat -b localhost:29092 -t songs -P -l -K: initial_songs
 ----
 
-Switch back to _terminal 1_ where you are running `kafkacat` as consumer.
+Switch back to _terminal 1_ where you are running `kafkacat` as a consumer.
 You've defined this at <<Consuming messages with Kafkacat>> section.
 
 Now the output of the terminal has been updated showing the consumed messages:
 
+[.console-output]
+[source, bash-shell]
 ----
 1t {"id": 1, "name": "The Ecstasy of Gold", "author":"Ennio Morricone", "op":"ADD"}
 2t {"id": 2, "name": "Still Loving you", "author":"Scorpions", "op":"ADD"}
@@ -54,16 +61,20 @@ Notice that the `offset` of this consumer has been updated to 2, as the two firs
 [#playingwithoffsets]
 == Playing with Offsets
 
-A Producer always produces content at the end of a topic, meanwhile a consumer can consume from any offset.
+A Producer always produces content at the end of a topic, meanwhile, a consumer can consume from any offset.
 Still on _terminal 1_, stop the `kafkacat` process by typing kbd:[Ctrl + C].
 
 Then start again `kafkacat` with the same command:
 
-[.lines_1]
+[.console-input]
 [source, bash-shell]
 ----
 kafkacat -b localhost:29092 -t songs -C -K:
+----
 
+[.console-output]
+[source, bash-shell]
+----
 1: {"id": 1, "name": "The Ecstasy of Gold", "author":"Ennio Morricone", "op":"ADD"}
 2: {"id": 2, "name": "Still Loving you", "author":"Scorpions", "op":"ADD"}
 % Reached end of topic songs [0] at offset 2
@@ -75,13 +86,17 @@ But you can change that.
 
 Stop again `kafkacat` process by typing kbd:[Ctrl + C].
 
-And start again with the follwoing command:
+And start again with the following command:
 
-[.lines_1]
+[.console-input]
 [source, bash-shell]
 ----
 kafkacat -b localhost:29092 -t songs -o 1 -C -K:
+----
 
+[.console-output]
+[source, bash-shell]
+----
 2: {"id": 2, "name": "Still Loving you", "author":"Scorpions", "op":"ADD"}
 % Reached end of topic songs [0] at offset 2
 ----
@@ -91,10 +106,10 @@ Now the initial offset was not set to the beginning but from the second element.
 [#changingretention]
 == Changing Retention
 
-By default, Kafka retains data in a topic for 168 hours (7 days).
+By default, Kafka retains data on a topic for 168 hours (7 days).
 But retention can be changed, let's change it to 1 minute.
 
-You can also use `kafka-topic.sh` tool to change retention time of a topic.
+You can also use `kafka-topic.sh` tool to change the retention time of a topic.
 
 Open a third terminal:
 
@@ -102,28 +117,36 @@ include::partial$docker-exec.adoc[]
 
 Inside the container run:
 
-[.lines_1]
+[.console-input]
 [source, bash-shell]
 ----
 ./bin/kafka-configs.sh --zookeeper zookeeper_1:2181 --alter --entity-type topics --entity-name songs --add-config 'retention.ms=10000'
+----
 
+[.console-output]
+[source, bash-shell]
+----
 Completed Updating config for entity: topic 'songs'.
 ----
 
 And check that it has been configured correctly:
 
-[.lines_1]
+[.console-input]
 [source, bash-shell]
 ----
 ./bin/kafka-topics.sh --describe --bootstrap-server localhost:29092 --topic songs
+----
 
+[.console-output]
+[source, bash-shell]
+----
 Topic: songs	PartitionCount: 1	ReplicationFactor: 1	Configs: segment.bytes=1073741824,retention.ms=10000
     Topic: songs	Partition: 0	Leader: 0	Replicas: 0	Isr: 0
 ----
 
 In one terminal produce data again:
 
-[.lines_1]
+[.console-input]
 [source, bash-shell]
 ----
 kafkacat -b localhost:29092 -t songs -P -l -K: initial_songs
@@ -131,44 +154,57 @@ kafkacat -b localhost:29092 -t songs -P -l -K: initial_songs
 
 In the other terminal consume this data so you know that it has been inserted correctly:
 
-[.lines_1]
+[.console-input]
 [source, bash-shell]
 ----
 kafkacat -b localhost:29092 -t songs -C -K:
+----
 
+[.console-output]
+[source, bash-shell]
+----
 1: {"id": 1, "name": "The Ecstasy of Gold", "author":"Ennio Morricone", "op":"ADD"}
 2: {"id": 2, "name": "Still Loving you", "author":"Scorpions", "op":"ADD"}
 % Reached end of topic songs [0] at offset 2
 ----
 
-Stop `kafkacat` process by typing kbd:[Ctrl + C] and wait for ~10 seconds (ie `sleep 15`).
+Stop the `kafkacat` process by typing kbd:[Ctrl + C] and wait for ~10 seconds (ie `sleep 15`).
 
-Run `kafkacat` in consumer mode again:
+Run the `kafkacat` in consumer mode again:
 
-[.lines_1]
+[.console-input]
 [source, bash-shell]
 ----
 kafkacat -b localhost:29092 -t songs -C -K:
+----
 
+[.console-output]
+[source, bash-shell]
+----
 % Reached end of topic songs [0] at offset 2
 ----
 
 The important part is the last line, notice that it returns no messages, but the offset is `2`.
-The reason is that the messages are expired and deleted from the topic, but the offset has its own retention period.
-By default this retention period is 1 week, so although there is no data, the current offset for a consumer is '2'.
+The reason is that the messages are expired and deleted from the topic, but the offset has its retention period.
+By default, this retention period is 1 week, so although there is no data, the current offset for a consumer is '2'.
 
 Change retention time to the default one by running in the third terminal (the one you did `docker exec`), the following command:
 
-[.lines_1]
+[.console-input]
 [source, bash-shell]
 ----
 ./bin/kafka-configs.sh --zookeeper zookeeper_1:2181 --alter --entity-type topics --entity-name songs --delete-config retention.ms
+----
 
+[.console-output]
+[source, bash-shell]
+----
 Completed Updating config for entity: topic 'songs'.
 ----
 
 Now that the topic configuration is back to default, you can run the `exit` command:
 
+[.console-input]
 [source, bash-shell]
 ----
 exit
@@ -183,7 +219,7 @@ include::partial$docker-exec.adoc[]
 
 Inside the container run:
 
-[.lines_1]
+[.console-input]
 [source, bash-shell]
 ----
 ./bin/kafka-topics.sh --delete --bootstrap-server localhost:29092 --topic songs
@@ -191,6 +227,7 @@ Inside the container run:
 
 Now that the topic is deleted, you can run the `exit` command:
 
+[.console-input]
 [source, bash-shell]
 ----
 exit
@@ -198,7 +235,7 @@ exit
 
 If you run `kafkacat` again, you'll see that no data is in the topic:
 
-[.lines_1]
+[.console-input]
 [source, bash-shell]
 ----
 kafkacat -b localhost:29092 -t songs -C -K:

@@ -5,7 +5,7 @@
 [.text-center.strong]
 == Kafka
 
-A Kafka tutorial to show you the basic concepts of Kafka, how to deploy it to Kubernetes, develop services that consumes and produces to Kafka topic in Java and how to stream data with KStreams and KSQL.
+A Kafka tutorial to show you the basic concepts of Kafka, how to deploy it to Kubernetes, develop services that consume and produce from/to Kafka topic in Java, and how to stream data with KStreams.
 
 [.tiles.browse]
 == Browse modules

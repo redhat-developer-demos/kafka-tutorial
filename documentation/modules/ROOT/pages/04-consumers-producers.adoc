@@ -5,14 +5,14 @@ include::_attributes.adoc[]
 == What are Producers?
 
 Producers publish messages to a topic at the end of a partition.
-By default if a message contains a key, the hashed value of the key is used to decide in which partition the message is stored.
-If key is `null`, then a round-robin algorith is used to balance the messages across all partitions.
+By default, if a message contains a key, the hashed value of the key is used to decide in which partition the message is stored.
+If the key is `null`, then a round-robin algorithm is used to balance the messages across all partitions.
 
-Kafka guaranttes that all as long as no new partitions are added, elements with the same key wil be stored in the same partition.
+Kafka guarantees that all as long as no new partitions are added, elements with the same key will be stored in the same partition.
 
-If you wish you can also implement a custom partioning strategy to store messages in a specific partition following any kind of business rule.
+If you want you can also implement a custom partitioning strategy to store messages in a specific partition following any kind of business rule.
 
-<<image P-B>>
+image::p.png[]
 
 [#consumer]
 == What are Consumers?
@@ -20,18 +20,16 @@ If you wish you can also implement a custom partioning strategy to store message
 Each message published to a topic is delivered to a consumer that is subscribed to that topic.
 
 A consumer can read data from any position of the partition, and internally it is stored as a pointer called `offset`.
-In most of the cases, a consumer advances its `offset` lineraly, but it could be in any order, or starting from any given position.
+In most of the cases, a consumer advances its `offset` linearly, but it could be in any order, or starting from any given position.
 
 Each consumer belongs to a consumer group.
-A consumer group is a list of consumer instances that ensures the scability for processing messages and also fault tolerance.
+A consumer group is a list of consumer instances that ensures the scalability for processing messages and also fault tolerance.
 
-When a consumer group only contains one consumer, this consumer is responsible of processing all messages of all partitions.
-
-<<image>>
+When a consumer group only contains one consumer, this consumer is responsible for processing all messages of all partitions.
 
 The more consumers you add to a group, each consumer will only receive messages from a subset of the partitions.
 
-<<image>>
+image::c.png[]
 
-As you can see, in fat, what is registered to a topic is the _consumer group_ and not the consumer.
-Consumer is "subscribed" to a partition.
+As you can see what is registered to a topic is the _consumer group_ and not the consumer.
+The consumer is "subscribed" to a partition.

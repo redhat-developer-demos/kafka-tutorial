@@ -3,10 +3,8 @@ include::_attributes.adoc[]
 
 In this example, we are going to develop an example where there is one service that is putting songs description to the `songs` topic.
 
-Then there is another service that consumes from `songs` topic these songs.
-Notice that usually this consumer would take the songs and process them (i.e adding them in a graph database like Neo4J, or in an ElasticSearch for searching capabilities), but for the sake of simplicity in this case the servie is printing them in the console.
-
-<<image>>
+Then there is another service that consumes from the `songs` topic these songs.
+Notice that usually this consumer would take the songs and process them (i.e adding them in a graph database like Neo4J, or an ElasticSearch for searching capabilities), but for the sake of simplicity, in this case, the service is printing them in the console.
 
 include::partial$kafka-up-dc.adoc[]
 
@@ -29,14 +27,28 @@ In terminal 1, run one of these two options:
 [#deploying-producer-java]
 ==== Building the Song Service
 
-[.lines_4]
+[.console-input]
 [source, bash-shell,subs="+macros,+attributes"]
 ----
 cd $TUTORIAL_HOME/apps/song-app/springboot/song-app
 ./mvnw clean package -DskipTests
-docker build -t quay.io/rhdevelopers/kafka-tutorial-song-app:springboot .
-docker run --rm -ti -p 8080:8080 --link=kafka:kafka quay.io/rhdevelopers/kafka-tutorial-song-app:springboot
+----
 
+[.console-input]
+[source, bash-shell,subs="+macros,+attributes"]
+----
+docker build -t quay.io/rhdevelopers/kafka-tutorial-song-app:springboot .
+----
+
+[.console-input]
+[source, bash-shell,subs="+macros,+attributes"]
+----
+docker run --rm -ti -p 8080:8080 --link=kafka:kafka quay.io/rhdevelopers/kafka-tutorial-song-app:springboot
+----
+
+[.console-output]
+[source, bash-shell,subs="+macros,+attributes"]
+----
 2020-04-29 09:38:23.290  INFO 3309 --- [main] o.s.web.context.ContextLoader            : Root WebApplicationContext: initialization completed in 921 ms
 2020-04-29 09:38:23.484  INFO 3309 --- [main] o.s.s.concurrent.ThreadPoolTaskExecutor  : Initializing ExecutorService 'applicationTaskExecutor'
 2020-04-29 09:38:23.670  INFO 3309 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8080 (http) with context path ''
@@ -46,11 +58,15 @@ docker run --rm -ti -p 8080:8080 --link=kafka:kafka quay.io/rhdevelopers/kafka-t
 [#running-producer-java-docker]
 ==== Running Producer using Docker
 
-[.lines_1]
+[.console-input]
 [source, bash-shell,subs="+macros,+attributes"]
 ----
 docker run --rm -ti -p 8080:8080 --link=kafka:kafka quay.io/rhdevelopers/kafka-tutorial-song-app:springboot
+----
 
+[.console-output]
+[source, bash-shell,subs="+macros,+attributes"]
+----
 2020-04-29 09:38:23.290  INFO 3309 --- [main] o.s.web.context.ContextLoader            : Root WebApplicationContext: initialization completed in 921 ms
 2020-04-29 09:38:23.484  INFO 3309 --- [main] o.s.s.concurrent.ThreadPoolTaskExecutor  : Initializing ExecutorService 'applicationTaskExecutor'
 2020-04-29 09:38:23.670  INFO 3309 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8080 (http) with context path ''
@@ -72,14 +88,28 @@ In terminal 2, run one of these two options:
 [#deploying-consumer-java]
 ==== Building the Song Indexer Service
 
-[.lines_4]
+[.console-input]
 [source, bash-shell,subs="+macros,+attributes"]
 ----
 cd $TUTORIAL_HOME/apps/song-indexer-app/springboot/song-indexer-app
 ./mvnw clean package -DskipTests
-docker build -t quay.io/rhdevelopers/kafka-tutorial-song-indexer-app:springboot .
-docker run --rm -ti -p 9090:8080 --link=kafka:kafka quay.io/rhdevelopers/kafka-tutorial-song-indexer-app:springboot
+----
 
+[.console-input]
+[source, bash-shell,subs="+macros,+attributes"]
+----
+docker build -t quay.io/rhdevelopers/kafka-tutorial-song-indexer-app:springboot .
+----
+
+[.console-input]
+[source, bash-shell,subs="+macros,+attributes"]
+----
+docker run --rm -ti -p 9090:8080 --link=kafka:kafka quay.io/rhdevelopers/kafka-tutorial-song-indexer-app:springboot
+----
+
+[.console-output]
+[source, bash-shell,subs="+macros,+attributes"]
+----
 2020-04-29 14:37:03.530  INFO 1 --- [ntainer#0-0-C-1] o.a.k.c.c.internals.AbstractCoordinator  : [Consumer clientId=consumer-1, groupId=G1] Successfully joined group with generation 3
 2020-04-29 14:37:03.534  INFO 1 --- [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-1, groupId=G1] Setting newly assigned partitions: songs-0
 2020-04-29 14:37:03.542  INFO 1 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8080 (http) with context path ''
@@ -91,11 +121,15 @@ docker run --rm -ti -p 9090:8080 --link=kafka:kafka quay.io/rhdevelopers/kafka-t
 [#running-consumer-java-docker]
 ==== Running Consumer using Docker
 
-[.lines_1]
+[.console-input]
 [source, bash-shell,subs="+macros,+attributes"]
 ----
 docker run --rm -ti -p 9090:8080 --link=kafka:kafka quay.io/rhdevelopers/kafka-tutorial-song-indexer-app:springboot
+----
 
+[.console-output]
+[source, bash-shell,subs="+macros,+attributes"]
+----
 2020-04-29 14:37:03.530  INFO 1 --- [ntainer#0-0-C-1] o.a.k.c.c.internals.AbstractCoordinator  : [Consumer clientId=consumer-1, groupId=G1] Successfully joined group with generation 3
 2020-04-29 14:37:03.534  INFO 1 --- [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-1, groupId=G1] Setting newly assigned partitions: songs-0
 2020-04-29 14:37:03.542  INFO 1 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8080 (http) with context path ''
@@ -110,7 +144,8 @@ docker run --rm -ti -p 9090:8080 --link=kafka:kafka quay.io/rhdevelopers/kafka-t
 Song Indexer Service is exposing using Server-Side Events, the songs that are published to `songs` topic.
 In the terminal 3, run the following command to start listening for the events:
 
-[source, bash-session]
+[.console-input]
+[source, bash-shell,subs="+macros,+attributes"]
 ----
 http GET localhost:9090/events --stream --timeout=600
 ----
@@ -118,11 +153,15 @@ http GET localhost:9090/events --stream --timeout=600
 Song Service exposes an endpoint to publish songs into `songs` topic.
 In the terminal 4, run the following command to publish a song:
 
-[.lines_1]
-[source, bash-session]
+[.console-input]
+[source, bash-shell,subs="+macros,+attributes"]
 ----
 http POST localhost:8080/songs id=1000 name=Portals author='Alan Silvestri'
+----
 
+[.console-ouput]
+[source, bash-shell,subs="+macros,+attributes"]
+----
 HTTP/1.1 201
 Connection: keep-alive
 Content-Length: 0
@@ -130,8 +169,10 @@ Date: Wed, 29 Apr 2020 14:34:27 GMT
 Keep-Alive: timeout=60
 ----
 
-To verify that the song has been processed, check terminal 2 (`song indexer service`) for the next log line:
+To verify that the song has been processed, check terminal 2 (`song indexer service`) for the next logline:
 
+[.console-output]
+[source, bash-shell,subs="+macros,+attributes"]
 ----
 2020-04-29 14:34:18.340  INFO 1 --- [nio-8080-exec-1] reactor.Flux.EmitterProcessor.1          : onSubscribe(EmitterProcessor.EmitterInner)
 2020-04-29 14:34:18.343  INFO 1 --- [nio-8080-exec-1] reactor.Flux.EmitterProcessor.1          : request(1)
@@ -142,6 +183,8 @@ Song [author=Alan Silvestri, id=1000, name=Portals] indexed.
 
 And in the termianl 4, you should see that en event has been streamed:
 
+[.console-output]
+[source, bash-shell,subs="+macros,+attributes"]
 ----
 id:04ad6bd0-463a-4fd7-a39c-59ce042f54a4
 data:Song 1000 processed

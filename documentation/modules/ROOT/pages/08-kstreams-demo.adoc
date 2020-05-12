@@ -9,7 +9,7 @@ include::partial$kafka-up-dc.adoc[]
 [#kstreamscat-tables]
 == Tables
 
-You need only one terminal windows to run this section.
+You need only one terminal window to run this section.
 
 [source, json]
 .update_songs
@@ -20,19 +20,23 @@ include::example$update_songs.json[]
 Then insert each of this line as a new message.
 The number before the `:` is taken as an id.
 
-[.lines_1]
-[source, bash-shell]
+[.console-input]
+[source, bash-shell,subs="+macros,+attributes"]
 ----
 kafkacat -b localhost:29092 -t songs -P -l -K: update_songs
 ----
 
 Then inspect the inserted songs using `kafkacat`:
 
-[.lines_1]
-[source, bash-shell]
+[.console-input]
+[source, bash-shell,subs="+macros,+attributes"]
 ----
 kafkacat -b localhost:29092 -t songs -C -K:
+----
 
+[.console-output]
+[source, bash-shell,subs="+macros,+attributes"]
+----
 3: {"id": 3, "name": "Time", "author":"Hans Zimmer", "op":"ADD"}
 4: {"id": 4, "name": "Friend Like Me", "author":"Alan Menken", "op":"ADD"}
 5: {"id": 5, "name": "The Imperial March", "author":"Alan Silvestri", "op":"ADD"}
@@ -42,11 +46,15 @@ Stop the process by typing kbd:[Ctrl + C].
 
 Create a Global Table from `songs` topic:
 
-[.lines_1]
+[.console-input]
 [source, bash-shell,subs="+macros,+attributes"]
 ----
 {kstreamscat} --topic=songs --id=songs -b=localhost:29092 --GT
+----
 
+[.console-output]
+[source, bash-shell,subs="+macros,+attributes"]
+----
 Starting Kafka Streams...
 Kafka Stream Threads started
 3:  {"id": 3, "name": "Time", "author":"Hans Zimmer", "op":"ADD"}
@@ -56,12 +64,13 @@ Kafka Stream Threads started
 
 Stop the process by typing kbd:[Ctrl + C].
 
-Notice that the output of `kafkacat` and `kstreamcat` is fairly the same.
+Notice that the output of the `kafkacat` and `kstreamcat` is fairly the same.
 Probably most of you have noticed that `The Imperial March` was not written by Alain Silvestri but by John Williams.
 So let's fix this.
 
 Create a file that creates a new event to fix the problem.
 
+[.console-input]
 [source, json]
 .update2_songs
 ----
@@ -70,7 +79,7 @@ include::example$update2_songs.json[]
 
 And add it to `songs` topic:
 
-[.lines_1]
+[.console-input]
 [source, bash-shell]
 ----
 kafkacat -b localhost:29092 -t songs -P -l -K: update2_songs
@@ -78,11 +87,15 @@ kafkacat -b localhost:29092 -t songs -P -l -K: update2_songs
 
 Then inspect the inserted songs using `kafkacat`:
 
-[.lines_1]
+[.console-input]
 [source, bash-shell]
 ----
 kafkacat -b localhost:29092 -t songs -C -K:
+----
 
+[.console-output]
+[source, bash-shell,subs="+macros,+attributes"]
+----
 3: {"id": 3, "name": "Time", "author":"Hans Zimmer", "op":"ADD"}
 4: {"id": 4, "name": "Friend Like Me", "author":"Alan Menken", "op":"ADD"}
 5: {"id": 5, "name": "The Imperial March", "author":"Alan Silvestri", "op":"ADD"}
@@ -91,13 +104,17 @@ kafkacat -b localhost:29092 -t songs -C -K:
 
 Stop the process by typing kbd:[Ctrl + C].
 
-Create a Global Table from `songs` topic:
+Create a Global Table from the `songs` topic:
 
-[.lines_1]
+[.console-input]
 [source, bash-shell,subs="+macros,+attributes"]
 ----
 {kstreamscat} --topic=songs --id=songs -b=localhost:29092 --GT
+----
 
+[.console-output]
+[source, bash-shell,subs="+macros,+attributes"]
+----
 Starting Kafka Streams...
 Kafka Stream Threads started
 3:  {"id": 3, "name": "Time", "author":"Hans Zimmer", "op":"ADD"}
@@ -107,10 +124,10 @@ Kafka Stream Threads started
 
 Stop the process by typing kbd:[Ctrl + C].
 
-Notice that `kafkacat` shows the content of all the events that has been added into `songs` topic, so both events of _The Imperial March_ songs are visible.
+Notice that `kafkacat` shows the content of all the events that have been added into the `songs` topic, so both events of _The Imperial March_ songs are visible.
 
-On the other side, Gloabl Table just shows the latest values of the topic.
-For this reason, only the update event of _The Imperial March_ is shown, and not the initial insertation.
+On the other side, Global Table just shows the latest values of the topic.
+For this reason, only the update event of _The Imperial March_ is shown, and not the initial insertion.
 
 === Clean Up
 
@@ -120,49 +137,49 @@ include::partial$kafka-restart.adoc[]
 == Windowing
 
 Windowing allows you to control how to group records that have the same key based on a time window.
-For example you can answer to questions like _how many songs each user has played the last 30 minutes_, or _how many songs each user has played every day_.
+For example, you can answer questions like _how many songs each user has played the last 30 minutes_ or _how many songs each user has played every day_.
 
 There are 4 types of windows:
 
-Tumbling time window:: Fixed-size, non-overlapping and gap-less.
+Tumbling time window:: Fixed-size, non-overlapping, and gap-less.
 
-<<image>>
+image::win1.png[]
 
 Hopping time window:: Fixed-size, overlapping windows.
 
-<<image>>
+image::win2.png[]
 
-Sliding time window:: Fixed-size, overlapping windows that work on differences between record timestamps.
+Sliding time window:: Fixed-size, overlapping windows that work on differences between record timestamps. In the case of Kafka Steams, it defines a maximum time difference for a join over two streams on the same key.
 
-<<image>>
+Session window:: Dynamically-sized, non-overlapping, data-driven windows. Sessions represent a period of activity separated by a defined gap of inactivity.
+Things that are different from other windows: All windows are tracked independently across keys and window sizes vary.
 
-Session window:: Dynamically-sized, non-overlapping, data-driven windows
-
-<<image>>
+image::win3.png[]
 
 .About Retention
 ****
-Events can be processed out-of-order or late-arriving data records for a given window. This means that these events could be processed in the wrong window.
-Retention configures the time that a window might remain open to process events that comes out-of-order.
+Events can be processed out-of-order or late-arriving data records for a given window. 
+This means that these events could be processed in the wrong window.
+Retention configures the time that a window might remain open to process events that come out-of-order.
 
-<<image>>
+image::retention.png[]
 ****
 
-For this section you need to open *two* terminals at the same screen.
+For this section, you need to open *two* terminals on the same screen.
 
-Let's see how affect different window strategies in a topic that contains the history of the songs taht each user has played.
+Let's see how affect different window strategies in a topic that contains the history of the songs that each user has played.
 
 [#kstreamscat-timewindow]
 === Tumbling time window
 
 Let's create a periodic window of 60 seconds.
-What we are doiong here is creating a fixed buckets of 60 seconds, so every 60 seconds a new window is created to process the events that falls into that window.
+What we are doing here is creating fixed buckets of 60 seconds, so every 60 seconds a new window is created to process the events that fall into that window.
 
-For example, let's count the number of played songs by user in a bucket of 60 seconds.
+For example, let's count the number of played songs by the user in a bucket of 60 seconds.
 
 With Kafka cluster started, prepare *but do not execute* the next command in terminal 2:
 
-[.lines_1]
+[.console-input]
 [source, bash-shell,subs="+macros,+attributes"]
 ----
 {kstreamscat} --topic=played --id=songs -b=localhost:29092 --time-window=60
@@ -170,6 +187,7 @@ With Kafka cluster started, prepare *but do not execute* the next command in ter
 
 In terminal 1, run the next command, and then immediatelly run the commandd you've prepared in terminal 2:
 
+[.console-input]
 [source, bash-shell,subs="+macros,+attributes"]
 ----
 kafkacat -b localhost:29092 -t played -P -l -K: apps/windowing/first-batch.json
@@ -177,11 +195,15 @@ kafkacat -b localhost:29092 -t played -P -l -K: apps/windowing/first-batch.json
 
 And run the command that you've prepared in the terminal 2:
 
-[.lines_1]
+[.console-input]
 [source, bash-shell,subs="+macros,+attributes"]
 ----
 {kstreamscat} --topic=played --id=songs -b=localhost:29092 --time-window=60
+----
 
+[.console-output]
+[source, bash-shell,subs="+macros,+attributes"]
+----
 SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
 SLF4J: Defaulting to no-operation (NOP) logger implementation
 SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
@@ -196,6 +218,7 @@ Key: sebi : 1
 
 Then in the terminal 1, run again the `kafkacat` command to insert again the played songs:
 
+[.console-input]
 [source, bash-shell,subs="+macros,+attributes"]
 ----
 kafkacat -b localhost:29092 -t played -P -l -K: apps/windowing/first-batch.json
@@ -203,6 +226,7 @@ kafkacat -b localhost:29092 -t played -P -l -K: apps/windowing/first-batch.json
 
 And if you inspect the `kstreamscat` output you'll see:
 
+[.console-output]
 [source, bash-shell,subs="+macros,+attributes"]
 ----
 Key: alex : 8
@@ -212,10 +236,11 @@ Key: edson : 2
 Key: sebi : 2
 ----
 
-Notice that the played songs has been increased by 2.
+Notice that the played songs have been increased by 2.
 
 Now wait for one minute and then run the `kafkacat` command again to insert again the played songs:
 
+[.console-input]
 [source, bash-shell,subs="+macros,+attributes"]
 ----
 kafkacat -b localhost:29092 -t played -P -l -K: apps/windowing/first-batch.json
@@ -223,6 +248,7 @@ kafkacat -b localhost:29092 -t played -P -l -K: apps/windowing/first-batch.json
 
 And if you inspect the `kstreamscat` output you'll see:
 
+[.console-output]
 [source, bash-shell,subs="+macros,+attributes"]
 ----
 Key: alex : 4
@@ -232,7 +258,7 @@ Key: edson : 1
 Key: sebi : 1
 ----
 
-After 1 minute, the window has shifted into a new one so these new played songs has fallen into this new window, so the count for this window are starting from 0.
+After 1 minute, the window has shifted into a new one so these new played songs have fallen into this new window, so the count for this window is starting from 0.
 
 ==== Clean Up
 
@@ -247,7 +273,7 @@ Let's see how it behaves when instead of a <<kstreamscat-timewindow>>, we use a 
 
 With Kafka cluster started, prepare *but do not execute* the next command in terminal 2:
 
-[.lines_1]
+[.console-input]
 [source, bash-shell,subs="+macros,+attributes"]
 ----
 {kstreamscat} --topic=played --id=songs -b=localhost:29092 --session-window=60
@@ -255,6 +281,7 @@ With Kafka cluster started, prepare *but do not execute* the next command in ter
 
 In terminal 1, run the next command, and then immediatelly run the commandd you've prepared in terminal 2:
 
+[.console-input]
 [source, bash-shell,subs="+macros,+attributes"]
 ----
 kafkacat -b localhost:29092 -t played -P -l -K: apps/windowing/first-batch.json
@@ -262,11 +289,15 @@ kafkacat -b localhost:29092 -t played -P -l -K: apps/windowing/first-batch.json
 
 And run the command that you've prepared in the terminal 2:
 
-[.lines_1]
+[.console-input]
 [source, bash-shell,subs="+macros,+attributes"]
 ----
 {kstreamscat} --topic=played --id=songs -b=localhost:29092 --session-window=60
+----
 
+[.console-output]
+[source, bash-shell,subs="+macros,+attributes"]
+----
 SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
 SLF4J: Defaulting to no-operation (NOP) logger implementation
 SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
@@ -281,11 +312,15 @@ Key: sebi : 1
 
 Then in terminal 1 run the following command:
 
-[.lines_1]
+[.console-input]
 [source, bash-shell,subs="+macros,+attributes"]
 ----
 ./apps/windowing/session-window.sh
+----
 
+[.console-output]
+[source, bash-shell,subs="+macros,+attributes"]
+----
 Sleeping 30s
 Insert new batch
 Sleeping 40s
@@ -298,6 +333,7 @@ Now new session window
 
 Monitor the output of the terminal 2, you should see something like:
 
+[.console-output]
 [source, bash-shell,subs="+macros,+attributes"]
 ----
 Key: alex : 4
@@ -328,7 +364,7 @@ Key: sebi : 1
 ----
 
 Notice that we configured the session window to 60 seconds `--session-window=60` but since until the last sleep (`Sleeping 65`) we were producing content continuously without stopping for one minute, all of these events where processed in the same window.
-The new window is created in the last batch, because the last batch is inserted after a timelapse of 60 seconds without producing any event.
+The new window is created in the last batch because the last batch is inserted after a timelapse of 60 seconds without producing any event.
 
 ==== Clean Up
 

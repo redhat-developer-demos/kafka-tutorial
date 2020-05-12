@@ -6,9 +6,7 @@ In this example, we are going to develop an example to build a music chart to se
 There is one service (`player-app`) that it is periodically producing played songs to the `played-songs` topic.
 This service is not using Kafka Streams.
 
-The second service is a Kafka Stream service that join `songs` and `played-songs` topics, to get the song name, and finally it updates the number of times that the song has been played.
-
-<<image>>
+The second service is a Kafka Stream service that joins `songs` and `played-songs` topics, to get the song name, and finally, it updates the number of times that the song has been played.
 
 include::partial$kafka-up-dc.adoc[]
 
@@ -29,14 +27,23 @@ In terminal 1, run one of these two options:
 [#deploying-player-app-java]
 ==== Building the Player Service
 
-[.lines_4]
+[.console-input]
 [source, bash-shell,subs="+macros,+attributes"]
 ----
 cd $TUTORIAL_HOME/apps/player-app/player/song-app
 ./mvnw clean package
+----
+
+[.console-input]
+[source, bash-shell,subs="+macros,+attributes"]
+----
 docker build -f src/main/docker/Dockerfile.jvm -t quay.io/rhdevelopers/kafka-tutorial-player-app:quarkus .
 docker run --rm -ti -p 8080:8080 --link=kafka:kafka quay.io/rhdevelopers/kafka-tutorial-player-app:quarkus
+----
 
+[.console-output]
+[source, bash-shell,subs="+macros,+attributes"]
+----
 exec java -Dquarkus.http.host=0.0.0.0 -Djava.util.logging.manager=org.jboss.logmanager.LogManager -XX:+UseParallelGC -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90 -XX:MinHeapFreeRatio=20 -XX:MaxHeapFreeRatio=40 -XX:+ExitOnOutOfMemoryError -cp . -jar /deployments/app.jar
 __  ____  __  _____   ___  __ ____  ______
  --/ __ \/ / / / _ | / _ \/ //_/ / / / __/
@@ -59,11 +66,15 @@ __  ____  __  _____   ___  __ ____  ______
 [#running-player-app-java-docker]
 ==== Running Player using Docker
 
-[.lines_1]
+[.console-input]
 [source, bash-shell,subs="+macros,+attributes"]
 ----
 docker run --rm -ti -p 8080:8080 --link=kafka:kafka quay.io/rhdevelopers/kafka-tutorial-player-app:quarkus
+----
 
+[.console-output]
+[source, bash-shell,subs="+macros,+attributes"]
+----
 exec java -Dquarkus.http.host=0.0.0.0 -Djava.util.logging.manager=org.jboss.logmanager.LogManager -XX:+UseParallelGC -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90 -XX:MinHeapFreeRatio=20 -XX:MaxHeapFreeRatio=40 -XX:+ExitOnOutOfMemoryError -cp . -jar /deployments/app.jar
 __  ____  __  _____   ___  __ ____  ______
  --/ __ \/ / / / _ | / _ \/ //_/ / / / __/
@@ -91,21 +102,30 @@ The KStreams code is at {github-repo}/{apps-folder}/music-chart-app[Music Chart 
 [#deploying-music-chart]
 === Deploying Music Chart Service
 
-In this case, the Quarkus service is deployed to use Kakfa Streams.
+In this case, the Quarkus service is deployed to use Kafka Streams.
 You've got two options, using Docker or building yourself the service.
 In terminal 2, run one of these two options:
 
 [#deploying-music-chart-app-java]
 ==== Building the Music Chart Service
 
-[.lines_4]
+[.console-input]
 [source, bash-shell,subs="+macros,+attributes"]
 ----
 cd $TUTORIAL_HOME/apps/player-app/player/song-app
 ./mvnw clean package
+----
+
+[.console-input]
+[source, bash-shell,subs="+macros,+attributes"]
+----
 docker build -f src/main/docker/Dockerfile.jvm -t quay.io/rhdevelopers/kafka-tutorial-music-chart-app:quarkus .
 docker run --rm -ti -p 9090:8080 --link=kafka:kafka quay.io/rhdevelopers/kafka-tutorial-music-chart-app:quarkus
+----
 
+[.console-output]
+[source, bash-shell,subs="+macros,+attributes"]
+----
 exec java -Dquarkus.http.host=0.0.0.0 -Djava.util.logging.manager=org.jboss.logmanager.LogManager -XX:+UseParallelGC -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90 -XX:MinHeapFreeRatio=20 -XX:MaxHeapFreeRatio=40 -XX:+ExitOnOutOfMemoryError -cp . -jar /deployments/app.jar
 __  ____  __  _____   ___  __ ____  ______
  --/ __ \/ / / / _ | / _ \/ //_/ / / / __/
@@ -128,11 +148,15 @@ __  ____  __  _____   ___  __ ____  ______
 [#running-music-chart-app-java-docker]
 ==== Running Music Chart using Docker
 
-[.lines_1]
+[.console-input]
 [source, bash-shell,subs="+macros,+attributes"]
 ----
 docker run --rm -ti -p 9090:8080 --link=kafka:kafka quay.io/rhdevelopers/kafka-tutorial-music-chart-app:quarkus
+----
 
+[.console-output]
+[source, bash-shell,subs="+macros,+attributes"]
+----
 exec java -Dquarkus.http.host=0.0.0.0 -Djava.util.logging.manager=org.jboss.logmanager.LogManager -XX:+UseParallelGC -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90 -XX:MinHeapFreeRatio=20 -XX:MaxHeapFreeRatio=40 -XX:+ExitOnOutOfMemoryError -cp . -jar /deployments/app.jar
 __  ____  __  _____   ___  __ ____  ______
  --/ __ \/ / / / _ | / _ \/ //_/ / / / __/
@@ -155,7 +179,7 @@ __  ____  __  _____   ___  __ ____  ______
 [#music-chart-result]
 === Music Chart Result
 
-If you inspect the output of Musci Chart service, you see how many times a concrete song has been played, and everytime a new song is played, the counter is updated.
+If you inspect the output of Music Chart service, you see how many times a concrete song has been played, and every time a new song is played, the counter is updated.
 
 [#kstreams-cleanup]
 == Clean Up

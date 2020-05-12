@@ -4,30 +4,39 @@ include::_attributes.adoc[]
 [#prerequisite]
 == Prerequisite CLI tools
 
-You will need in this tutorial:
 
-* `docker`
-* `docker-compose`
-* `kafkacat` v1.5.0
-* `minikube`
-* `kubectl`
+include::https://raw.githubusercontent.com/redhat-developer-demos/rhd-tutorial-common/master/prerequisites-kubernetes.adoc[]
+|`Kafkacat`
+|https://github.com/edenhill/kafkacat[Download]
+|https://github.com/edenhill/kafkacat[Download]
+|https://github.com/edenhill/kafkacat[Download]
 
-Optional:
+|`Kstreamscat`
+|https://github.com/lordofthejars/kstreamscat[Download]
+|https://github.com/lordofthejars/kstreamscat[Download]
+|https://github.com/lordofthejars/kstreamscat[Download]
 
-* `Apache Maven`
-* `Java 11`.
+|`Java 11`
+|https://adoptopenjdk.net/[Download]
+|https://adoptopenjdk.net/[Download]
+|https://adoptopenjdk.net/[Download]
+|===
 
 [#kafka]
 == Setup Kafka
 
 Assuming you've got https://docs.docker.com/get-docker/[Docker & Docker Compose installed].
 
-[.lines_2]
+[.console-input]
 [source, bash-shell]
 ----
 cd $TUTORIAL_HOME/apps/it
 docker-compose up --remove-orphans
+----
 
+[.console-output]
+[source,bash,subs="+macros,+attributes"]
+----
 ...
 
 kafka_1      | [2020-04-27 05:51:56,560] INFO [Transaction Marker Channel Manager 0]: Starting (kafka.coordinator.transaction.TransactionMarkerChannelManager)
@@ -45,23 +54,31 @@ Open a new terminal to run Kafka commands:
 
 Verify that Zookeeper and Apache Kafka containers are up and running:
 
-[.lines_1]
+[.console-input]
 [source, bash-shell]
 ----
 docker ps
+----
 
+[.console-output]
+[source,bash,subs="+macros,+attributes"]
+----
 CONTAINER ID        IMAGE                              COMMAND                  CREATED             STATUS              PORTS                                                                                        NAMES
 65659ad17d07        strimzi/kafka:0.17.0-kafka-2.4.0   "sh -c 'bin/kafka-se…"   2 hours ago         Up 2 hours          0.0.0.0:9092->9092/tcp                                                                       it_kafka_1
 9bfdd117f957        debezium/zookeeper:1.0             "/docker-entrypoint.…"   2 hours ago         Up 2 hours          0.0.0.0:2181->2181/tcp, 0.0.0.0:2888->2888/tcp, 8778/tcp, 0.0.0.0:3888->3888/tcp, 9779/tcp   it_zookeeper_1
 ----
 
-Verify that Kafka cluster is correctly started and configured by running the following command:
+Verify that the Kafka cluster is correctly started and configured by running the following command:
 
-[.lines_1]
+[.console-input]
 [source, bash-shell]
 ----
 kafkacat -b localhost:9092 -L
+----
 
+[.console-output]
+[source,bash,subs="+macros,+attributes"]
+----
 Metadata for all topics (from broker 0: localhost:9092/0):
  1 brokers:
   broker 0 at localhost:9092 (controller)

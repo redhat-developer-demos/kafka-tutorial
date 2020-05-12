@@ -7,26 +7,28 @@ So far, you've seen that you can consume and produce data into a Kafka topic, bu
 == What are Kafka Streams?
 
 Kafka Streams is a Java API that implements all these features, doing in a fault-tolerant, scalable way.
-One of the important thing of Kafka Streams application is that it doesn't run inside a broker, but it runs in a spearate JVM instance, maybe in the same cluster, or maybe in a different cluster but it is a different process.
+One of the important things of Kafka Streams application is that it doesn't run inside a broker, but it runs in a separate JVM instance, maybe in the same cluster, or maybe in a different cluster but it is a different process.
 
-A Kafka Stream application instances, can run in parallel, in different machines and they will automatically collaborate on the data processing.
-This is what makes Kafka Streams applications fault-tolerancea and scalable.
+A Kafka Stream application instances can run in parallel, in different machines and they will automatically collaborate on the data processing.
+This is what makes Kafka Streams applications fault-tolerance and scalable.
 
 [#kstreamsconcepts]
-== Kafka Sterams Concepts
+== Kafka Streams Concepts
 
-Stream Processor:: A Stream processor represents an operation to execute to a stream, some examples of built-in operations can be filter, map, join or aggregate. 
-Usually, a Kafka Stream application is created of one or more operations.
+Stream Processor:: A Stream processor represents an operation to execute to a stream, some examples of built-in operations can be a filter, map, join, or aggregate. 
+Usually, a Kafka Stream application is created for one or more operations.
 
 Table:: A table is a collection of key-value pairs, that represents the last value for the same record key.
-The big difference is that a stream contains the log of all events (ie an insertation of a song, and update of a song, ...) and a table contains the last value (ie the last update done in a song).
-There are two kind of tables, a _KTable_ which represents a table from a partition, and a _GlobalKTable_ which agrgegates the content from all partitions of a given topic.
+The big difference is that a stream contains the log of all events (ie an insertion of a song, and update of a song, ...) and a table contains the last value (ie the last update done in a song).
+There is two kinds of tables, a _KTable_ which represents a table from a partition, and a _GlobalKTable_ which aggregates the content from all partitions of a given topic.
 We'll take a look later.
 
 Aggregation Operation:: Takes one input stream or table, and yields a new table by combining multiple input records into a single output record. Examples of aggregations are computing counts or sum.
 
 Join Operation:: Merges two input streams and/or tables based on the keys of their data records, and yields a new stream/table.
 
-Windowing:: Group records that have the same key by a window time. For example you can group which events has occurred between a period of time.
+Windowing:: Group records that have the same key by a window time. For example, you can group which events have occurred between a period of time.
 
 Interactive Queries:: Treat the stream processing layer as a lightweight embedded database, to directly query the latest state of your stream processing application.
+
+image::kstreams.png[]

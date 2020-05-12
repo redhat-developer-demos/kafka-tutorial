@@ -1,5 +1,6 @@
 = Kafka in Kubernetes
 include::_attributes.adoc[]
+include::https://raw.githubusercontent.com/redhat-developer-demos/rhd-tutorial-common/master/versions.adoc[]
 
 Kubernetes is an open source container orchestration platform that automates many of the manual processes involved in deploying, managing, and scaling containerized applications.
 
@@ -20,7 +21,7 @@ include::https://raw.githubusercontent.com/redhat-developer-demos/rhd-tutorial-c
 [#start-kubernetes]
 === Start Kubernetes
 
-There are series of commands as steps that allows you get started with minikube. The following section shows how to start minikube with minimal and required configurations:
+The following section shows how to start Kubernetes with required configurations:
 
 :profile: kafka
 include::https://raw.githubusercontent.com/redhat-developer-demos/rhd-tutorial-common/master/kubernetes-setup.adoc[]
@@ -33,7 +34,7 @@ Strimzi provides a way to run an Apache Kafka cluster on Kubernetes in various d
 Some of the features of Strimzi are:
 
 Secure by Default:: TLS and SCRAM-SHA supported. Automated Certificate Management.
-Simple yet Configurable:: NodePort, Load balancer and Ingress options. Rack awareness for HA. Use dedicated nodes for Kafka.
+Simple yet Configurable:: NodePort, Load balancer, and Ingress options. Rack awareness for HA. Use dedicated nodes for Kafka.
 Kubernetes-Native Experience:: `kubectl get kafka`. Operator Based. Manage Kafka using gitops.
 
 [#installing-crds]
@@ -42,12 +43,20 @@ Kubernetes-Native Experience:: `kubectl get kafka`. Operator Based. Manage Kafka
 Strimzi uses Kubernetes operators to manage the Kafka cluster.
 To install the Strimzi operator you need to run the following command:
 
+
+[tabs]
+====
+Minikube::
++
+--
+[.console-input]
 [source, bash-shell]
 ----
 kubectl apply -f 'https://strimzi.io/install/latest?namespace=default' -n default 
 ----
 
-[source, bash-shell]
+[.console-output]
+[source, bash-shell,subs="+macros,+attributes"]
 ----
 customresourcedefinition.apiextensions.k8s.io/kafkas.kafka.strimzi.io created
 rolebinding.rbac.authorization.k8s.io/strimzi-cluster-operator-entity-operator-delegation created
@@ -72,14 +81,39 @@ customresourcedefinition.apiextensions.k8s.io/kafkaconnects.kafka.strimzi.io cre
 customresourcedefinition.apiextensions.k8s.io/kafkamirrormakers.kafka.strimzi.io created
 ----
 
-Check that everything has been installed by running the follwing commands:
+[.console-input]
+[source, bash-shell]
+----
+kubectl get pods
+----
 
+[.console-output]
+[source, bash-shell,subs="+macros,+attributes"]
+----
+NAME                                          READY   STATUS    RESTARTS   AGE
+strimzi-cluster-operator-59b99fc7cf-h4kf8     1/1     Running   0          6m53s
+----
+--
+OpenShift::
++
+--
+To install Kafka in OpenShift, you can go to menu:Operators[OperatorHub] and search for `Kafka`.
+Then select the `Red Hat Integration - AMQ Streams` and install it.
+
+image::amqstreams.png[]
+--
+====
+
+Check that everything has been installed by running the following commands:
+
+[.console-input]
 [source, bash-shell]
 ----
 kubectl get crds | grep kafka
 ----
 
-[source, bash-shell]
+[.console-output]
+[source, bash-shell,subs="+macros,+attributes"]
 ----
 NAME                                  CREATED AT
 kafkabridges.kafka.strimzi.io         2020-05-07T07:50:38Z
@@ -93,64 +127,60 @@ kafkatopics.kafka.strimzi.io          2020-05-07T07:50:38Z
 kafkausers.kafka.strimzi.io           2020-05-07T07:50:37Z
 ----
 
-[source, bash-shell]
-----
-kubectl get pods
-----
-
-[source, bash-shell]
-----
-NAME                                          READY   STATUS    RESTARTS   AGE
-strimzi-cluster-operator-59b99fc7cf-h4kf8     1/1     Running   0          6m53s
-----
-
 [#deploy-kafka]
 === Deploying Kafka Cluster
 
 To deploy the cluster, you need to create a Kafka resource file using the Kafka Custom Resource Definition (_CRD_).
 
-In this case, you are going to deploy a Kafka cluster with 3 instances and ephimeral storage.
+In this case, you are going to deploy a Kafka cluster with 3 instances and ephemeral storage.
 
 The file you are going to apply is the next one:
 
+[.console-input]
 [source, bash-shell]
 ----
 include::https://strimzi.io/examples/latest/kafka/kafka-ephemeral.yaml[]
 ----
 
 Notice how simple is to deploy a Kafka cluster in Kubernetes, you just need a few YAML lines.
-Run the follwoing command to deploy Kafka:
+Run the following command to deploy Kafka:
 
-[source, bash-shell]
+[.console-input]
+[source, bash-shell,subs="+macros,+attributes"]
 ----
 kubectl apply -f https://strimzi.io/examples/latest/kafka/kafka-ephemeral.yaml -n default
 ----
 
-[source, bash-shell]
+[.console-output]
+[source, bash-shell,subs="+macros,+attributes"]
 ----
 kafka.kafka.strimzi.io/my-cluster created
 ----
 
-To wait until Kafka cluster is up and running, you can run the follwoing comamnd:
+To wait until Kafka cluster is up and running, you can run the following comamnd:
 
+[.console-input]
 [source, bash-shell]
 ----
 kubectl wait kafka/my-cluster --for=condition=Ready --timeout=300s -n default
 ----
 
-[source, bash-shell]
+[.console-output]
+[source, bash-shell,subs="+macros,+attributes"]
 ----
 kafka.kafka.strimzi.io/my-cluster condition met
 ----
 
 After that, you should have Kafka pods and services up and running:
 
-[source, bash-shell]
+[.console-input]
+[source, bash-shell,subs="+macros,+attributes"]
 ----
 kubectl get pods
 ----
 
-[source, bash-shell]
+[.console-output]
+[source, bash-shell,subs="+macros,+attributes"]
 ----
 NAME                                          READY   STATUS    RESTARTS   AGE
 my-cluster-entity-operator-77b5dd5594-hl7cf   3/3     Running   0          44s
@@ -165,12 +195,14 @@ strimzi-cluster-operator-59b99fc7cf-h4kf8     1/1     Running   0          6m53s
 
 And services:
 
+[.console-input]
 [source, bash-shell]
 ----
 kubectl get services
 ----
 
-[source, bash-shell]
+[.console-output]
+[source, bash-shell,subs="+macros,+attributes"]
 ----
 NAME                          TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)                      AGE
 kubernetes                    ClusterIP   10.96.0.1        <none>        443/TCP                      11m
@@ -191,6 +223,7 @@ At this time, Quarkus version of the `song` - `song-indexer` application is depl
 
 To deploy the Song Service go to:
 
+[.console-input]
 [source, bash-shell]
 ----
 cd $TUTORIAL_HOME/apps/song-app/quarkus/song-app
@@ -198,12 +231,14 @@ cd $TUTORIAL_HOME/apps/song-app/quarkus/song-app
 
 And use `kubectl` to deploy the service:
 
+[.console-input]
 [source, bash-shell]
 ----
 kubectl apply -f src/main/kubernetes/kubernetes.yml
 ----
 
-[source, bash-shell]
+[.console-output]
+[source, bash-shell,subs="+macros,+attributes"]
 ----
 serviceaccount/kafka-tutorial-song-app created
 service/kafka-tutorial-song-app created
@@ -212,12 +247,14 @@ deployment.apps/kafka-tutorial-song-app created
 
 Verify that the service has been deployed correctly:
 
+[.console-input]
 [source, bash-shell]
 ----
 kubetl get pods
 ----
 
-[source, bash-shell]
+[.console-output]
+[source, bash-shell,subs="+macros,+attributes"]
 ----
 kafka-tutorial-song-app-84f8476bc8-vhr4k           1/1     Running   0          8m53s
 my-cluster-entity-operator-77b5dd5594-hl7cf        3/3     Running   3          8h
@@ -235,6 +272,7 @@ strimzi-cluster-operator-59b99fc7cf-h4kf8          1/1     Running   1          
 
 To deploy the Song Indexer Service go to:
 
+[.console-input]
 [source, bash-shell]
 ----
 cd $TUTORIAL_HOME/apps/song-indexer-app/quarkus/song-indexer-app
@@ -242,12 +280,14 @@ cd $TUTORIAL_HOME/apps/song-indexer-app/quarkus/song-indexer-app
 
 And use `kubectl` to deploy the service:
 
+[.console-input]
 [source, bash-shell]
 ----
 kubectl apply -f src/main/kubernetes/kubernetes.yml
 ----
 
-[source, bash-shell]
+[.console-output]
+[source, bash-shell,subs="+macros,+attributes"]
 ----
 serviceaccount/kafka-tutorial-song-indexer-app created
 service/kafka-tutorial-song-indexer-app created
@@ -256,12 +296,14 @@ deployment.apps/kafka-tutorial-song-indexer-app created
 
 Verify that the service has been deployed correctly:
 
+[.console-input]
 [source, bash-shell]
 ----
 kubetl get pods
 ----
 
-[source, bash-shell]
+[.console-output]
+[source, bash-shell,subs="+macros,+attributes"]
 ----
 NAME                                               READY   STATUS    RESTARTS   AGE
 kafka-tutorial-song-app-84f8476bc8-vhr4k           1/1     Running   0          8m53s
@@ -283,12 +325,14 @@ Let's test that it works as expected.
 
 The first thing that you need to know is the exposed port of each of the services.
 
+[.console-input]
 [source, bash-shell]
 ----
 kubectl get services
 ----
 
-[source, bash-shell]
+[.console-output]
+[source, bash-shell,subs="+macros,+attributes"]
 ----
 NAME                              TYPE           CLUSTER-IP       EXTERNAL-IP   PORT(S)                      AGE
 kafka-tutorial-song-app           LoadBalancer   10.99.68.119     <pending>     8080:31834/TCP               5m15s
@@ -300,17 +344,19 @@ my-cluster-zookeeper-client       ClusterIP      10.101.161.217   <none>        
 my-cluster-zookeeper-nodes        ClusterIP      None             <none>        2181/TCP,2888/TCP,3888/TCP   8h
 ----
 
-In this specific case `kafka-tutorial-song-app` port is `31834` and `kafka-tutorial-song-indexer-app` is `30581` but this is going to change everytime you deploy these services.
+In this specific case, `kafka-tutorial-song-app` port is `31834` and `kafka-tutorial-song-indexer-app` is `30581` but this is going to change every time you deploy these services.
 
 Then you need the IP to connect.
-This IP is the minikube IP and it is know by running the following command:
+This IP is the minikube IP and it is known by running the following command:
 
+[.console-input]
 [source, bash-shell]
 ----
 minikube ip -p kafka
 ----
 
-[source, bash-shell]
+[.console-output]
+[source, bash-shell,subs="+macros,+attributes"]
 ----
 192.168.99.107
 ----
@@ -319,12 +365,14 @@ Open 2 terminal windows, one for populating songs, and another one to get the re
 
 In the terminal 1 run the following command:
 
+[.console-input]
 [source, bash-shell]
 ----
 http GET 192.168.99.107:30581/events --stream --timeout=600
 ----
 
-[source, bash-shell]
+[.console-output]
+[source, bash-shell,subs="+macros,+attributes"]
 ----
 HTTP/1.1 200 OK
 Content-Type: text/event-stream
@@ -333,6 +381,7 @@ transfer-encoding: chunked
 
 In the terminal 2 run the following command:
 
+[.console-input]
 [source, bash-shell]
 ----
 http POST 192.168.99.107:31834/songs id=107 name=Portals author='Alan Silvestri'
@@ -340,7 +389,8 @@ http POST 192.168.99.107:31834/songs id=107 name=Portals author='Alan Silvestri'
 
 Inspect the output of terminal 2, to check that the song has been processed by indexer service.
 
-[source, bash-shell]
+[.console-output]
+[source, bash-shell,subs="+macros,+attributes"]
 ----
 data: {"author":"Alan Silvestri","id":107,"name":"Portals","op":"ADD"}
 ----
@@ -350,6 +400,7 @@ data: {"author":"Alan Silvestri","id":107,"name":"Portals","op":"ADD"}
 
 To clean the namespace run:
 
+[.console-input]
 [source, bash-shell]
 ----
 kubectl delete all --all
