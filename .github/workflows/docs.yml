@@ -5,8 +5,9 @@ on:
     branches: 
     - master
     paths:
+    - .github/workflows/docs.yml
+    - github-pages.yml
     - 'documentation/**'
-    - '*.yml'
 
 jobs:
   build-and-publish:
@@ -15,7 +16,7 @@ jobs:
     - name: Checkout project
       uses: actions/checkout@v2
     - name: Run antora
-      uses: docker://antora/antora:2.2.0
+      uses: docker://antora/antora:2.3.1
       with:
         args: github-pages-site.yml
     - name: Deploy to GitHub Pages
