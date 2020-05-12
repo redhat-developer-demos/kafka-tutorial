@@ -7,23 +7,23 @@ site:
 
 content:
   sources:
-    - url: .
-      branches: master
-      tags: [1.0.*]
+    - url: ./
       start_path: documentation
 
 asciidoc:
   attributes:
-    title: Kafka Tutorial
   extensions:
     - ./lib/tab-block.js
     - ./lib/remote-include-processor.js
-
+    
 ui:
   bundle:
     url: https://github.com/redhat-developer-demos/rhd-tutorial-ui/releases/download/v0.1.9/ui-bundle.zip
-    snapshot: true
-  supplemental_files: ./supplemental-ui
+  supplemental_files:
+    - path: ./supplemental-ui
+    - path: .nojekyll
+    - path: ui.yml
+      contents: "static_files: [ .nojekyll ]"
 
 output:
   dir: ./gh-pages
