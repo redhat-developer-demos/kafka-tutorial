@@ -6,7 +6,7 @@ on:
     - master
     paths:
     - .github/workflows/docs.yml
-    - github-pages.yml
+    - github-pages-site.yml
     - 'documentation/**'
 
 jobs:
