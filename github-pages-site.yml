@@ -4,6 +4,7 @@ runtime:
 site:
   title: Kafka Tutorial
   url: https://redhat-developer-demos.github.io/kafka-tutorial
+  start_page: kafka-tutorial::index.adoc
 
 content:
   sources:
@@ -12,6 +13,7 @@ content:
 
 asciidoc:
   attributes:
+    release-version: master
   extensions:
     - ./lib/tab-block.js
     - ./lib/remote-include-processor.js
