@@ -9,9 +9,9 @@ It acts as a message queue but it offers two major advantages over traditional p
 
 image::cbp.png[]
 
-Notice in the next figure, the difference in how the entities are stored in a Kafka topic vs how are stored in an RDBMS.
-Events are always stored with the actions that they have applied, meanwhile, in RDBMS, you are storing a snapshot of that entity.
-
+Notice in the next figure, the difference in how the entities are stored in a Kafka topic vs how they are stored in an RDBMS.
+Events are always stored as they are applied and they are never overridden, meanwhile, in RDBMS, you are storing a snapshot of an entity, when you update an entity you are modifying the original record.
+ 
 image::dbvsevent.png[]
 
 [#topics]
