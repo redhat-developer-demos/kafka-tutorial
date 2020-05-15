@@ -286,13 +286,26 @@ It acts as a message queue but it offers two major advantages over traditional p
 </div>
 </div>
 <div class="paragraph">
-<p>Notice in the next figure, the difference in how the entities are stored in a Kafka topic vs how are stored in an RDBMS.
-Events are always stored with the actions that they have applied, meanwhile, in RDBMS, you are storing a snapshot of that entity.</p>
+<p>Notice in the next figure, the difference in how the entities are stored in a Kafka topic VS how they are stored in an RDBMS.
+Events are always stored as they are applied in the log and they are never overridden, meanwhile, in RDBMS, you are storing a snapshot of an entity, when you update an entity you are modifying the original record.</p>
 </div>
 <div class="imageblock">
 <div class="content">
 <img src="_images/dbvsevent.png" alt="dbvsevent">
 </div>
+</div>
+<div class="paragraph">
+<p>Other differences are:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Real Time vs Batch processing.</p>
+</li>
+<li>
+<p>Distributed/Fault Tolerant vs "None" Distributed by construction.</p>
+</li>
+</ul>
 </div>
 </div>
 </div>
