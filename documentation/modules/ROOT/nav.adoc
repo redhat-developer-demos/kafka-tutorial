@@ -6,7 +6,7 @@
 ** xref:02-topics-partitions.adoc#topics[Topics]
 ** xref:02-topics-partitions.adoc#partitions[Partitions]
 ** xref:02-topics-partitions.adoc#messages[Messages]
-** xref:03-topics-creation.adoc#topic-creation[Create a Topic]
+** xref:03-topic-creation.adoc#topic-creation[Create a Topic]
 
 * xref:04-consumers-producers.adoc[3. Consumer & Producers]
 ** xref:04-consumers-producers.adoc#producer[Producer]
