@@ -3,8 +3,8 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Topics and Partitions :: Kafka Tutorial</title>
-    <link rel="canonical" href="https://redhat-developer-demos.github.io/kafka-tutorial/kafka-tutorial/1.0.x/02-topics-partitions.html">
+    <title>Kafka Listeners :: Kafka Tutorial</title>
+    <link rel="canonical" href="https://redhat-developer-demos.github.io/kafka-tutorial/kafka-tutorial/1.0.x/11-kafka-listeners.html">
     <meta name="generator" content="Antora 2.3.1">
     <link rel="stylesheet" href="../../_/css/site.css">
   </head>
@@ -61,18 +61,18 @@
   </li>
 </ul>
   </li>
-  <li class="nav-item is-current-page" data-depth="1">
+  <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
     <a class="nav-link" href="02-topics-partitions.html">2. Topics &amp; Partitions</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="#topics">Topics</a>
+    <a class="nav-link" href="02-topics-partitions.html#topics">Topics</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="#partitions">Partitions</a>
+    <a class="nav-link" href="02-topics-partitions.html#partitions">Partitions</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="#messages">Messages</a>
+    <a class="nav-link" href="02-topics-partitions.html#messages">Messages</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="03-topic-creation.html#topic-creation">Create a Topic</a>
@@ -245,7 +245,7 @@
     <button class="nav-item-toggle"></button>
     <span class="nav-text">8. Tips &amp; Tricks</span>
 <ul class="nav-list">
-  <li class="nav-item" data-depth="2">
+  <li class="nav-item is-current-page" data-depth="2">
     <a class="nav-link" href="11-kafka-listeners.html">Kafka Listeners</a>
   </li>
 </ul>
@@ -265,135 +265,60 @@
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="index.html">Kafka Tutorial</a></li>
-    <li><a href="02-topics-partitions.html">2. Topics &amp; Partitions</a></li>
+    <li>8. Tips &amp; Tricks</li>
+    <li><a href="11-kafka-listeners.html">Kafka Listeners</a></li>
   </ul>
 </nav>
-  <div class="edit-this-page"><a href="https://github.com/redhat-developer-demos/kafka-tutorial/edit/master/documentation/modules/ROOT/pages/02-topics-partitions.adoc">Edit this Page</a></div>
+  <div class="edit-this-page"><a href="https://github.com/redhat-developer-demos/kafka-tutorial/edit/master/documentation/modules/ROOT/pages/11-kafka-listeners.adoc">Edit this Page</a></div>
   </div>
   <div class="content">
 <article class="doc">
-<h1 class="page">Topics and Partitions</h1>
-<div id="preamble">
-<div class="sectionbody">
+<h1 class="page">Kafka Listeners</h1>
 <div class="paragraph">
-<p>Apache Kafka is a distributed robust publish/subscribe system.
-It acts as a message queue but it offers two major advantages over traditional pub/sub systems.</p>
+<p>Probably, you&#8217;ve noticed that you are exposing two ports the <code>9092</code> and <code>29092</code>.
+The reason for this, it is that we want to be able to access to Kafka broker either from outside the Docker Host (for example when <code>kafkacat</code> tool is used), but also from inside the Docker Host (for example when we were deploying Java services inside Docker).</p>
+</div>
+<div class="paragraph">
+<p>When a client starts, it requests some metadata from the Kafka broker.
+One of these data is the endpoint of the current Kafka leader broker for a partition.
+This endpoint then is used to create a working connection to the cluster.</p>
+</div>
+<div class="paragraph">
+<p>Then what&#8217;s happening when running the Kafka inside Docker?
+The Kafka broker returns the container hostname to the client (ie in our tutorial the Kafka hostname is <code>kafka</code>).</p>
+</div>
+<div class="paragraph">
+<p>Then what&#8217;s happening with the client?
+Well, it depends on the scenario:</p>
 </div>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>Storing records with Fault Tolerance.</p>
+<p>If the client is running inside the Docker Host, then it will be able to connect to the returned hostname by the broker (ie <code>kafka</code>).</p>
 </li>
 <li>
-<p>Processing streams (data-streams) as they occur in real-time instead of in a batch.</p>
+<p>If the client is running external of the Docker Host, then an error is thrown. The reason is that the client will get from Kafka broker, the hostname to connect, which is the container hostname (ie <code>kafka</code>), so from outside the Docker Host, client will try to reach the container host, which of course it is not valid.</p>
 </li>
 </ol>
 </div>
 <div class="imageblock">
 <div class="content">
-<img src="_images/cbp.png" alt="cbp">
+<img src="_images/hdhe.png" alt="hdhe">
 </div>
 </div>
 <div class="paragraph">
-<p>Notice in the next figure, the difference in how the entities are stored in a Kafka topic VS how they are stored in an RDBMS.
-Events are always stored as they are applied in the log and they are never overridden, meanwhile, in RDBMS, you are storing a snapshot of an entity, when you update an entity you are modifying the original record.</p>
+<p>How to fix this problem?</p>
+</div>
+<div class="paragraph">
+<p>To fix this problem, you need to expose two ports, one returning the <em>hostname</em> (ie <code>kafka</code>) and another one returning the <code>localhost</code> as the hostname.</p>
 </div>
 <div class="imageblock">
 <div class="content">
-<img src="_images/dbvsevent.png" alt="dbvsevent">
+<img src="_images/hdhs.png" alt="hdhs">
 </div>
 </div>
 <div class="paragraph">
-<p>Other differences are:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Real Time vs Batch processing.</p>
-</li>
-<li>
-<p>Distributed/Fault Tolerant vs "None" Distributed by construction.</p>
-</li>
-</ul>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="topics"><a class="anchor" href="#topics"></a>What are Topics?</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>A topic is an ordered collection of events that are persisted to disk, replicated for fault-tolerance and they have a duration, as an event can be available for just some minutes or forever.</p>
-</div>
-<div class="imageblock">
-<div class="content">
-<img src="_images/cbtp.png" alt="cbtp">
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="partitions"><a class="anchor" href="#partitions"></a>What are Partitions?</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>A topic might be divided into several partitions to improve the performance in cases of heavy load.</p>
-</div>
-<div class="paragraph">
-<p>The partitions of a topic are distributed across all the Apache Kafka brokers to maximize the parallelism when working with topics.</p>
-</div>
-<div class="paragraph">
-<p>The sum of all events of all the partitions is what conforms a topic.</p>
-</div>
-<div class="imageblock">
-<div class="content">
-<img src="_images/pbtpc.png" alt="pbtpc">
-</div>
-</div>
-<div class="paragraph">
-<p>Each partition can be configured to be replicated across different Kafka brokers.</p>
-</div>
-<div class="imageblock">
-<div class="content">
-<img src="_images/bp.png" alt="bp">
-</div>
-</div>
-<div class="paragraph">
-<p>Each partition can be replicated and one of the partition is designed the leader.
-All events and produced and consumed from the leader, and the other replicas just stay in sync  with the leader.
-If the leader becomes unavailable, one of the synced replicas becomes the new leader.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="messages"><a class="anchor" href="#messages"></a>What are Messages?</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>A message is a Key/Value pair that is stored inside a topic.
-This message is persisted and durable during the configured lifespan.</p>
-</div>
-<div class="paragraph">
-<p>A message is a typical small chunk of data with two parts the key (optional) to identify the message and it is used by default to decide in which partition the message is stored, and the value which is the content of the message which can be in any format.</p>
-</div>
-<div class="paragraph">
-<p>Moreover, each message contains a metadata timestamp attribute that is either set by the producer at creation time or by the broker on insertion time.</p>
-</div>
-<div class="admonitionblock important">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-important" title="Important"></i>
-</td>
-<td class="content">
-Although you can configure Apache Kafka to work with large messages, the default max size is <code>1 MB</code>, being a few KB the recommended maximum size of a message.
-</td>
-</tr>
-</table>
-</div>
-<div class="imageblock">
-<div class="content">
-<img src="_images/pkp.png" alt="pkp">
-</div>
-</div>
-</div>
+<p>That&#8217;s why two ports are exposed in the current course.</p>
 </div>
 </article>
 <aside class="toc sidebar" data-title="Contents" data-levels="2">
