@@ -320,6 +320,43 @@ Well, it depends on the scenario:</p>
 <div class="paragraph">
 <p>That&#8217;s why two ports are exposed in the current course.</p>
 </div>
+<div class="paragraph">
+<p>You can run the next commands to visualize how broker host differs depending on the port:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">kafkacat -b localhost:29092 -L</code></pre>
+</div>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">Metadata for all topics (from broker 0: localhost:29092/0):
+ 1 brokers:
+  broker 0 at localhost:29092 (controller)
+ 0 topics:</code></pre>
+</div>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">kafkacat -b localhost:9092 -L</code></pre>
+</div>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">Metadata for all topics (from broker -1: localhost:9092/bootstrap):
+ 1 brokers:
+  broker 0 at kafka:9092 (controller) <i class="conum" data-value="1"></i><b>(1)</b>
+ 0 topics:</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Notice that when the leader is queried using port <code>9092</code>, then the hostname returned is <code>kafka:9092</code>.</td>
+</tr>
+</table>
+</div>
 </article>
 <aside class="toc sidebar" data-title="Contents" data-levels="2">
   <div class="toc-menu"></div>
