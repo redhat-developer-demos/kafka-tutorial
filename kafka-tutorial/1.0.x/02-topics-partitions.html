@@ -147,7 +147,7 @@
     <a class="nav-link" href="07-kstreams.html#kstreamsconcepts">Kafka Streams Concepts</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="08-kstreams-demo.html#kstreamscat-tables">Kafka Streams Gloabl Tables</a>
+    <a class="nav-link" href="08-kstreams-demo.html#kstreamscat-tables">Kafka Streams Global Tables</a>
   </li>
   <li class="nav-item" data-depth="2">
     <button class="nav-item-toggle"></button>
@@ -340,12 +340,17 @@ Events are always stored as they are applied in the log and they are never overr
 </div>
 </div>
 <div class="paragraph">
-<p>Each partition can be configured to be replicated across a number of Kafka brokers.</p>
+<p>Each partition can be configured to be replicated across different Kafka brokers.</p>
 </div>
 <div class="imageblock">
 <div class="content">
 <img src="_images/bp.png" alt="bp">
 </div>
+</div>
+<div class="paragraph">
+<p>Each partition can be replicated and one of the partition is designed the leader.
+All events and produced and consumed from the leader, and the other replicas just stay in sync  with the leader.
+If the leader becomes unavailable, one of the synced replicas becomes the new leader.</p>
 </div>
 </div>
 </div>
@@ -369,7 +374,7 @@ This message is persisted and durable during the configured lifespan.</p>
 <i class="fa icon-important" title="Important"></i>
 </td>
 <td class="content">
-Although you can configure Apache Kafka to work with large messages, the default max size is <code>1 MB</code>, being <code>1KB</code> the recommended maximum size of a message.
+Although you can configure Apache Kafka to work with large messages, the default max size is <code>1 MB</code>, being a few KB the recommended maximum size of a message.
 </td>
 </tr>
 </table>
