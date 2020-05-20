@@ -63,9 +63,9 @@ docker ps
 [.console-output]
 [source,bash,subs="+macros,+attributes"]
 ----
-CONTAINER ID        IMAGE                              COMMAND                  CREATED             STATUS              PORTS                                                                                        NAMES
-65659ad17d07        strimzi/kafka:0.17.0-kafka-2.4.0   "sh -c 'bin/kafka-se…"   2 hours ago         Up 2 hours          0.0.0.0:9092->9092/tcp                                                                       it_kafka_1
-9bfdd117f957        debezium/zookeeper:1.0             "/docker-entrypoint.…"   2 hours ago         Up 2 hours          0.0.0.0:2181->2181/tcp, 0.0.0.0:2888->2888/tcp, 8778/tcp, 0.0.0.0:3888->3888/tcp, 9779/tcp   it_zookeeper_1
+CONTAINER ID        IMAGE                              COMMAND                  CREATED             STATUS              PORTS                                                                    NAMES
+5152b0eabe99        strimzi/kafka:0.17.0-kafka-2.4.0   "sh -c 'bin/kafka-se…"   43 seconds ago      Up 42 seconds       0.0.0.0:9092->9092/tcp, 0.0.0.0:29092->29092/tcp                         kafka
+e3417f63ac61        strimzi/kafka:0.17.0-kafka-2.4.0   "sh -c 'bin/zookeepe…"   43 seconds ago      Up 43 seconds       0.0.0.0:2181->2181/tcp, 0.0.0.0:2888->2888/tcp, 0.0.0.0:3888->3888/tcp   it_zookeeper_1
 ----
 
 Verify that the Kafka cluster is correctly started and configured by running the following command:

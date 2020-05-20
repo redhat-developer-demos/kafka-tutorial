@@ -26,3 +26,36 @@ To fix this problem, you need to expose two ports, one returning the _hostname_ 
 image::hdhs.png[]
 
 That's why two ports are exposed in the current course.
+
+You can run the next commands to visualize how broker host differs depending on the port:
+
+[.console-input]
+[source, bash-shell]
+----
+kafkacat -b localhost:29092 -L
+----
+
+[.console-output]
+[source, bash-shell]
+----
+Metadata for all topics (from broker 0: localhost:29092/0):
+ 1 brokers:
+  broker 0 at localhost:29092 (controller)
+ 0 topics:
+----
+
+[.console-input]
+[source, bash-shell]
+----
+kafkacat -b localhost:9092 -L
+----
+
+[.console-output]
+[source, bash-shell]
+----
+Metadata for all topics (from broker -1: localhost:9092/bootstrap):
+ 1 brokers:
+  broker 0 at kafka:9092 (controller) // <1>
+ 0 topics:
+----
+<1> Notice that when the leader is queried using port `9092`, then the hostname returned is `kafka:9092`.
