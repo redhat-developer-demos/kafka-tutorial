@@ -53,3 +53,6 @@
 *** xref:10-kubernetes.adoc#kubernetes-song-app[Deploy Song Service]
 *** xref:10-kubernetes.adoc#kubernetes-testing[Test It]
 ** xref:10-kubernetes.adoc#kubernetes-cleanup[Clean Up]
+
+* 8. Tips & Tricks
+** xref:11-kafka-listeners.adoc[Kafka Listeners]

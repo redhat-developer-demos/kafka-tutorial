@@ -41,7 +41,7 @@ You can get topic information by using `kafkacat`:
 [.console-input]
 [source, bash-shell]
 ----
-kafkacat -b localhost:9092 -L
+kafkacat -b localhost:29092 -L
 ----
 
 [.console-output]
