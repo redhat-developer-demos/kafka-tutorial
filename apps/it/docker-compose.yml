@@ -4,12 +4,18 @@ services:
 
   # Install zookeeper. 
   zookeeper:
-    image: debezium/zookeeper:1.0
+    image: strimzi/kafka:0.17.0-kafka-2.4.0
+    command: [
+        "sh", "-c",
+        "bin/zookeeper-server-start.sh config/zookeeper.properties"
+      ]
     network_mode: bridge
     ports:
       - '2181:2181'
       - '2888:2888'
       - '3888:3888'
+    environment:
+      LOG_DIR: /tmp/logs
   # Install kafka and create needed topics. 
   kafka:
     image: strimzi/kafka:0.17.0-kafka-2.4.0
