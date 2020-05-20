@@ -28,7 +28,7 @@
 * xref:07-kstreams.adoc[5. Kafka Streams]
 ** xref:07-kstreams.adoc#whatkstreams[What are Kafka Streams?]
 ** xref:07-kstreams.adoc#kstreamsconcepts[Kafka Streams Concepts]
-** xref:08-kstreams-demo.adoc#kstreamscat-tables[Kafka Streams Gloabl Tables]
+** xref:08-kstreams-demo.adoc#kstreamscat-tables[Kafka Streams Global Tables]
 ** xref:08-kstreams-demo.adoc#kstreamscat-windowing[Windowing]
 *** xref:08-kstreams-demo.adoc#kstreamscat-timewindow[Tumbling Time Window]
 *** xref:08-kstreams-demo.adoc#kstreamscat-sessiontimewindow[Session Time Window]

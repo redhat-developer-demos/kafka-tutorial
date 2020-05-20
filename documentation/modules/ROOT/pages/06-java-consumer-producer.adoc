@@ -10,7 +10,7 @@ include::partial$kafka-up-dc.adoc[]
 
 You need to open 4 terminal windows to run this example, 2 terminals for running the services, and 2 terminals for sending requests.
 
-image::terminals-songs.png[]
+image::terminals-song.png[]
 
 [#producer-java]
 == Producing messages with Java

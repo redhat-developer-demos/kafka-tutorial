@@ -37,9 +37,13 @@ The sum of all events of all the partitions is what conforms a topic.
 
 image::pbtpc.png[]
 
-Each partition can be configured to be replicated across a number of Kafka brokers.
+Each partition can be configured to be replicated across different Kafka brokers.
 
 image::bp.png[]
+
+Each partition can be replicated and one of the partition is designed the leader.
+All events and produced and consumed from the leader, and the other replicas just stay in sync  with the leader. 
+If the leader becomes unavailable, one of the synced replicas becomes the new leader.
 
 [#messages]
 == What are Messages?
@@ -51,6 +55,6 @@ A message is a typical small chunk of data with two parts the key (optional) to 
 
 Moreover, each message contains a metadata timestamp attribute that is either set by the producer at creation time or by the broker on insertion time.
 
-IMPORTANT: Although you can configure Apache Kafka to work with large messages, the default max size is `1 MB`, being `1KB` the recommended maximum size of a message.
+IMPORTANT: Although you can configure Apache Kafka to work with large messages, the default max size is `1 MB`, being a few KB the recommended maximum size of a message.
 
 image::pkp.png[]
