@@ -319,6 +319,18 @@ A consumer group is a list of consumer instances that ensures the scalability fo
 <img src="_images/c.png" alt="c">
 </div>
 </div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+If you add more consumers in a consumer group than the number of partitions for a topic, then they will stay in an idle state, without getting any message.
+</td>
+</tr>
+</table>
+</div>
 <div class="paragraph">
 <p>As you can see what is registered to a topic is the <em>consumer group</em> and not the consumer.
 The consumer is "subscribed" to a partition.</p>

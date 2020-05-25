@@ -358,8 +358,32 @@ Events are always stored as they are applied in the log and they are never overr
 </div>
 <div class="paragraph">
 <p>Each partition can be replicated and one of the partition is designed the leader.
-All events and produced and consumed from the leader, and the other replicas just stay in sync  with the leader.
+All events are produced and consumed from the leader, and the other replicas just stay in sync  with the leader.
 If the leader becomes unavailable, one of the synced replicas becomes the new leader.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>From Apache Kafka 2.4.0, the previous statement is not strictly true.
+Although this is the most used behaviour, now a consumer can get messages from the closer replicas even though they aren&#8217;t leaders.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/After-KIP-392.png" alt="After KIP 392">
+</div>
+<div class="title">Figure 1. Red Partitions are the leaders</div>
+</div>
+<div class="paragraph">
+<p>Also a <code>ReplicaSelector</code> interface is provided so you can implement a custom selector of the replica from where messages are consumed.</p>
+</div>
+</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
