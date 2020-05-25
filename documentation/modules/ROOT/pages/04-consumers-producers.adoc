@@ -31,5 +31,7 @@ The more consumers you add to a group, each consumer will only receive messages 
 
 image::c.png[]
 
+IMPORTANT: If you add more consumers in a consumer group than the number of partitions for a topic, then they will stay in an idle state, without getting any message.
+
 As you can see what is registered to a topic is the _consumer group_ and not the consumer.
 The consumer is "subscribed" to a partition.

@@ -42,8 +42,19 @@ Each partition can be configured to be replicated across different Kafka brokers
 image::bp.png[]
 
 Each partition can be replicated and one of the partition is designed the leader.
-All events and produced and consumed from the leader, and the other replicas just stay in sync  with the leader. 
+All events are produced and consumed from the leader, and the other replicas just stay in sync  with the leader. 
 If the leader becomes unavailable, one of the synced replicas becomes the new leader.
+
+[IMPORTANT]
+====
+From Apache Kafka 2.4.0, the previous statement is not strictly true.
+Although this is the most used behaviour, now a consumer can get messages from the closer replicas even though they aren't leaders.
+
+.Red Partitions are the leaders
+image::After-KIP-392.png[]
+
+Also a `ReplicaSelector` interface is provided so you can implement a custom selector of the replica from where messages are consumed.
+====
 
 [#messages]
 == What are Messages?

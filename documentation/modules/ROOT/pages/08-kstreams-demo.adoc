@@ -11,6 +11,8 @@ include::partial$kafka-up-dc.adoc[]
 
 You need only one terminal window to run this section.
 
+Create a new file named `update_songs` with some new songs on it.
+
 [source, json]
 .update_songs
 ----
