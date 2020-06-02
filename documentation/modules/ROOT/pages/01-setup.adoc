@@ -12,9 +12,9 @@ include::https://raw.githubusercontent.com/redhat-developer-demos/rhd-tutorial-c
 |https://github.com/edenhill/kafkacat[Download]
 
 |`Kstreamscat`
-|https://github.com/lordofthejars/kstreamscat[Download]
-|https://github.com/lordofthejars/kstreamscat[Download]
-|https://github.com/lordofthejars/kstreamscat[Download]
+|https://github.com/lordofthejars/kstreamscat/releases/download/v0.0.1/kstreamscat.jar[Download]
+|https://github.com/lordofthejars/kstreamscat/releases/download/v0.0.1/kstreamscat.jar[Download]
+|https://github.com/lordofthejars/kstreamscat/releases/download/v0.0.1/kstreamscat.jar[Download]
 
 |`Java 11`
 |https://adoptopenjdk.net/[Download]

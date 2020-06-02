@@ -1,8 +1,8 @@
 = Kafka Streams Operations
 include::_attributes.adoc[]
-:kstreamscat: java -jar target/kstreamscat-1.0.0-SNAPSHOT-jar-with-dependencies.jar
+:kstreamscat: java -jar kstreamscat.jar
 
-Let's see some of the K-Stream concepts in action.
+Let's see some of the Kafka-Streams concepts in action.
 
 include::partial$kafka-up-dc.adoc[]
 
