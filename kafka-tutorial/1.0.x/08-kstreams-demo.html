@@ -277,7 +277,7 @@
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>Let&#8217;s see some of the K-Stream concepts in action.</p>
+<p>Let&#8217;s see some of the Kafka-Streams concepts in action.</p>
 </div>
 <div class="paragraph">
 <p>Rememeber to have Zookeeper and Apache Kafka up and running.
@@ -334,7 +334,7 @@ The number before the <code>:</code> is taken as an id.</p>
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">java -jar target/kstreamscat-1.0.0-SNAPSHOT-jar-with-dependencies.jar --topic=songs --id=songs -b=localhost:29092 --GT</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">java -jar kstreamscat.jar --topic=songs --id=songs -b=localhost:29092 --GT</code></pre>
 </div>
 </div>
 <div class="listingblock console-output">
@@ -395,7 +395,7 @@ So let&#8217;s fix this.</p>
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">java -jar target/kstreamscat-1.0.0-SNAPSHOT-jar-with-dependencies.jar --topic=songs --id=songs -b=localhost:29092 --GT</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">java -jar kstreamscat.jar --topic=songs --id=songs -b=localhost:29092 --GT</code></pre>
 </div>
 </div>
 <div class="listingblock console-output">
@@ -538,7 +538,7 @@ What we are doing here is creating fixed buckets of 60 seconds, so every 60 seco
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">java -jar target/kstreamscat-1.0.0-SNAPSHOT-jar-with-dependencies.jar --topic=played --id=songs -b=localhost:29092 --time-window=60</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">java -jar kstreamscat.jar --topic=played --id=songs -b=localhost:29092 --time-window=60</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -554,7 +554,7 @@ What we are doing here is creating fixed buckets of 60 seconds, so every 60 seco
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">java -jar target/kstreamscat-1.0.0-SNAPSHOT-jar-with-dependencies.jar --topic=played --id=songs -b=localhost:29092 --time-window=60</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">java -jar kstreamscat.jar --topic=played --id=songs -b=localhost:29092 --time-window=60</code></pre>
 </div>
 </div>
 <div class="listingblock console-output">
@@ -661,7 +661,7 @@ kafka        | [2020-05-04 11:30:27,398] INFO [KafkaServer id=0] started (kafka.
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">java -jar target/kstreamscat-1.0.0-SNAPSHOT-jar-with-dependencies.jar --topic=played --id=songs -b=localhost:29092 --session-window=60</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">java -jar kstreamscat.jar --topic=played --id=songs -b=localhost:29092 --session-window=60</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -677,7 +677,7 @@ kafka        | [2020-05-04 11:30:27,398] INFO [KafkaServer id=0] started (kafka.
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">java -jar target/kstreamscat-1.0.0-SNAPSHOT-jar-with-dependencies.jar --topic=played --id=songs -b=localhost:29092 --session-window=60</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">java -jar kstreamscat.jar --topic=played --id=songs -b=localhost:29092 --session-window=60</code></pre>
 </div>
 </div>
 <div class="listingblock console-output">
