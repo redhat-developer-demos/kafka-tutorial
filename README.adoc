@@ -1,1 +1,3 @@
-A Kafka tutorial to show you the basic concepts of Kafka, how to deploy it to Kubernetes, develop services that consume and produce from/to Kafka topic in Java, and how to stream data with KStreams.
+A Kafka tutorial to show you the basic concepts of Kafka, how to deploy it to Kubernetes, develop services that consume and produce from/to Kafka topic in Java, and how to stream data with Kafka-Streams.
+
+HTML version of the tutorial: https://redhat-developer-demos.github.io/kafka-tutorial
