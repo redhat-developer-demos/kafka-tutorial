@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Kafka Streams :: Kafka Tutorial</title>
+    <link rel="canonical" href="https://redhat-developer-demos.github.io/kafka-tutorial/kafka-tutorial/1.0.x/05-kstreams.html">
+    <meta name="generator" content="Antora 2.3.1">
+    <link rel="stylesheet" href="../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://developers.redhat.com" target="_blank"><img src="../../_/img/NewRHDFullLogo_4-color_white-wordmark.png" height="40px" alt="Red Hat Developer Program"></a>
+      <a class="navbar-item" style="font-size: 24px; color: white" href="https://redhat-developer-demos.github.io/kafka-tutorial">Kafka Tutorial</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="https://developers.redhat.com/ebooks/" target="_blank">Books</a>
+        <a class="navbar-item" href="https://developers.redhat.com/cheatsheets/" target="_blank">Cheat Sheets</a>
+        <a class="navbar-item" href="https://developers.redhat.com/events/" target="_blank">Upcoming Events</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">More Tutorials</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="https://redhat-developer-demos.github.io/kubernetes-tutorial/" target="_blank">Kubernetes</a>
+            <a class="navbar-item" href="https://redhat-developer-demos.github.io/istio-tutorial/" target="_blank">Istio</a>
+            <a class="navbar-item" href="https://redhat-developer-demos.github.io/quarkus-tutorial/" target="_blank">Quarkus</a>
+            <a class="navbar-item" href="https://redhat-developer-demos.github.io/knative-tutorial/" target="_blank">Knative</a>
+            <a class="navbar-item" href="https://redhat-developer-demos.github.io/tekton-tutorial/" target="_blank">Tekton</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="kafka-tutorial" data-version="1.0.x">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="index.html"></a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="01-setup.html">1. Setup</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="01-setup.html#prerequisite">Prerequisites</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="01-setup.html#downloadconfiguresources">Download &amp; Configure Tutorial</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="01-setup.html#kafka">Install Kafka</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="02-topics-partitions.html">2. Topics &amp; Partitions</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="02-topics-partitions.html#topics">Topics</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="02-topics-partitions.html#partitions">Partitions</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="02-topics-partitions.html#messages">Messages</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="02-topics-partitions.html#topic-creation">Create a Topic</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="03-consumers-producers.html">3. Consumer &amp; Producers</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="03-consumers-producers.html#producer">Producer</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="03-consumers-producers.html#consumer">Consumer</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="03-consumers-producers.html#consume-kafkacat">Kafkacat Consumer</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="03-consumers-producers.html#produce-kafkacat">Kafkacat Producer</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="03-consumers-producers.html#playingwithoffsets">Kafkacat Offsets</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="03-consumers-producers.html#changingretention">Changing Retention</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="03-consumers-producers.html#deletetopiccontent">Delete Topic Content</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="03-consumers-producers.html#kafkacat-cleanup">Clean Up</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="04-java-consumer-producer.html">4. Developing Consumers and Producers in Java</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="04-java-consumer-producer.html#producer-java">Producing messages with Java</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="04-java-consumer-producer.html#deploying-producer">Deploying Producer</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="04-java-consumer-producer.html#consumer-java">Consuming messages with Java</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="04-java-consumer-producer.html#deploying-consumer">Deploying Consumer</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="04-java-consumer-producer.html#java-cleanup">Clean Up</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item is-current-page" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="05-kstreams.html">5. Kafka Streams</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="#whatkstreams">What are Kafka Streams?</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="#kstreamsconcepts">Kafka Streams Concepts</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="#kstreamscat-tables">Kafka Streams Global Tables</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="#kstreamscat-windowing">Windowing</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="#kstreamscat-timewindow">Tumbling Time Window</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="#kstreamscat-sessiontimewindow">Session Time Window</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="06-java-kstreams.html">6. Developing Kafka Streams</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="06-java-kstreams.html#player-songs-java">Player Service</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="06-java-kstreams.html#deploying-player-app">Deploying Player Service</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="06-java-kstreams.html#music-chart-java">Music Chart Service</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="06-java-kstreams.html#deploying-music-chart">Deploying Music Chart Service</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="06-java-kstreams.html#kstreams-cleanup">Clean Up</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="07-kubernetes.html">7. Kafka in Kubernetes</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="07-kubernetes.html#kubernetes">Kubernetes</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="07-kubernetes.html#install-minikube">Install Minikube</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="07-kubernetes.html#start-kubernetes">Start Kubernetes</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="07-kubernetes.html#strimzi">Strimzi</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="07-kubernetes.html#installing-crds">Install Strimzi Operator</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="07-kubernetes.html#deploy-kafka">Deploy Kafka</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="07-kubernetes.html#deploy-service-strimzi">Deploy Services</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="07-kubernetes.html#kubernetes-song-app">Deploy Song Service</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="07-kubernetes.html#kubernetes-song-indexer-app">Deploy Song Indexer Service</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="07-kubernetes.html#kubernetes-song-app">Deploy Song Service</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="07-kubernetes.html#kubernetes-testing">Test It</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="07-kubernetes.html#kubernetes-cleanup">Clean Up</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">8. Tips &amp; Tricks</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="08-kafka-listeners.html">Kafka Listeners</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="08-kstreamscat.html">KStreamscat</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="index.html">Kafka Tutorial</a></li>
+    <li><a href="05-kstreams.html">5. Kafka Streams</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="https://github.com/redhat-developer-demos/kafka-tutorial/edit/master/documentation/modules/ROOT/pages/05-kstreams.adoc">Edit this Page</a></div>
+  </div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Kafka Streams</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>So far, you&#8217;ve seen that you can consume and produce data into a Kafka topic, but sometimes you want to do things more advanced like joining different topics, aggregating content, or processing on the fly to send it to redirect the result to another topic.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="whatkstreams"><a class="anchor" href="#whatkstreams"></a>What are Kafka Streams?</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Kafka Streams is a Java API that implements all these features, doing in a fault-tolerant, scalable way.
+One of the important things of Kafka Streams application is that it doesn&#8217;t run inside a broker, but it runs in a separate JVM instance, maybe in the same cluster, or maybe in a different cluster but it is a different process.</p>
+</div>
+<div class="paragraph">
+<p>A Kafka Stream application instances can run in parallel, in different machines and they will automatically collaborate on the data processing.
+This is what makes Kafka Streams applications fault-tolerance and scalable.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="kstreamsconcepts"><a class="anchor" href="#kstreamsconcepts"></a>Kafka Streams Concepts</h2>
+<div class="sectionbody">
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Stream Processor</dt>
+<dd>
+<p>A Stream processor represents an operation to execute to a stream, some examples of built-in operations can be a filter, map, join, or aggregate.
+Usually, a Kafka Stream application is created for one or more operations.</p>
+</dd>
+<dt class="hdlist1">Table</dt>
+<dd>
+<p>A table is a collection of key-value pairs, that represents the last value for the same record key.
+The big difference is that a stream contains the log of all events (ie an insertion of a song, and update of a song, &#8230;&#8203;) and a table contains the last value (ie the last update done in a song).
+There is two kinds of tables, a <em>KTable</em> which represents a table from a partition, and a <em>GlobalKTable</em> which aggregates the content from all partitions of a given topic.
+We&#8217;ll take a look later.</p>
+</dd>
+<dt class="hdlist1">Aggregation Operation</dt>
+<dd>
+<p>Takes one input stream or table, and yields a new table by combining multiple input records into a single output record. Examples of aggregations are computing counts or sum.</p>
+</dd>
+<dt class="hdlist1">Join Operation</dt>
+<dd>
+<p>Merges two input streams and/or tables based on the keys of their data records, and yields a new stream/table.</p>
+</dd>
+<dt class="hdlist1">Windowing</dt>
+<dd>
+<p>Group records that have the same key by a window time. For example, you can group which events have occurred between a period of time.</p>
+</dd>
+<dt class="hdlist1">Interactive Queries</dt>
+<dd>
+<p>Treat the stream processing layer as a lightweight embedded database, to directly query the latest state of your stream processing application.</p>
+</dd>
+</dl>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/kstreams.png" alt="kstreams">
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_kafka_streams_operations"><a class="anchor" href="#_kafka_streams_operations"></a>Kafka Streams Operations</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Let&#8217;s see some of the Kafka-Streams concepts in action.</p>
+</div>
+<div class="paragraph">
+<p>Rememeber to have Zookeeper and Apache Kafka up and running.
+If not, you can follow <a href="#Setup Kafka">[Setup Kafka]</a> section to learn how to do it using <em>docker-compose</em>.</p>
+</div>
+<div class="sect2">
+<h3 id="kstreamscat-tables"><a class="anchor" href="#kstreamscat-tables"></a>Tables</h3>
+<div class="paragraph">
+<p>You need only one terminal window to run this section.</p>
+</div>
+<div class="paragraph">
+<p>Create a new file named <code>update_songs</code> with some new songs on it.</p>
+</div>
+<div class="listingblock">
+<div class="title">update_songs</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">3: {"id": 3, "name": "Time", "author":"Hans Zimmer", "op":"ADD"}
+4: {"id": 4, "name": "Friend Like Me", "author":"Alan Menken", "op":"ADD"}
+5: {"id": 5, "name": "The Imperial March", "author":"Alan Silvestri", "op":"ADD"}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Then insert each of this line as a new message.
+The number before the <code>:</code> is taken as an id.</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">kafkacat -b localhost:29092 -t songs -P -l -K: update_songs</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Then inspect the inserted songs using <code>kafkacat</code>:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">kafkacat -b localhost:29092 -t songs -C -K:</code></pre>
+</div>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">3: {"id": 3, "name": "Time", "author":"Hans Zimmer", "op":"ADD"}
+4: {"id": 4, "name": "Friend Like Me", "author":"Alan Menken", "op":"ADD"}
+5: {"id": 5, "name": "The Imperial March", "author":"Alan Silvestri", "op":"ADD"}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Stop the process by typing <span class="keyseq"><kbd>Ctrl</kbd>+<kbd>C</kbd></span>.</p>
+</div>
+<div class="paragraph">
+<p>Create a Global Table from <code>songs</code> topic:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">java -jar kstreamscat.jar --topic=songs --id=songs -b=localhost:29092 --GT</code></pre>
+</div>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">Starting Kafka Streams...
+Kafka Stream Threads started
+3:  {"id": 3, "name": "Time", "author":"Hans Zimmer", "op":"ADD"}
+4:  {"id": 4, "name": "Friend Like Me", "author":"Alan Menken", "op":"ADD"}
+5:  {"id": 5, "name": "The Imperial March", "author":"Alan Silvestri", "op":"ADD"}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Stop the process by typing <span class="keyseq"><kbd>Ctrl</kbd>+<kbd>C</kbd></span>.</p>
+</div>
+<div class="paragraph">
+<p>Notice that the output of the <code>kafkacat</code> and <code>kstreamcat</code> is fairly the same.
+Probably most of you have noticed that <code>The Imperial March</code> was not written by Alain Silvestri but by John Williams.
+So let&#8217;s fix this.</p>
+</div>
+<div class="paragraph">
+<p>Create a file that creates a new event to fix the problem.</p>
+</div>
+<div class="listingblock console-input">
+<div class="title">update2_songs</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">5: {"id": 5, "name": "The Imperial March", "author":"John Williams", "op":"MODIFY"}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>And add it to <code>songs</code> topic:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">kafkacat -b localhost:29092 -t songs -P -l -K: update2_songs</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Then inspect the inserted songs using <code>kafkacat</code>:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">kafkacat -b localhost:29092 -t songs -C -K:</code></pre>
+</div>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">3: {"id": 3, "name": "Time", "author":"Hans Zimmer", "op":"ADD"}
+4: {"id": 4, "name": "Friend Like Me", "author":"Alan Menken", "op":"ADD"}
+5: {"id": 5, "name": "The Imperial March", "author":"Alan Silvestri", "op":"ADD"}
+5: {"id": 5, "name": "The Imperial March", "author":"John Williams", "op":"MODIFY"}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Stop the process by typing <span class="keyseq"><kbd>Ctrl</kbd>+<kbd>C</kbd></span>.</p>
+</div>
+<div class="paragraph">
+<p>Create a Global Table from the <code>songs</code> topic:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">java -jar kstreamscat.jar --topic=songs --id=songs -b=localhost:29092 --GT</code></pre>
+</div>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">Starting Kafka Streams...
+Kafka Stream Threads started
+3:  {"id": 3, "name": "Time", "author":"Hans Zimmer", "op":"ADD"}
+4:  {"id": 4, "name": "Friend Like Me", "author":"Alan Menken", "op":"ADD"}
+5:  {"id": 5, "name": "The Imperial March", "author":"John Williams", "op":"MODIFY"}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Stop the process by typing <span class="keyseq"><kbd>Ctrl</kbd>+<kbd>C</kbd></span>.</p>
+</div>
+<div class="paragraph">
+<p>Notice that <code>kafkacat</code> shows the content of all the events that have been added into the <code>songs</code> topic, so both events of <em>The Imperial March</em> songs are visible.</p>
+</div>
+<div class="paragraph">
+<p>On the other side, Global Table just shows the latest values of the topic.
+For this reason, only the update event of <em>The Imperial March</em> is shown, and not the initial insertion.</p>
+</div>
+<div class="sect3">
+<h4 id="_clean_up"><a class="anchor" href="#_clean_up"></a>Clean Up</h4>
+<div class="paragraph">
+<p>To restart Kafka (and Zookeeper) go to <code>docker-compose</code> terminal and stop the process by typing <span class="keyseq"><kbd>Ctrl</kbd>+<kbd>C</kbd></span>.</p>
+</div>
+<div class="paragraph">
+<p>Then run:</p>
+</div>
+<div class="listingblock lines_1">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-session hljs" data-lang="bash-session">docker-compose rm
+
+Going to remove kafka, it_zookeeper_1
+Are you sure? [yN] y
+Removing kafka          ... done
+Removing it_zookeeper_1 ... done</code></pre>
+</div>
+</div>
+<div class="listingblock lines_1">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-session hljs" data-lang="bash-session">docker-compose up --remove-orphans
+
+kafka        | [2020-05-04 11:30:27,392] INFO [SocketServer brokerId=0] Started data-plane processors for 2 acceptors (kafka.network.SocketServer)
+kafka        | [2020-05-04 11:30:27,396] INFO Kafka version: 2.4.0 (org.apache.kafka.common.utils.AppInfoParser)
+kafka        | [2020-05-04 11:30:27,397] INFO Kafka commitId: 77a89fcf8d7fa018 (org.apache.kafka.common.utils.AppInfoParser)
+kafka        | [2020-05-04 11:30:27,397] INFO Kafka startTimeMs: 1588591827393 (org.apache.kafka.common.utils.AppInfoParser)
+kafka        | [2020-05-04 11:30:27,398] INFO [KafkaServer id=0] started (kafka.server.KafkaServer)</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="kstreamscat-windowing"><a class="anchor" href="#kstreamscat-windowing"></a>Windowing</h3>
+<div class="paragraph">
+<p>Windowing allows you to control how to group records that have the same key based on a time window.
+For example, you can answer questions like <em>how many songs each user has played the last 30 minutes</em> or <em>how many songs each user has played every day</em>.</p>
+</div>
+<div class="paragraph">
+<p>There are 4 types of windows:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Tumbling time window</dt>
+<dd>
+<p>Fixed-size, non-overlapping, and gap-less.</p>
+</dd>
+</dl>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/win1.png" alt="win1">
+</div>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Hopping time window</dt>
+<dd>
+<p>Fixed-size, overlapping windows.</p>
+</dd>
+</dl>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/win2.png" alt="win2">
+</div>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Sliding time window</dt>
+<dd>
+<p>Fixed-size, overlapping windows that work on differences between record timestamps. In the case of Kafka Steams, it defines a maximum time difference for a join over two streams on the same key.</p>
+</dd>
+<dt class="hdlist1">Session window</dt>
+<dd>
+<p>Dynamically-sized, non-overlapping, data-driven windows. Sessions represent a period of activity separated by a defined gap of inactivity.
+This window is used for user behaviour analysis.</p>
+</dd>
+</dl>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/win3.png" alt="win3">
+</div>
+</div>
+<div class="sidebarblock">
+<div class="content">
+<div class="title">About Retention</div>
+<div class="paragraph">
+<p>Events can be processed out-of-order or late-arriving data records for a given window.
+This means that these events could be processed in the wrong window.
+Retention configures the time that a window might remain open to process events that come out-of-order.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/retention.png" alt="retention">
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>For this section, you need to open <strong>two</strong> terminals on the same screen.</p>
+</div>
+<div class="paragraph">
+<p>Let&#8217;s see how affect different window strategies in a topic that contains the history of the songs that each user has played.</p>
+</div>
+<div class="sect3">
+<h4 id="kstreamscat-timewindow"><a class="anchor" href="#kstreamscat-timewindow"></a>Tumbling time window</h4>
+<div class="paragraph">
+<p>Let&#8217;s create a periodic window of 60 seconds.
+What we are doing here is creating fixed buckets of 60 seconds, so every 60 seconds a new window is created to process the events that fall into that window.</p>
+</div>
+<div class="paragraph">
+<p>For example, let&#8217;s count the number of played songs by the user in a bucket of 60 seconds.</p>
+</div>
+<div class="paragraph">
+<p>With Kafka cluster started, prepare <strong>but do not execute</strong> the next command in terminal 2:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">java -jar kstreamscat.jar --topic=played --id=songs -b=localhost:29092 --time-window=60</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In terminal 1, run the next command, and then immediatelly run the commandd you&#8217;ve prepared in terminal 2:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">kafkacat -b localhost:29092 -t played -P -l -K: apps/windowing/first-batch.json</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>And run the command that you&#8217;ve prepared in the terminal 2:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">java -jar kstreamscat.jar --topic=played --id=songs -b=localhost:29092 --time-window=60</code></pre>
+</div>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
+SLF4J: Defaulting to no-operation (NOP) logger implementation
+SLF4J: See <a href="http://www.slf4j.org/codes.html#StaticLoggerBinder" class="bare">http://www.slf4j.org/codes.html#StaticLoggerBinder</a> for further details.
+Starting Kafka Streams...
+Kafka Stream Threads started
+Key: alex : 4
+Key: burr : 3
+Key: kamesh : 2
+Key: edson : 1
+Key: sebi : 1</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Then in the terminal 1, run again the <code>kafkacat</code> command to insert again the played songs:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">kafkacat -b localhost:29092 -t played -P -l -K: apps/windowing/first-batch.json</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>And if you inspect the <code>kstreamscat</code> output you&#8217;ll see:</p>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">Key: alex : 8
+Key: burr : 6
+Key: kamesh : 4
+Key: edson : 2
+Key: sebi : 2</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Notice that the played songs have been increased by 2.</p>
+</div>
+<div class="paragraph">
+<p>Now wait for one minute and then run the <code>kafkacat</code> command again to insert again the played songs:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">kafkacat -b localhost:29092 -t played -P -l -K: apps/windowing/first-batch.json</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>And if you inspect the <code>kstreamscat</code> output you&#8217;ll see:</p>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">Key: alex : 4
+Key: burr : 3
+Key: kamesh : 2
+Key: edson : 1
+Key: sebi : 1</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>After 1 minute, the window has shifted into a new one so these new played songs have fallen into this new window, so the count for this window is starting from 0.</p>
+</div>
+<div class="sect4">
+<h5 id="_clean_up_2"><a class="anchor" href="#_clean_up_2"></a>Clean Up</h5>
+<div class="paragraph">
+<p>Stop <code>kstreamscat</code> process by typing <span class="keyseq"><kbd>Ctrl</kbd>+<kbd>C</kbd></span> in the terminal 2.</p>
+</div>
+<div class="paragraph">
+<p>To restart Kafka (and Zookeeper) go to <code>docker-compose</code> terminal and stop the process by typing <span class="keyseq"><kbd>Ctrl</kbd>+<kbd>C</kbd></span>.</p>
+</div>
+<div class="paragraph">
+<p>Then run:</p>
+</div>
+<div class="listingblock lines_1">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-session hljs" data-lang="bash-session">docker-compose rm
+
+Going to remove kafka, it_zookeeper_1
+Are you sure? [yN] y
+Removing kafka          ... done
+Removing it_zookeeper_1 ... done</code></pre>
+</div>
+</div>
+<div class="listingblock lines_1">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-session hljs" data-lang="bash-session">docker-compose up --remove-orphans
+
+kafka        | [2020-05-04 11:30:27,392] INFO [SocketServer brokerId=0] Started data-plane processors for 2 acceptors (kafka.network.SocketServer)
+kafka        | [2020-05-04 11:30:27,396] INFO Kafka version: 2.4.0 (org.apache.kafka.common.utils.AppInfoParser)
+kafka        | [2020-05-04 11:30:27,397] INFO Kafka commitId: 77a89fcf8d7fa018 (org.apache.kafka.common.utils.AppInfoParser)
+kafka        | [2020-05-04 11:30:27,397] INFO Kafka startTimeMs: 1588591827393 (org.apache.kafka.common.utils.AppInfoParser)
+kafka        | [2020-05-04 11:30:27,398] INFO [KafkaServer id=0] started (kafka.server.KafkaServer)</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="kstreamscat-sessiontimewindow"><a class="anchor" href="#kstreamscat-sessiontimewindow"></a>Session time window</h4>
+<div class="paragraph">
+<p>Let&#8217;s see how it behaves when instead of a <a href="#kstreamscat-timewindow">Tumbling time window</a>, we use a Session time window:</p>
+</div>
+<div class="paragraph">
+<p>With Kafka cluster started, prepare <strong>but do not execute</strong> the next command in terminal 2:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">java -jar kstreamscat.jar --topic=played --id=songs -b=localhost:29092 --session-window=60</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In terminal 1, run the next command, and then immediatelly run the commandd you&#8217;ve prepared in terminal 2:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">kafkacat -b localhost:29092 -t played -P -l -K: apps/windowing/first-batch.json</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>And run the command that you&#8217;ve prepared in the terminal 2:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">java -jar kstreamscat.jar --topic=played --id=songs -b=localhost:29092 --session-window=60</code></pre>
+</div>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
+SLF4J: Defaulting to no-operation (NOP) logger implementation
+SLF4J: See <a href="http://www.slf4j.org/codes.html#StaticLoggerBinder" class="bare">http://www.slf4j.org/codes.html#StaticLoggerBinder</a> for further details.
+Starting Kafka Streams...
+Kafka Stream Threads started
+Key: alex : 4
+Key: burr : 3
+Key: kamesh : 2
+Key: edson : 1
+Key: sebi : 1</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Then in terminal 1 run the following command:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">./apps/windowing/session-window.sh</code></pre>
+</div>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">Sleeping 30s
+Insert new batch
+Sleeping 40s
+Insert new batch
+Notice that since the beginning it has passed more than 60s but still in the same time window
+Sleeping 65s
+Insert new batch
+Now new session window</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Monitor the output of the terminal 2, you should see something like:</p>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">Key: alex : 4
+Key: burr : 3
+Key: kamesh : 2
+Key: edson : 1
+Key: sebi : 1
+Key: alex : 8
+Key: burr : 6
+Key: kamesh : 4
+Key: edson : 2
+Key: sebi : 2
+Key: alex : 12
+Key: burr : 9
+Key: kamesh : 6
+Key: edson : 3
+Key: sebi : 3
+Key: alex : 16
+Key: burr : 12
+Key: kamesh : 8
+Key: edson : 4
+Key: sebi : 4
+Key: alex : 4
+Key: burr : 3
+Key: kamesh : 2
+Key: edson : 1
+Key: sebi : 1</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Notice that we configured the session window to 60 seconds <code>--session-window=60</code> but since until the last sleep (<code>Sleeping 65</code>) we were producing content continuously without stopping for one minute, all of these events where processed in the same window.
+The new window is created in the last batch because the last batch is inserted after a timelapse of 60 seconds without producing any event.</p>
+</div>
+<div class="sect4">
+<h5 id="_clean_up_3"><a class="anchor" href="#_clean_up_3"></a>Clean Up</h5>
+<div class="paragraph">
+<p>Stop <code>kstreamscat</code> process by typing <span class="keyseq"><kbd>Ctrl</kbd>+<kbd>C</kbd></span> in the terminal 2.</p>
+</div>
+<div class="paragraph">
+<p>To restart Kafka (and Zookeeper) go to <code>docker-compose</code> terminal and stop the process by typing <span class="keyseq"><kbd>Ctrl</kbd>+<kbd>C</kbd></span>.</p>
+</div>
+<div class="paragraph">
+<p>Then run:</p>
+</div>
+<div class="listingblock lines_1">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-session hljs" data-lang="bash-session">docker-compose rm
+
+Going to remove kafka, it_zookeeper_1
+Are you sure? [yN] y
+Removing kafka          ... done
+Removing it_zookeeper_1 ... done</code></pre>
+</div>
+</div>
+<div class="listingblock lines_1">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-session hljs" data-lang="bash-session">docker-compose up --remove-orphans
+
+kafka        | [2020-05-04 11:30:27,392] INFO [SocketServer brokerId=0] Started data-plane processors for 2 acceptors (kafka.network.SocketServer)
+kafka        | [2020-05-04 11:30:27,396] INFO Kafka version: 2.4.0 (org.apache.kafka.common.utils.AppInfoParser)
+kafka        | [2020-05-04 11:30:27,397] INFO Kafka commitId: 77a89fcf8d7fa018 (org.apache.kafka.common.utils.AppInfoParser)
+kafka        | [2020-05-04 11:30:27,397] INFO Kafka startTimeMs: 1588591827393 (org.apache.kafka.common.utils.AppInfoParser)
+kafka        | [2020-05-04 11:30:27,398] INFO [KafkaServer id=0] started (kafka.server.KafkaServer)</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <a class="rhd-logo" href="https://developers.redhat.com" target="_blank"></div>
+</footer>
+<script src="../../_/js/vendor/clipboard.js"></script>
+<script src="../../_/js/site.js"></script>
+<script async src="../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

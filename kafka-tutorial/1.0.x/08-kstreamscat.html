@@ -3,8 +3,8 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Topics and Partitions :: Kafka Tutorial</title>
-    <link rel="canonical" href="https://redhat-developer-demos.github.io/kafka-tutorial/kafka-tutorial/1.0.x/02-topics-partitions.html">
+    <title>KStreamscat :: Kafka Tutorial</title>
+    <link rel="canonical" href="https://redhat-developer-demos.github.io/kafka-tutorial/kafka-tutorial/1.0.x/08-kstreamscat.html">
     <meta name="generator" content="Antora 2.3.1">
     <link rel="stylesheet" href="../../_/css/site.css">
   </head>
@@ -64,21 +64,21 @@
   </li>
 </ul>
   </li>
-  <li class="nav-item is-current-page" data-depth="1">
+  <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
     <a class="nav-link" href="02-topics-partitions.html">2. Topics &amp; Partitions</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="#topics">Topics</a>
+    <a class="nav-link" href="02-topics-partitions.html#topics">Topics</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="#partitions">Partitions</a>
+    <a class="nav-link" href="02-topics-partitions.html#partitions">Partitions</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="#messages">Messages</a>
+    <a class="nav-link" href="02-topics-partitions.html#messages">Messages</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="#topic-creation">Create a Topic</a>
+    <a class="nav-link" href="02-topics-partitions.html#topic-creation">Create a Topic</a>
   </li>
 </ul>
   </li>
@@ -251,7 +251,7 @@
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="08-kafka-listeners.html">Kafka Listeners</a>
   </li>
-  <li class="nav-item" data-depth="2">
+  <li class="nav-item is-current-page" data-depth="2">
     <a class="nav-link" href="08-kstreamscat.html">KStreamscat</a>
   </li>
 </ul>
@@ -271,223 +271,30 @@
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="index.html">Kafka Tutorial</a></li>
-    <li><a href="02-topics-partitions.html">2. Topics &amp; Partitions</a></li>
+    <li>8. Tips &amp; Tricks</li>
+    <li><a href="08-kstreamscat.html">KStreamscat</a></li>
   </ul>
 </nav>
-  <div class="edit-this-page"><a href="https://github.com/redhat-developer-demos/kafka-tutorial/edit/master/documentation/modules/ROOT/pages/02-topics-partitions.adoc">Edit this Page</a></div>
+  <div class="edit-this-page"><a href="https://github.com/redhat-developer-demos/kafka-tutorial/edit/master/documentation/modules/ROOT/pages/08-kstreamscat.adoc">Edit this Page</a></div>
   </div>
   <div class="content">
 <article class="doc">
-<h1 class="page">Topics and Partitions</h1>
-<div id="preamble">
-<div class="sectionbody">
+<h1 class="page">KStreamscat</h1>
 <div class="paragraph">
-<p>Apache Kafka is a distributed robust publish/subscribe system.
-It acts as a message queue but it offers two major advantages over traditional pub/sub systems.</p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>Storing records with Fault Tolerance.</p>
-</li>
-<li>
-<p>Processing streams (data-streams) as they occur in real-time instead of in a batch.</p>
-</li>
-</ol>
-</div>
-<div class="imageblock">
-<div class="content">
-<img src="_images/cbp.png" alt="cbp">
-</div>
+<p><a href="https://github.com/lordofthejars/kstreamscat">KStreamscat</a> is a tool that allows you to explore some Kafka Streams concept like Kafka Tables or Windowing.</p>
 </div>
 <div class="paragraph">
-<p>Notice in the next figure, the difference in how the entities are stored in a Kafka topic VS how they are stored in an RDBMS.
-Events are always stored as they are applied in the log and they are never overridden, meanwhile, in RDBMS, you are storing a snapshot of an entity, when you update an entity you are modifying the original record.</p>
-</div>
-<div class="imageblock">
-<div class="content">
-<img src="_images/dbvsevent.png" alt="dbvsevent">
-</div>
+<p>Currently, it is a Java CLI application (to be compiled to native executable sooner), that can be downloaded from <a href="https://github.com/lordofthejars/kstreamscat/releases" class="bare">https://github.com/lordofthejars/kstreamscat/releases</a>.</p>
 </div>
 <div class="paragraph">
-<p>Other differences are:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Real Time vs Batch processing.</p>
-</li>
-<li>
-<p>Distributed/Fault Tolerant vs "None" Distributed by construction.</p>
-</li>
-</ul>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="topics"><a class="anchor" href="#topics"></a>What are Topics?</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>A topic is an ordered collection of events that are persisted to disk, replicated for fault-tolerance and they have a duration, as an event can be available for just some minutes or forever.</p>
-</div>
-<div class="imageblock">
-<div class="content">
-<img src="_images/cbtp.png" alt="cbtp">
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="partitions"><a class="anchor" href="#partitions"></a>What are Partitions?</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>A topic might be divided into several partitions to improve the performance in cases of heavy load.</p>
+<p>To run it, you need to use the <code>java -jar &lt;location-jar&gt;/kstreamscat.jar</code> and the valid options are found at: <a href="https://github.com/lordofthejars/kstreamscat/blob/master/src/main/java/com/lordofthejars/kstreamscat/KStreamsCatOptions.java" class="bare">https://github.com/lordofthejars/kstreamscat/blob/master/src/main/java/com/lordofthejars/kstreamscat/KStreamsCatOptions.java</a>.</p>
 </div>
 <div class="paragraph">
-<p>The partitions of a topic are distributed across all the Apache Kafka brokers to maximize the parallelism when working with topics.</p>
+<p>If you are curious on where is the logic for configuring the Kafka Stream, you can take a look at <a href="https://github.com/lordofthejars/kstreamscat/blob/master/src/main/java/com/lordofthejars/kstreamscat/TopologyProducer.java" class="bare">https://github.com/lordofthejars/kstreamscat/blob/master/src/main/java/com/lordofthejars/kstreamscat/TopologyProducer.java</a>.</p>
 </div>
 <div class="paragraph">
-<p>The sum of all events of all the partitions is what conforms a topic.</p>
-</div>
-<div class="imageblock">
-<div class="content">
-<img src="_images/pbtpc.png" alt="pbtpc">
-</div>
-</div>
-<div class="paragraph">
-<p>Each partition can be configured to be replicated across different Kafka brokers.</p>
-</div>
-<div class="imageblock">
-<div class="content">
-<img src="_images/bp.png" alt="bp">
-</div>
-</div>
-<div class="paragraph">
-<p>Each partition can be replicated and one of the partition is designed the leader.
-All events are produced and consumed from the leader, and the other replicas just stay in sync  with the leader.
-If the leader becomes unavailable, one of the synced replicas becomes the new leader.</p>
-</div>
-<div class="admonitionblock important">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-important" title="Important"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>From Apache Kafka 2.4.0, the previous statement is not strictly true.
-Although this is the most used behaviour, now a consumer can get messages from the closer replicas even though they aren&#8217;t leaders.</p>
-</div>
-<div class="imageblock">
-<div class="content">
-<img src="_images/After-KIP-392.png" alt="After KIP 392">
-</div>
-<div class="title">Figure 1. Red Partitions are the leaders</div>
-</div>
-<div class="paragraph">
-<p>Also a <code>ReplicaSelector</code> interface is provided so you can implement a custom selector of the replica from where messages are consumed.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="messages"><a class="anchor" href="#messages"></a>What are Messages?</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>A message is a Key/Value pair that is stored inside a topic.
-This message is persisted and durable during the configured lifespan.</p>
-</div>
-<div class="paragraph">
-<p>A message is a typical small chunk of data with two parts the key (optional) to identify the message and it is used by default to decide in which partition the message is stored, and the value which is the content of the message which can be in any format.</p>
-</div>
-<div class="paragraph">
-<p>Moreover, each message contains a metadata timestamp attribute that is either set by the producer at creation time or by the broker on insertion time.</p>
-</div>
-<div class="admonitionblock important">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-important" title="Important"></i>
-</td>
-<td class="content">
-Although you can configure Apache Kafka to work with large messages, the default max size is <code>1 MB</code>, being a few KB the recommended maximum size of a message.
-</td>
-</tr>
-</table>
-</div>
-<div class="imageblock">
-<div class="content">
-<img src="_images/pkp.png" alt="pkp">
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="topic-creation"><a class="anchor" href="#topic-creation"></a>Create a Topic</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Apache Kafka auto-creates topics when a message is published to the topic.</p>
-</div>
-<div class="paragraph">
-<p>You can also use <code>kafka-topic.sh</code> tool to create a topic manually.</p>
-</div>
-<div class="paragraph">
-<p>This tool is bundled inside Kafka installation, so let&#8217;s <code>exec</code> a <code>bash</code> terminal inside the Kafka container.</p>
-</div>
-<div class="listingblock lines_1">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker exec -it $(docker ps -q --filter "label=com.docker.compose.service=kafka") /bin/bash</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Inside the container, create a topic with name <code>songs</code> with a single partition and only one replica:</p>
-</div>
-<div class="listingblock console-input">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">./bin/kafka-topics.sh --create --bootstrap-server localhost:29092 --replication-factor 1 --partitions 1 --topic songs
-./bin/kafka-topics.sh --list --bootstrap-server localhost:29092</code></pre>
-</div>
-</div>
-<div class="listingblock console-output">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">songs</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Now that the topic is created and you&#8217;ve validated that the topic has been created, you can run the <code>exit</code> command:</p>
-</div>
-<div class="listingblock console-input">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">exit</code></pre>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="topic-info"><a class="anchor" href="#topic-info"></a>Get Topic information</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>You can get topic information by using <code>kafkacat</code>:</p>
-</div>
-<div class="listingblock console-input">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">kafkacat -b localhost:29092 -L</code></pre>
-</div>
-</div>
-<div class="listingblock console-output">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">Metadata for all topics (from broker 0: localhost:29092/0):
- 1 brokers:
-  broker 0 at localhost:29092 (controller)
- 1 topics:
-  topic "songs" with 1 partitions:
-    partition 0, leader 0, replicas: 0, isrs: 0</code></pre>
-</div>
-</div>
-</div>
+<p>If you want you can build yourself the tool by running <code>./mvnw package</code>.
+The <code>target`directory will contain a JAR file named `kstreamscat-&lt;version&gt;-jar-with-dependencies.jar</code> with everything bundled.</p>
 </div>
 </article>
 <aside class="toc sidebar" data-title="Contents" data-levels="2">
