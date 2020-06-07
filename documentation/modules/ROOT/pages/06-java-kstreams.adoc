@@ -32,7 +32,7 @@ Building & Run::
 [.console-input]
 [source, bash-shell,subs="+macros,+attributes"]
 ----
-cd $TUTORIAL_HOME/apps/player-app/player/song-app
+cd $TUTORIAL_HOME/apps/player-app/quarkus/player-app
 ./mvnw clean package
 ----
 
@@ -118,7 +118,7 @@ Building & Run::
 [.console-input]
 [source, bash-shell,subs="+macros,+attributes"]
 ----
-cd $TUTORIAL_HOME/apps/player-app/player/song-app
+cd $TUTORIAL_HOME/apps/music-chart-app/quarkus/music-chart-app
 ./mvnw clean package
 ----
 

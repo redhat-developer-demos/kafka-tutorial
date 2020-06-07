@@ -76,6 +76,8 @@ CONTAINER ID        IMAGE                              COMMAND                  
 e3417f63ac61        strimzi/kafka:0.17.0-kafka-2.4.0   "sh -c 'bin/zookeepe…"   43 seconds ago      Up 43 seconds       0.0.0.0:2181->2181/tcp, 0.0.0.0:2888->2888/tcp, 0.0.0.0:3888->3888/tcp   it_zookeeper_1
 ----
 
+IMPORTANT: Notice that Kafka container is exposing two ports to outside. The reason is that Kafka requires one port for accessing from host machine, and another one for accessing from Docker host machine. You can find a full explanation of this at xref:08-kafka-listeners.adoc[Kafka Listeners].
+
 Verify that the Kafka cluster is correctly started and configured by running the following command:
 
 [.console-input]
