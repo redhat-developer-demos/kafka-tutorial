@@ -3,6 +3,8 @@ include::_attributes.adoc[]
 
 In this example, we are going to develop an example where there is one service that is putting songs description to the `songs` topic.
 
+TIP: By default, it is not necessary to create the Kafka topic manually, Kafka creates it automatically with default parameters.
+
 Then there is another service that consumes from the `songs` topic these songs.
 Notice that usually this consumer would take the songs and process them (i.e adding them in a graph database like Neo4J, or an ElasticSearch for searching capabilities), but for the sake of simplicity, in this case, the service is printing them in the console.
 

@@ -14,6 +14,7 @@ content:
 asciidoc:
   attributes:
     release-version: master
+    tutorial-url: https://github.com/redhat-developer-demos/kafka-tutorial.git
   extensions:
     - ./lib/tab-block.js
     - ./lib/remote-include-processor.js

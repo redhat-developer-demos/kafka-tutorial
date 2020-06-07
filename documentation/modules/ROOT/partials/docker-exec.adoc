@@ -3,17 +3,5 @@ This tool is bundled inside Kafka installation, so let's `exec` a `bash` termina
 [.lines_1]
 [source, bash-shell]
 ----
-docker ps
-
-CONTAINER ID        IMAGE                              COMMAND                  CREATED             STATUS              PORTS                                                                                        NAMES
-20ff4c1aeba3        strimzi/kafka:0.17.0-kafka-2.4.0   "sh -c 'bin/kafka-se…"   2 minutes ago       Up 2 minutes        0.0.0.0:9092->9092/tcp, 0.0.0.0:29092->29092/tc
-9bfdd117f957        debezium/zookeeper:1.0             "/docker-entrypoint.…"   2 hours ago         Up 2 hours          0.0.0.0:2181->2181/tcp, 0.0.0.0:2888->2888/tcp, 8778/tcp, 0.0.0.0:3888->3888/tcp, 9779/tcp   it_zookeeper_1
-----
-
-Copy the container id of the `strimzi/kafka` image and run:
-
-[.lines_1]
-[source, bash-shell]
-----
-docker exec -ti 65659ad17d07 /bin/bash
+docker exec -it $(docker ps -q --filter "label=com.docker.compose.service=kafka") /bin/bash
 ----

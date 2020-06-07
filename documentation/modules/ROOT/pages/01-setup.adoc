@@ -4,10 +4,9 @@ include::_attributes.adoc[]
 [#prerequisite]
 == Prerequisite CLI tools
 
-
 include::https://raw.githubusercontent.com/redhat-developer-demos/rhd-tutorial-common/master/prerequisites-kubernetes.adoc[]
 |`Kafkacat`
-|https://github.com/edenhill/kafkacat[Download]
+|https://github.com/edenhill/kafkacat[Download] or `brew install kafkacat`
 |https://github.com/edenhill/kafkacat[Download]
 |https://github.com/edenhill/kafkacat[Download]
 
@@ -21,6 +20,15 @@ include::https://raw.githubusercontent.com/redhat-developer-demos/rhd-tutorial-c
 |https://adoptopenjdk.net/[Download]
 |https://adoptopenjdk.net/[Download]
 |===
+
+include::https://raw.githubusercontent.com/redhat-developer-demos/rhd-tutorial-common/master/optional-requisites.adoc[]
+|===
+
+[#downloadconfiguresources]
+== Download & Configure Tutorial Sources
+
+:folder: kafka-tutorial
+include::https://raw.githubusercontent.com/redhat-developer-demos/rhd-tutorial-common/master/download-sources.adoc[]
 
 [#kafka]
 == Setup Kafka

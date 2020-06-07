@@ -1,5 +1,6 @@
 * xref:01-setup.adoc[1. Setup]
 ** xref:01-setup.adoc#prerequisite[Prerequisites]
+** xref:01-setup.adoc#downloadconfiguresources[Download & Configure Tutorial]
 ** xref:01-setup.adoc#kafka[Install Kafka]
 
 * xref:02-topics-partitions.adoc[2. Topics & Partitions]
