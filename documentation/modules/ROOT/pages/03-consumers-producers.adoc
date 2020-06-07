@@ -1,12 +1,49 @@
-= Consume and Produce Messages
+= Produces and Consumers
 include::_attributes.adoc[]
+
+[#producer]
+== What are Producers?
+
+Producers publish messages to a topic at the end of a partition.
+By default, if a message contains a key, the hashed value of the key is used to decide in which partition the message is stored.
+If the key is `null`, then a round-robin algorithm is used to balance the messages across all partitions.
+
+Kafka guarantees that all as long as no new partitions are added, elements with the same key will be stored in the same partition.
+
+If you want you can also implement a custom partitioning strategy to store messages in a specific partition following any kind of business rule.
+
+image::p.png[]
+
+[#consumer]
+== What are Consumers?
+
+Each message published to a topic is delivered to a consumer that is subscribed to that topic.
+
+A consumer can read data from any position of the partition, and internally it is stored as a pointer called `offset`.
+In most of the cases, a consumer advances its `offset` linearly, but it could be in any order, or starting from any given position.
+
+Each consumer belongs to a consumer group.
+A consumer group is a list of consumer instances that ensures the scalability for processing messages and also fault tolerance.
+
+When a consumer group only contains one consumer, this consumer is responsible for processing all messages of all partitions.
+
+The more consumers you add to a group, each consumer will only receive messages from a subset of the partitions.
+
+image::c.png[]
+
+IMPORTANT: If you add more consumers in a consumer group than the number of partitions for a topic, then they will stay in an idle state, without getting any message.
+
+As you can see what is registered to a topic is the _consumer group_ and not the consumer.
+The consumer is "subscribed" to a partition.
+
+== Consume and Produce Messages
 
 Before digging into how to produce and consume data from Java, let's see how to use `kafkacat` to do it.
 
 `kafkacat` is a great tool for these use cases, and it is the _de-facto_ tool to inspect data in Kafka.
 
 [#consume-kafkacat]
-== Consuming messages with Kafkacat
+=== Consuming messages with Kafkacat
 
 Open a new terminal, _terminal 1_, and run the following command:
 
@@ -59,7 +96,7 @@ Now the output of the terminal has been updated showing the consumed messages:
 Notice that the `offset` of this consumer has been updated to 2, as the two first records has been consumed from the topic.
 
 [#playingwithoffsets]
-== Playing with Offsets
+=== Playing with Offsets
 
 A Producer always produces content at the end of a topic, meanwhile, a consumer can consume from any offset.
 Still on _terminal 1_, stop the `kafkacat` process by typing kbd:[Ctrl + C].
@@ -104,7 +141,7 @@ kafkacat -b localhost:29092 -t songs -o 1 -C -K:
 Now the initial offset was not set to the beginning but from the second element.
 
 [#changingretention]
-== Changing Retention
+=== Changing Retention
 
 By default, Kafka retains data on a topic for 168 hours (7 days).
 But retention can be changed, let's change it to 1 minute.
@@ -211,7 +248,7 @@ exit
 ----
 
 [#deletetopiccontent]
-== Deleting Topic Content
+=== Deleting Topic Content
 
 You can also use `kafka-topic.sh` tool to delete the content of a topic manually.
 
@@ -244,6 +281,6 @@ kafkacat -b localhost:29092 -t songs -C -K:
 Stop `kafkacat` process by typing kbd:[Ctrl + C].
 
 [#kafkacat-cleanup]
-== Clean Up
+=== Clean Up
 
 Stop the current `kafkacat` process by typing kbd:[Ctrl + C] on the terminal.

@@ -69,3 +69,57 @@ Moreover, each message contains a metadata timestamp attribute that is either se
 IMPORTANT: Although you can configure Apache Kafka to work with large messages, the default max size is `1 MB`, being a few KB the recommended maximum size of a message.
 
 image::pkp.png[]
+
+[#topic-creation]
+== Create a Topic
+
+Apache Kafka auto-creates topics when a message is published to the topic.
+
+You can also use `kafka-topic.sh` tool to create a topic manually.
+
+include::partial$docker-exec.adoc[]
+
+Inside the container, create a topic with name `songs` with a single partition and only one replica:
+
+[.console-input]
+[source, bash-shell]
+----
+./bin/kafka-topics.sh --create --bootstrap-server localhost:29092 --replication-factor 1 --partitions 1 --topic songs
+./bin/kafka-topics.sh --list --bootstrap-server localhost:29092
+----
+
+[.console-output]
+[source,bash,subs="+macros,+attributes"]
+----
+songs
+----
+
+Now that the topic is created and you've validated that the topic has been created, you can run the `exit` command:
+
+[.console-input]
+[source, bash-shell]
+----
+exit
+----
+
+[#topic-info]
+== Get Topic information
+
+You can get topic information by using `kafkacat`:
+
+[.console-input]
+[source, bash-shell]
+----
+kafkacat -b localhost:29092 -L
+----
+
+[.console-output]
+[source, bash-shell]
+----
+Metadata for all topics (from broker 0: localhost:29092/0):
+ 1 brokers:
+  broker 0 at localhost:29092 (controller)
+ 1 topics:
+  topic "songs" with 1 partitions:
+    partition 0, leader 0, replicas: 0, isrs: 0
+----

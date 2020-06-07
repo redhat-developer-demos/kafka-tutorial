@@ -26,9 +26,11 @@ In this case, the Spring Boot service is deployed to produce songs.
 You've got two options, using Docker or building yourself the service.
 In terminal 1, run one of these two options:
 
-[#deploying-producer-java]
-==== Building the Song Service
-
+[tabs]
+====
+Building & Run::
++
+--
 [.console-input]
 [source, bash-shell,subs="+macros,+attributes"]
 ----
@@ -56,10 +58,10 @@ docker run --rm -ti -p 8080:8080 --link=kafka:kafka quay.io/rhdevelopers/kafka-t
 2020-04-29 09:38:23.670  INFO 3309 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8080 (http) with context path ''
 2020-04-29 09:38:23.674  INFO 3309 --- [main] org.acme.song.app.SongAppApplication     : Started SongAppApplication in 1.719 seconds (JVM running for 2.096)
 ----
-
-[#running-producer-java-docker]
-==== Running Producer using Docker
-
+--
+Docker::
++
+--
 [.console-input]
 [source, bash-shell,subs="+macros,+attributes"]
 ----
@@ -74,6 +76,8 @@ docker run --rm -ti -p 8080:8080 --link=kafka:kafka quay.io/rhdevelopers/kafka-t
 2020-04-29 09:38:23.670  INFO 3309 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8080 (http) with context path ''
 2020-04-29 09:38:23.674  INFO 3309 --- [main] org.acme.song.app.SongAppApplication     : Started SongAppApplication in 1.719 seconds (JVM running for 2.096)
 ----
+--
+====
 
 [#consumer-java]
 == Consuming messages with Java
@@ -87,9 +91,11 @@ In this case, the Spring Boot service is deployed to consume songs.
 You've got two options, using Docker or building yourself the service.
 In terminal 2, run one of these two options:
 
-[#deploying-consumer-java]
-==== Building the Song Indexer Service
-
+[tabs]
+====
+Build & Run::
++
+--
 [.console-input]
 [source, bash-shell,subs="+macros,+attributes"]
 ----
@@ -119,10 +125,10 @@ docker run --rm -ti -p 9090:8080 --link=kafka:kafka quay.io/rhdevelopers/kafka-t
 2020-04-29 14:37:03.556  INFO 1 --- [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-1, groupId=G1] Setting offset for partition songs-0 to the committed offset FetchPosition{offset=3, offsetEpoch=Optional.empty, currentLeader=LeaderAndEpoch{leader=kafka:9092 (id: 0 rack: null), epoch=0}}
 2020-04-29 14:37:03.565  INFO 1 --- [ntainer#0-0-C-1] o.s.k.l.KafkaMessageListenerContainer    : G1: partitions assigned: [songs-0]
 ----
-
-[#running-consumer-java-docker]
-==== Running Consumer using Docker
-
+--
+Docker::
++
+--
 [.console-input]
 [source, bash-shell,subs="+macros,+attributes"]
 ----
@@ -139,6 +145,8 @@ docker run --rm -ti -p 9090:8080 --link=kafka:kafka quay.io/rhdevelopers/kafka-t
 2020-04-29 14:37:03.556  INFO 1 --- [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-1, groupId=G1] Setting offset for partition songs-0 to the committed offset FetchPosition{offset=3, offsetEpoch=Optional.empty, currentLeader=LeaderAndEpoch{leader=kafka:9092 (id: 0 rack: null), epoch=0}}
 2020-04-29 14:37:03.565  INFO 1 --- [ntainer#0-0-C-1] o.s.k.l.KafkaMessageListenerContainer    : G1: partitions assigned: 
 ----
+--
+====
 
 [#providing-song]
 === Providing Songs

@@ -1,4 +1,39 @@
-= Kafka Streams Operations
+= Kafka Streams
+include::_attributes.adoc[]
+
+So far, you've seen that you can consume and produce data into a Kafka topic, but sometimes you want to do things more advanced like joining different topics, aggregating content, or processing on the fly to send it to redirect the result to another topic.
+
+[#whatkstreams]
+== What are Kafka Streams?
+
+Kafka Streams is a Java API that implements all these features, doing in a fault-tolerant, scalable way.
+One of the important things of Kafka Streams application is that it doesn't run inside a broker, but it runs in a separate JVM instance, maybe in the same cluster, or maybe in a different cluster but it is a different process.
+
+A Kafka Stream application instances can run in parallel, in different machines and they will automatically collaborate on the data processing.
+This is what makes Kafka Streams applications fault-tolerance and scalable.
+
+[#kstreamsconcepts]
+== Kafka Streams Concepts
+
+Stream Processor:: A Stream processor represents an operation to execute to a stream, some examples of built-in operations can be a filter, map, join, or aggregate. 
+Usually, a Kafka Stream application is created for one or more operations.
+
+Table:: A table is a collection of key-value pairs, that represents the last value for the same record key.
+The big difference is that a stream contains the log of all events (ie an insertion of a song, and update of a song, ...) and a table contains the last value (ie the last update done in a song).
+There is two kinds of tables, a _KTable_ which represents a table from a partition, and a _GlobalKTable_ which aggregates the content from all partitions of a given topic.
+We'll take a look later.
+
+Aggregation Operation:: Takes one input stream or table, and yields a new table by combining multiple input records into a single output record. Examples of aggregations are computing counts or sum.
+
+Join Operation:: Merges two input streams and/or tables based on the keys of their data records, and yields a new stream/table.
+
+Windowing:: Group records that have the same key by a window time. For example, you can group which events have occurred between a period of time.
+
+Interactive Queries:: Treat the stream processing layer as a lightweight embedded database, to directly query the latest state of your stream processing application.
+
+image::kstreams.png[]
+
+== Kafka Streams Operations
 include::_attributes.adoc[]
 :kstreamscat: java -jar kstreamscat.jar
 
@@ -7,7 +42,7 @@ Let's see some of the Kafka-Streams concepts in action.
 include::partial$kafka-up-dc.adoc[]
 
 [#kstreamscat-tables]
-== Tables
+=== Tables
 
 You need only one terminal window to run this section.
 
@@ -131,12 +166,12 @@ Notice that `kafkacat` shows the content of all the events that have been added 
 On the other side, Global Table just shows the latest values of the topic.
 For this reason, only the update event of _The Imperial March_ is shown, and not the initial insertion.
 
-=== Clean Up
+==== Clean Up
 
 include::partial$kafka-restart.adoc[]
 
 [#kstreamscat-windowing]
-== Windowing
+=== Windowing
 
 Windowing allows you to control how to group records that have the same key based on a time window.
 For example, you can answer questions like _how many songs each user has played the last 30 minutes_ or _how many songs each user has played every day_.
@@ -172,7 +207,7 @@ For this section, you need to open *two* terminals on the same screen.
 Let's see how affect different window strategies in a topic that contains the history of the songs that each user has played.
 
 [#kstreamscat-timewindow]
-=== Tumbling time window
+==== Tumbling time window
 
 Let's create a periodic window of 60 seconds.
 What we are doing here is creating fixed buckets of 60 seconds, so every 60 seconds a new window is created to process the events that fall into that window.
@@ -262,14 +297,14 @@ Key: sebi : 1
 
 After 1 minute, the window has shifted into a new one so these new played songs have fallen into this new window, so the count for this window is starting from 0.
 
-==== Clean Up
+===== Clean Up
 
 Stop `kstreamscat` process by typing kbd:[Ctrl + C] in the terminal 2.
 
 include::partial$kafka-restart.adoc[]
 
 [#kstreamscat-sessiontimewindow]
-=== Session time window
+==== Session time window
 
 Let's see how it behaves when instead of a <<kstreamscat-timewindow>>, we use a Session time window:
 
@@ -368,7 +403,7 @@ Key: sebi : 1
 Notice that we configured the session window to 60 seconds `--session-window=60` but since until the last sleep (`Sleeping 65`) we were producing content continuously without stopping for one minute, all of these events where processed in the same window.
 The new window is created in the last batch because the last batch is inserted after a timelapse of 60 seconds without producing any event.
 
-==== Clean Up
+===== Clean Up
 
 Stop `kstreamscat` process by typing kbd:[Ctrl + C] in the terminal 2.
 

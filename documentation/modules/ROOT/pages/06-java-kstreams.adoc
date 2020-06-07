@@ -24,9 +24,11 @@ In this case, the Quarkus service is deployed to produce played songs.
 You've got two options, using Docker or building yourself the service.
 In terminal 1, run one of these two options:
 
-[#deploying-player-app-java]
-==== Building the Player Service
-
+[tabs]
+====
+Building & Run::
++
+--
 [.console-input]
 [source, bash-shell,subs="+macros,+attributes"]
 ----
@@ -62,10 +64,10 @@ __  ____  __  _____   ___  __ ____  ______
 ...
 2020-05-06 10:37:02,657 INFO  [org.acm.PlaySongsGenerator] (RxComputationThreadPool-1) song 8: Perfect played.
 ----
-
-[#running-player-app-java-docker]
-==== Running Player using Docker
-
+--
+Docker::
++
+--
 [.console-input]
 [source, bash-shell,subs="+macros,+attributes"]
 ----
@@ -93,6 +95,8 @@ __  ____  __  _____   ___  __ ____  ______
 ...
 2020-05-06 10:37:02,657 INFO  [org.acm.PlaySongsGenerator] (RxComputationThreadPool-1) song 8: Perfect played.
 ----
+--
+====
 
 [#music-chart-java]
 == Kafka Streams with Java
@@ -106,9 +110,11 @@ In this case, the Quarkus service is deployed to use Kafka Streams.
 You've got two options, using Docker or building yourself the service.
 In terminal 2, run one of these two options:
 
-[#deploying-music-chart-app-java]
-==== Building the Music Chart Service
-
+[tabs]
+====
+Building & Run::
++
+--
 [.console-input]
 [source, bash-shell,subs="+macros,+attributes"]
 ----
@@ -144,10 +150,10 @@ __  ____  __  _____   ___  __ ____  ______
 [KTABLE-TOSTREAM-0000000006]: 1, PlayedSong [count=2, songName=The Good The Bad And The Ugly]
 [KTABLE-TOSTREAM-0000000006]: 2, PlayedSong [count=3, songName=Believe]
 ----
-
-[#running-music-chart-app-java-docker]
-==== Running Music Chart using Docker
-
+--
+Docker::
++
+--
 [.console-input]
 [source, bash-shell,subs="+macros,+attributes"]
 ----
@@ -175,6 +181,8 @@ __  ____  __  _____   ___  __ ____  ______
 [KTABLE-TOSTREAM-0000000006]: 1, PlayedSong [count=2, songName=The Good The Bad And The Ugly]
 [KTABLE-TOSTREAM-0000000006]: 2, PlayedSong [count=3, songName=Believe]
 ----
+--
+====
 
 [#music-chart-result]
 === Music Chart Result
