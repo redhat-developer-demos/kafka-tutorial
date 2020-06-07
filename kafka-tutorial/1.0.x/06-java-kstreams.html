@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>Developing Kafka Streams in Java :: Kafka Tutorial</title>
     <link rel="canonical" href="https://redhat-developer-demos.github.io/kafka-tutorial/kafka-tutorial/1.0.x/06-java-kstreams.html">
+    <link rel="prev" href="05-kstreams.html">
+    <link rel="next" href="07-kubernetes.html">
     <meta name="generator" content="Antora 2.3.1">
     <link rel="stylesheet" href="../../_/css/site.css">
   </head>
@@ -328,7 +330,7 @@ In terminal 1, run one of these two options:</p>
 <div class="tab-pane" aria-labelledby="tabset1_building-amp-run">
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">cd $TUTORIAL_HOME/apps/player-app/player/song-app
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">cd $TUTORIAL_HOME/apps/player-app/quarkus/player-app
 ./mvnw clean package</code></pre>
 </div>
 </div>
@@ -421,7 +423,7 @@ In terminal 2, run one of these two options:</p>
 <div class="tab-pane" aria-labelledby="tabset2_building-amp-run">
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">cd $TUTORIAL_HOME/apps/player-app/player/song-app
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">cd $TUTORIAL_HOME/apps/music-chart-app/quarkus/music-chart-app
 ./mvnw clean package</code></pre>
 </div>
 </div>
@@ -527,6 +529,10 @@ kafka        | [2020-05-04 11:30:27,398] INFO [KafkaServer id=0] started (kafka.
 </div>
 </div>
 </div>
+<nav class="pagination">
+  <span class="prev"><a href="05-kstreams.html">5. Kafka Streams</a></span>
+  <span class="next"><a href="07-kubernetes.html">7. Kafka in Kubernetes</a></span>
+</nav>
 </article>
 <aside class="toc sidebar" data-title="Contents" data-levels="2">
   <div class="toc-menu"></div>

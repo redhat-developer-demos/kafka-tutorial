@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>Setup :: Kafka Tutorial</title>
     <link rel="canonical" href="https://redhat-developer-demos.github.io/kafka-tutorial/kafka-tutorial/1.0.x/01-setup.html">
+    <link rel="prev" href="index.html">
+    <link rel="next" href="02-topics-partitions.html">
     <meta name="generator" content="Antora 2.3.1">
     <link rel="stylesheet" href="../../_/css/site.css">
   </head>
@@ -492,6 +494,18 @@ kafka_1      | [2020-04-27 05:51:56,669] INFO [KafkaServer id=0] started (kafka.
 e3417f63ac61        strimzi/kafka:0.17.0-kafka-2.4.0   "sh -c 'bin/zookeepe…"   43 seconds ago      Up 43 seconds       0.0.0.0:2181-&gt;2181/tcp, 0.0.0.0:2888-&gt;2888/tcp, 0.0.0.0:3888-&gt;3888/tcp   it_zookeeper_1</code></pre>
 </div>
 </div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+Notice that Kafka container is exposing two ports to outside. The reason is that Kafka requires one port for accessing from host machine, and another one for accessing from Docker host machine. You can find a full explanation of this at <a href="08-kafka-listeners.html" class="page">Kafka Listeners</a>.
+</td>
+</tr>
+</table>
+</div>
 <div class="paragraph">
 <p>Verify that the Kafka cluster is correctly started and configured by running the following command:</p>
 </div>
@@ -510,6 +524,10 @@ e3417f63ac61        strimzi/kafka:0.17.0-kafka-2.4.0   "sh -c 'bin/zookeepe…" 
 </div>
 </div>
 </div>
+<nav class="pagination">
+  <span class="prev"><a href="index.html">Kafka Tutorial</a></span>
+  <span class="next"><a href="02-topics-partitions.html">2. Topics &amp; Partitions</a></span>
+</nav>
 </article>
 <aside class="toc sidebar" data-title="Contents" data-levels="2">
   <div class="toc-menu"></div>
