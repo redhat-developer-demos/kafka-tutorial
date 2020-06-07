@@ -57,6 +57,9 @@
     <a class="nav-link" href="01-setup.html#prerequisite">Prerequisites</a>
   </li>
   <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="01-setup.html#downloadconfiguresources">Download &amp; Configure Tutorial</a>
+  </li>
+  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="01-setup.html#kafka">Install Kafka</a>
   </li>
 </ul>
@@ -277,6 +280,18 @@
 <div class="sectionbody">
 <div class="paragraph">
 <p>In this example, we are going to develop an example where there is one service that is putting songs description to the <code>songs</code> topic.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+By default, it is not necessary to create the Kafka topic manually, Kafka creates it automatically with default parameters.
+</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
 <p>Then there is another service that consumes from the <code>songs</code> topic these songs.

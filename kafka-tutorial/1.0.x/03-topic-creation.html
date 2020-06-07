@@ -57,6 +57,9 @@
     <a class="nav-link" href="01-setup.html#prerequisite">Prerequisites</a>
   </li>
   <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="01-setup.html#downloadconfiguresources">Download &amp; Configure Tutorial</a>
+  </li>
+  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="01-setup.html#kafka">Install Kafka</a>
   </li>
 </ul>
@@ -288,19 +291,7 @@
 </div>
 <div class="listingblock lines_1">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker ps
-
-CONTAINER ID        IMAGE                              COMMAND                  CREATED             STATUS              PORTS                                                                                        NAMES
-20ff4c1aeba3        strimzi/kafka:0.17.0-kafka-2.4.0   "sh -c 'bin/kafka-se…"   2 minutes ago       Up 2 minutes        0.0.0.0:9092-&gt;9092/tcp, 0.0.0.0:29092-&gt;29092/tc
-9bfdd117f957        debezium/zookeeper:1.0             "/docker-entrypoint.…"   2 hours ago         Up 2 hours          0.0.0.0:2181-&gt;2181/tcp, 0.0.0.0:2888-&gt;2888/tcp, 8778/tcp, 0.0.0.0:3888-&gt;3888/tcp, 9779/tcp   it_zookeeper_1</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Copy the container id of the <code>strimzi/kafka</code> image and run:</p>
-</div>
-<div class="listingblock lines_1">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker exec -ti 65659ad17d07 /bin/bash</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker exec -it $(docker ps -q --filter "label=com.docker.compose.service=kafka") /bin/bash</code></pre>
 </div>
 </div>
 <div class="paragraph">
