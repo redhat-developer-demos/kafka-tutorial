@@ -250,7 +250,7 @@ Verify that the service has been deployed correctly:
 [.console-input]
 [source, bash-shell]
 ----
-kubetl get pods
+kubectl get pods
 ----
 
 [.console-output]
