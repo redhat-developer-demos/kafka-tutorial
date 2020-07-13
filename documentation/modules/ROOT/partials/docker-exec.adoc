@@ -2,6 +2,7 @@ This tool is bundled inside Kafka installation, so let's `exec` a `bash` termina
 
 [.lines_1]
 [source, bash-shell]
+[.console-input]
 ----
 docker exec -it $(docker ps -q --filter "label=com.docker.compose.service=kafka") /bin/bash
 ----
