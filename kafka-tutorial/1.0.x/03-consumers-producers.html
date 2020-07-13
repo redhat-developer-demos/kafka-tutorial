@@ -473,7 +473,7 @@ But retention can be changed, let&#8217;s change it to 1 minute.</p>
 <div class="paragraph">
 <p>This tool is bundled inside Kafka installation, so let&#8217;s <code>exec</code> a <code>bash</code> terminal inside the Kafka container.</p>
 </div>
-<div class="listingblock lines_1">
+<div class="listingblock lines_1 console-input">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker exec -it $(docker ps -q --filter "label=com.docker.compose.service=kafka") /bin/bash</code></pre>
 </div>
@@ -579,7 +579,7 @@ By default, this retention period is 1 week, so although there is no data, the c
 <div class="paragraph">
 <p>This tool is bundled inside Kafka installation, so let&#8217;s <code>exec</code> a <code>bash</code> terminal inside the Kafka container.</p>
 </div>
-<div class="listingblock lines_1">
+<div class="listingblock lines_1 console-input">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker exec -it $(docker ps -q --filter "label=com.docker.compose.service=kafka") /bin/bash</code></pre>
 </div>
