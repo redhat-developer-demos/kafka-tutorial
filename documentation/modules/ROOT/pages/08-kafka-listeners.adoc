@@ -2,20 +2,20 @@
 include::_attributes.adoc[]
 
 Probably, you've noticed that you are exposing two ports the `9092` and `29092`.
-The reason for this, it is that we want to be able to access to Kafka broker either from outside the Docker Host (for example when `kafkacat` tool is used), but also from inside the Docker Host (for example when we were deploying Java services inside Docker).
+The reason for this is that we want to be able to access Kafka broker not only from outside the Docker Host (for example when `kafkacat` tool is used), but also from inside the Docker Host (for example when we were deploying Java services inside Docker).
 
 When a client starts, it requests some metadata from the Kafka broker. 
 One of these data is the endpoint of the current Kafka leader broker for a partition.
-This endpoint then is used to create a working connection to the cluster.
+This endpoint is then used to create a working connection to the cluster.
 
 Then what's happening when running the Kafka inside Docker? 
-The Kafka broker returns the container hostname to the client (ie in our tutorial the Kafka hostname is `kafka`).
+The Kafka broker returns the container hostname to the client (that is why in our tutorial the Kafka hostname is `kafka`).
 
 Then what's happening with the client?
 Well, it depends on the scenario:
 
 . If the client is running inside the Docker Host, then it will be able to connect to the returned hostname by the broker (ie `kafka`).
-. If the client is running external of the Docker Host, then an error is thrown. The reason is that the client will get from Kafka broker, the hostname to connect, which is the container hostname (ie `kafka`), so from outside the Docker Host, client will try to reach the container host, which of course it is not valid.
+. If the client is running outside of the Docker Host, then an error is thrown. The reason is that the client will get the hostname to connect from Kafka broker, which is the container hostname (ie `kafka`), which of course is not valid when client will try to reach the container host from outside the Docker Host.
 
 image::hdhe.png[]
 
