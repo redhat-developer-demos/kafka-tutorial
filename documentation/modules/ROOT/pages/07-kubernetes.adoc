@@ -142,7 +142,7 @@ The file you are going to apply is the next one:
 include::https://strimzi.io/examples/latest/kafka/kafka-ephemeral.yaml[]
 ----
 
-Notice how simple is to deploy a Kafka cluster in Kubernetes, you just need a few YAML lines.
+Notice how simple it is to deploy a Kafka cluster in Kubernetes, you just need a few YAML lines.
 Run the following command to deploy Kafka:
 
 [.console-input]
