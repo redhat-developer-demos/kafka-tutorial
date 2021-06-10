@@ -325,7 +325,7 @@
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">curl -Lo minikube <a href="https://storage.googleapis.com/minikube/releases/v1.11.0/minikube-darwin-amd64" class="bare">https://storage.googleapis.com/minikube/releases/v1.11.0/minikube-darwin-amd64</a></code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">curl -Lo minikube <a href="https://storage.googleapis.com/minikube/releases/v1.12.1/minikube-darwin-amd64" class="bare">https://storage.googleapis.com/minikube/releases/v1.12.1/minikube-darwin-amd64</a></code></pre>
 </div>
 </div>
 <div class="listingblock console-input">
@@ -335,7 +335,7 @@
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">curl -LO <a href="https://storage.googleapis.com/kubernetes-release/release/v1.17.4/bin/darwin/amd64/kubectl" class="bare">https://storage.googleapis.com/kubernetes-release/release/v1.17.4/bin/darwin/amd64/kubectl</a></code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">curl -LO <a href="https://storage.googleapis.com/kubernetes-release/release/v1.18.6/bin/darwin/amd64/kubectl" class="bare">https://storage.googleapis.com/kubernetes-release/release/v1.18.6/bin/darwin/amd64/kubectl</a></code></pre>
 </div>
 </div>
 <div class="listingblock console-input">
@@ -357,7 +357,7 @@
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">curl -Lo minikube <a href="https://storage.googleapis.com/minikube/releases/v1.11.0/minikube-linux-amd64" class="bare">https://storage.googleapis.com/minikube/releases/v1.11.0/minikube-linux-amd64</a></code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">curl -Lo minikube <a href="https://storage.googleapis.com/minikube/releases/v1.12.1/minikube-linux-amd64" class="bare">https://storage.googleapis.com/minikube/releases/v1.12.1/minikube-linux-amd64</a></code></pre>
 </div>
 </div>
 <div class="listingblock console-input">
@@ -367,7 +367,7 @@
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">curl -LO <a href="https://storage.googleapis.com/kubernetes-release/release/v1.17.4/bin/linux/amd64/kubectl" class="bare">https://storage.googleapis.com/kubernetes-release/release/v1.17.4/bin/linux/amd64/kubectl</a></code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">curl -LO <a href="https://storage.googleapis.com/kubernetes-release/release/v1.18.6/bin/linux/amd64/kubectl" class="bare">https://storage.googleapis.com/kubernetes-release/release/v1.18.6/bin/linux/amd64/kubectl</a></code></pre>
 </div>
 </div>
 <div class="listingblock console-input">
@@ -389,12 +389,12 @@
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">curl -Lo minikube <a href="https://storage.googleapis.com/minikube/releases/v1.11.0/minikube-windows-amd64.exe" class="bare">https://storage.googleapis.com/minikube/releases/v1.11.0/minikube-windows-amd64.exe</a></code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">curl -Lo minikube <a href="https://storage.googleapis.com/minikube/releases/v1.12.1/minikube-windows-amd64.exe" class="bare">https://storage.googleapis.com/minikube/releases/v1.12.1/minikube-windows-amd64.exe</a></code></pre>
 </div>
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">curl -LO <a href="https://storage.googleapis.com/kubernetes-release/release/v1.17.4/bin/windows/amd64/kubectl" class="bare">https://storage.googleapis.com/kubernetes-release/release/v1.17.4/bin/windows/amd64/kubectl</a></code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">curl -LO <a href="https://storage.googleapis.com/kubernetes-release/release/v1.18.6/bin/windows/amd64/kubectl" class="bare">https://storage.googleapis.com/kubernetes-release/release/v1.18.6/bin/windows/amd64/kubectl</a></code></pre>
 </div>
 </div>
 <div class="listingblock console-input">
@@ -467,9 +467,28 @@ set KUBE_EDITOR="code -w"</code></pre>
 <div class="paragraph">
 <p>Having <code>minikube</code> installed and in your <code>PATH</code>, then run:</p>
 </div>
+<div class="paragraph">
+<p><strong>MacOS</strong></p>
+</div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">minikube start --memory=8192 --cpus=3 --kubernetes-version=v1.17.4 --vm-driver=virtualbox -p kafka</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">minikube start --memory=8192 --cpus=3 --kubernetes-version=v1.18.6 --vm-driver=virtualbox -p kafka</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Linux</strong></p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">minikube start --memory=8192 --cpus=3 --kubernetes-version=v1.18.6 --vm-driver=kvm2 -p kafka</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Windows:</strong></p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">minikube start --memory=8192 --cpus=3 --kubernetes-version=v1.18.6 --vm-driver=hyperv -p kafka</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -477,13 +496,13 @@ set KUBE_EDITOR="code -w"</code></pre>
 </div>
 <div class="listingblock console-output">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">❌  profile "kafka" not found
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">😄  [kafka] minikube v1.20.0 on Darwin 11.3
 ✅  Created a new profile : kafka
 ✅  minikube profile was successfully set to kafka
-😄  [default] minikube v1.11.0 on Darwin 10.15.2
+😄  [default] minikube v1.12.1 on Darwin 11.3
 ✨  Selecting 'virtualbox' driver from user configuration (alternates: [hyperkit])
 🔥  Creating virtualbox VM (CPUs=2, Memory=8192MB, Disk=50000MB) ...
-🐳  Preparing Kubernetes v1.17.4 on Docker '19.03.5' ...
+🐳  Preparing Kubernetes v1.18.6 on Docker '20.10.6' ...
     ▪ apiserver.enable-admission-plugins=LimitRanger,NamespaceExists,NamespaceLifecycle,ResourceQuota,ServiceAccount,DefaultStorageClass,MutatingAdmissionWebhook
 🚜  Pulling images ...
 🚀  Launching Kubernetes ...
@@ -519,12 +538,12 @@ Once you have your cluster, you can download the latest OpenShift client(oc) fro
 </div>
 </div>
 <div class="paragraph">
-<p>The output should show oc version &gt;=4.2:</p>
+<p>The output should show oc version &gt;=4.7:</p>
 </div>
 <div class="listingblock console-output">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">Client Version: openshift-clients-4.3.0-201910250623-88-g6a937dfe
-Kubernetes Version: v1.17.4</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">Client Version: 4.7.0-202102130115.p0-c66c03f
+Kubernetes Version: v1.18.6</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -676,22 +695,29 @@ kafkausers.kafka.strimzi.io           2020-05-07T07:50:37Z</code></pre>
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">apiVersion: kafka.strimzi.io/v1beta1
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">apiVersion: kafka.strimzi.io/v1beta2
 kind: Kafka
 metadata:
   name: my-cluster
 spec:
   kafka:
-    version: 2.5.0
+    version: 2.8.0
     replicas: 3
     listeners:
-      plain: {}
-      tls: {}
+      - name: plain
+        port: 9092
+        type: internal
+        tls: false
+      - name: tls
+        port: 9093
+        type: internal
+        tls: true
     config:
       offsets.topic.replication.factor: 3
       transaction.state.log.replication.factor: 3
       transaction.state.log.min.isr: 2
-      log.message.format.version: "2.5"
+      log.message.format.version: "2.8"
+      inter.broker.protocol.version: "2.8"
     storage:
       type: ephemeral
   zookeeper:
@@ -704,7 +730,7 @@ spec:
 </div>
 </div>
 <div class="paragraph">
-<p>Notice how simple is to deploy a Kafka cluster in Kubernetes, you just need a few YAML lines.
+<p>Notice how simple it is to deploy a Kafka cluster in Kubernetes, you just need a few YAML lines.
 Run the following command to deploy Kafka:</p>
 </div>
 <div class="listingblock console-input">
