@@ -186,7 +186,7 @@ Hopping time window:: Fixed-size, overlapping windows.
 
 image::win2.png[]
 
-Sliding time window:: Fixed-size, overlapping windows that work on differences between record timestamps. In the case of Kafka Steams, it defines a maximum time difference for a join over two streams on the same key.
+Sliding time window:: Fixed-size, overlapping windows that work on differences between record timestamps. In the case of Kafka Streams, it defines a maximum time difference for a join over two streams on the same key.
 
 Session window:: Dynamically-sized, non-overlapping, data-driven windows. Sessions represent a period of activity separated by a defined gap of inactivity.
 This window is used for user behaviour analysis. 
