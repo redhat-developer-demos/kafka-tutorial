@@ -284,7 +284,7 @@
 <h1 class="page">Kafka Listeners</h1>
 <div class="paragraph">
 <p>Probably, you&#8217;ve noticed that you are exposing two ports the <code>9092</code> and <code>29092</code>.
-The reason for this is that we want to be able to access Kafka broker not only from outside the Docker Host (for example when <code>kafkacat</code> tool is used), but also from inside the Docker Host (for example when we were deploying Java services inside Docker).</p>
+The reason for this is that we want to be able to access Kafka broker not only from outside the Docker Host (for example when <code>kcat</code> tool is used), but also from inside the Docker Host (for example when we were deploying Java services inside Docker).</p>
 </div>
 <div class="paragraph">
 <p>When a client starts, it requests some metadata from the Kafka broker.
@@ -331,9 +331,32 @@ Well, it depends on the scenario:</p>
 <div class="paragraph">
 <p>You can run the next commands to visualize how broker host differs depending on the port:</p>
 </div>
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset1_kcat"></a>kcat</p>
+</li>
+<li>
+<p><a id="tabset1_kcat-in-docker"></a>kcat in Docker</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset1_kcat">
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">kafkacat -b localhost:29092 -L</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">kcat -b localhost:29092 -L</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset1_kcat-in-docker">
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker run -it --network=host edenhill/kcat:1.7.0 kcat -b localhost:29092 -L</code></pre>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="listingblock console-output">
@@ -344,9 +367,32 @@ Well, it depends on the scenario:</p>
  0 topics:</code></pre>
 </div>
 </div>
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset2_kcat"></a>kcat</p>
+</li>
+<li>
+<p><a id="tabset2_kcat-in-docker"></a>kcat in Docker</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset2_kcat">
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">kafkacat -b localhost:9092 -L</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">kcat -b localhost:9092 -L</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset2_kcat-in-docker">
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker run -it --network=host edenhill/kcat:1.7.0 kcat -b localhost:29092 -L</code></pre>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="listingblock console-output">

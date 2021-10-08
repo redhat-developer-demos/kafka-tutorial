@@ -362,7 +362,8 @@ Please have them installed and configured before you get started with any of the
 <td class="tableblock halign-center valign-top"><p class="tableblock"><code>Java 11</code></p></td>
 <td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://adoptopenjdk.net/">Download</a></p></td>
 <td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://adoptopenjdk.net/">Download</a></p></td>
-<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://adoptopenjdk.net/">Download</a></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://adoptopenjdk.net/">Download</a></p>
+<p class="tableblock">IMPORTANT: An alternative for running <code>kcat</code> is to use the following Docker command and image  <code>docker run -it --network=host edenhill/kcat:1.7.0 kcat</code></p></td>
 </tr>
 </tbody>
 </table>
@@ -509,9 +510,32 @@ Notice that Kafka container is exposing two ports to outside. The reason is that
 <div class="paragraph">
 <p>Verify that the Kafka cluster is correctly started and configured by running the following command:</p>
 </div>
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset1_kcat"></a>kcat</p>
+</li>
+<li>
+<p><a id="tabset1_kcat-in-docker"></a>kcat in Docker</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset1_kcat">
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">kafkacat -b localhost:9092 -L</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">kcat -b localhost:9092 -L</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset1_kcat-in-docker">
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker run -it --network=host edenhill/kcat:1.7.0 kcat -b localhost:29092 -L</code></pre>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="listingblock console-output">

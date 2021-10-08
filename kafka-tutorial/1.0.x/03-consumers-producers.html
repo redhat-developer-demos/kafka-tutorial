@@ -349,19 +349,42 @@ The consumer is "subscribed" to a partition.</p>
 <h2 id="_consume_and_produce_messages"><a class="anchor" href="#_consume_and_produce_messages"></a>Consume and Produce Messages</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Before digging into how to produce and consume data from Java, let&#8217;s see how to use <code>kafkacat</code> to do it.</p>
+<p>Before digging into how to produce and consume data from Java, let&#8217;s see how to use <code>kcat</code> to do it.</p>
 </div>
 <div class="paragraph">
-<p><code>kafkacat</code> is a great tool for these use cases, and it is the <em>de-facto</em> tool to inspect data in Kafka.</p>
+<p><code>kcat</code> is a great tool for these use cases, and it is the <em>de-facto</em> tool to inspect data in Kafka.</p>
 </div>
 <div class="sect2">
 <h3 id="consume-kafkacat"><a class="anchor" href="#consume-kafkacat"></a>Consuming messages with Kafkacat</h3>
 <div class="paragraph">
 <p>Open a new terminal, <em>terminal 1</em>, and run the following command:</p>
 </div>
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset1_kcat"></a>kcat</p>
+</li>
+<li>
+<p><a id="tabset1_kcat-in-docker"></a>kcat in Docker</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset1_kcat">
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">kafkacat -b localhost:29092 -t songs -C -K:</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">kcat -b localhost:29092 -t songs -C -K:</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset1_kcat-in-docker">
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker run -it --network=host edenhill/kcat:1.7.0 kcat -b localhost:29092 -t songs -C -K:</code></pre>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="listingblock console-output">
@@ -389,13 +412,36 @@ The consumer is "subscribed" to a partition.</p>
 <p>Then insert each of this line as a new message.
 The number before the <code>:</code> is taken as an id.</p>
 </div>
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset2_kcat"></a>kcat</p>
+</li>
+<li>
+<p><a id="tabset2_kcat-in-docker"></a>kcat in Docker</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset2_kcat">
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">kafkacat -b localhost:29092 -t songs -P -l -K: initial_songs</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">kcat -b localhost:29092 -t songs -P -l -K: initial_songs</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset2_kcat-in-docker">
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker run -it --network=host edenhill/kcat:1.7.0 kcat -b localhost:29092 -t songs -P -l -K: initial_songs</code></pre>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="paragraph">
-<p>Switch back to <em>terminal 1</em> where you are running <code>kafkacat</code> as a consumer.
+<p>Switch back to <em>terminal 1</em> where you are running <code>kcat</code> as a consumer.
 You&#8217;ve defined this at <a href="#consume-kafkacat">Consuming messages with Kafkacat</a> section.</p>
 </div>
 <div class="paragraph">
@@ -415,14 +461,37 @@ You&#8217;ve defined this at <a href="#consume-kafkacat">Consuming messages with
 <h3 id="playingwithoffsets"><a class="anchor" href="#playingwithoffsets"></a>Playing with Offsets</h3>
 <div class="paragraph">
 <p>A Producer always produces content at the end of a topic, meanwhile, a consumer can consume from any offset.
-Still on <em>terminal 1</em>, stop the <code>kafkacat</code> process by typing <span class="keyseq"><kbd>Ctrl</kbd>+<kbd>C</kbd></span>.</p>
+Still on <em>terminal 1</em>, stop the <code>kcat</code> process by typing <span class="keyseq"><kbd>Ctrl</kbd>+<kbd>C</kbd></span>.</p>
 </div>
 <div class="paragraph">
-<p>Then start again <code>kafkacat</code> with the same command:</p>
+<p>Then start again <code>kcat</code> with the same command:</p>
 </div>
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset3_kcat"></a>kcat</p>
+</li>
+<li>
+<p><a id="tabset3_kcat-in-docker"></a>kcat in Docker</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset3_kcat">
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">kafkacat -b localhost:29092 -t songs -C -K:</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">kcat -b localhost:29092 -t songs -P -l -K: initial_songs</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset3_kcat-in-docker">
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker run -it --network=host edenhill/kcat:1.7.0 kcat -b localhost:29092 -t songs -P -l -K: initial_songs</code></pre>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="listingblock console-output">
@@ -434,18 +503,41 @@ Still on <em>terminal 1</em>, stop the <code>kafkacat</code> process by typing <
 </div>
 <div class="paragraph">
 <p>Notice that all stream is consumed.
-This is happening because by default <code>kafkacat</code> is getting all the content from a topic since the beginning of the stream.
+This is happening because by default <code>kcat</code> is getting all the content from a topic since the beginning of the stream.
 But you can change that.</p>
 </div>
 <div class="paragraph">
-<p>Stop again <code>kafkacat</code> process by typing <span class="keyseq"><kbd>Ctrl</kbd>+<kbd>C</kbd></span>.</p>
+<p>Stop again <code>kcat</code> process by typing <span class="keyseq"><kbd>Ctrl</kbd>+<kbd>C</kbd></span>.</p>
 </div>
 <div class="paragraph">
 <p>And start again with the following command:</p>
 </div>
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset4_kcat"></a>kcat</p>
+</li>
+<li>
+<p><a id="tabset4_kcat-in-docker"></a>kcat in Docker</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset4_kcat">
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">kafkacat -b localhost:29092 -t songs -o 1 -C -K:</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">kcat -b localhost:29092 -t songs -o 1 -C -K:</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset4_kcat-in-docker">
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker run -it --network=host edenhill/kcat:1.7.0 kcat -b localhost:29092 -t songs -o 1 -C -K:</code></pre>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="listingblock console-output">
@@ -508,17 +600,63 @@ But retention can be changed, let&#8217;s change it to 1 minute.</p>
 <div class="paragraph">
 <p>In one terminal produce data again:</p>
 </div>
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset5_kcat"></a>kcat</p>
+</li>
+<li>
+<p><a id="tabset5_kcat-in-docker"></a>kcat in Docker</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset5_kcat">
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">kafkacat -b localhost:29092 -t songs -P -l -K: initial_songs</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">kcat -b localhost:29092 -t songs -P -l -K: initial_songs</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset5_kcat-in-docker">
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker run -it --network=host edenhill/kcat:1.7.0 kcat -b localhost:29092 -t songs -P -l -K: initial_songs</code></pre>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="paragraph">
 <p>In the other terminal consume this data so you know that it has been inserted correctly:</p>
 </div>
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset6_kcat"></a>kcat</p>
+</li>
+<li>
+<p><a id="tabset6_kcat-in-docker"></a>kcat in Docker</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset6_kcat">
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">kafkacat -b localhost:29092 -t songs -C -K:</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">kcat -b localhost:29092 -t songs -C -K:</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset6_kcat-in-docker">
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker run -it --network=host edenhill/kcat:1.7.0 kcat -b localhost:29092 -t songs -C -K:</code></pre>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="listingblock console-output">
@@ -529,14 +667,37 @@ But retention can be changed, let&#8217;s change it to 1 minute.</p>
 </div>
 </div>
 <div class="paragraph">
-<p>Stop the <code>kafkacat</code> process by typing <span class="keyseq"><kbd>Ctrl</kbd>+<kbd>C</kbd></span> and wait for ~10 seconds (ie <code>sleep 15</code>).</p>
+<p>Stop the <code>kcat</code> process by typing <span class="keyseq"><kbd>Ctrl</kbd>+<kbd>C</kbd></span> and wait for ~10 seconds (ie <code>sleep 15</code>).</p>
 </div>
 <div class="paragraph">
-<p>Run the <code>kafkacat</code> in consumer mode again:</p>
+<p>Run the <code>kcat</code> in consumer mode again:</p>
 </div>
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset7_kcat"></a>kcat</p>
+</li>
+<li>
+<p><a id="tabset7_kcat-in-docker"></a>kcat in Docker</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset7_kcat">
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">kafkacat -b localhost:29092 -t songs -C -K:</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">kcat -b localhost:29092 -t songs -C -K:</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset7_kcat-in-docker">
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker run -it --network=host edenhill/kcat:1.7.0 kcat -b localhost:29092 -t songs -C -K:</code></pre>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="listingblock console-output">
@@ -601,21 +762,44 @@ By default, this retention period is 1 week, so although there is no data, the c
 </div>
 </div>
 <div class="paragraph">
-<p>If you run <code>kafkacat</code> again, you&#8217;ll see that no data is in the topic:</p>
+<p>If you run <code>kcat</code> again, you&#8217;ll see that no data is in the topic:</p>
 </div>
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset8_kcat"></a>kcat</p>
+</li>
+<li>
+<p><a id="tabset8_kcat-in-docker"></a>kcat in Docker</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset8_kcat">
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">kafkacat -b localhost:29092 -t songs -C -K:</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">kcat -b localhost:29092 -t songs -C -K:</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset8_kcat-in-docker">
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker run -it --network=host edenhill/kcat:1.7.0 kcat -b localhost:29092 -t songs -C -K:</code></pre>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="paragraph">
-<p>Stop <code>kafkacat</code> process by typing <span class="keyseq"><kbd>Ctrl</kbd>+<kbd>C</kbd></span>.</p>
+<p>Stop <code>kcat</code> process by typing <span class="keyseq"><kbd>Ctrl</kbd>+<kbd>C</kbd></span>.</p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="kafkacat-cleanup"><a class="anchor" href="#kafkacat-cleanup"></a>Clean Up</h3>
 <div class="paragraph">
-<p>Stop the current <code>kafkacat</code> process by typing <span class="keyseq"><kbd>Ctrl</kbd>+<kbd>C</kbd></span> on the terminal.</p>
+<p>Stop the current <code>kcat</code> process by typing <span class="keyseq"><kbd>Ctrl</kbd>+<kbd>C</kbd></span> on the terminal.</p>
 </div>
 </div>
 </div>
