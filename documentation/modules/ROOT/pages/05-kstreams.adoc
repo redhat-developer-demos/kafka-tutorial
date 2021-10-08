@@ -57,19 +57,49 @@ include::example$update_songs.json[]
 Then insert each of this line as a new message.
 The number before the `:` is taken as an id.
 
+[tabs]
+====
+kcat::
++
+--
 [.console-input]
-[source, bash-shell,subs="+macros,+attributes"]
+[source, bash-shell]
 ----
-kafkacat -b localhost:29092 -t songs -P -l -K: update_songs
+kcat -b localhost:29092 -t songs -P -l -K: update_songs
 ----
+--
+kcat in Docker::
++
+--
+[.console-input]
+[source, bash-shell]
+----
+docker run -it --network=host edenhill/kcat:1.7.0 kcat -b localhost:29092 -t songs -P -l -K: update_songs
+----
+====
 
 Then inspect the inserted songs using `kafkacat`:
 
+[tabs]
+====
+kcat::
++
+--
 [.console-input]
-[source, bash-shell,subs="+macros,+attributes"]
+[source, bash-shell]
 ----
-kafkacat -b localhost:29092 -t songs -C -K:
+kcat -b localhost:29092 -t songs -C -K:
 ----
+--
+kcat in Docker::
++
+--
+[.console-input]
+[source, bash-shell]
+----
+docker run -it --network=host edenhill/kcat:1.7.0 kcat -b localhost:29092 -t songs -C -K:
+----
+====
 
 [.console-output]
 [source, bash-shell,subs="+macros,+attributes"]
@@ -116,19 +146,49 @@ include::example$update2_songs.json[]
 
 And add it to `songs` topic:
 
+[tabs]
+====
+kcat::
++
+--
 [.console-input]
 [source, bash-shell]
 ----
-kafkacat -b localhost:29092 -t songs -P -l -K: update2_songs
+kcat -b localhost:29092 -t songs -P -l -K: update2_songs
 ----
+--
+kcat in Docker::
++
+--
+[.console-input]
+[source, bash-shell]
+----
+docker run -it --network=host edenhill/kcat:1.7.0 kcat -b localhost:29092 -t songs -P -l -K: update2_songs
+----
+====
 
 Then inspect the inserted songs using `kafkacat`:
 
+[tabs]
+====
+kcat::
++
+--
 [.console-input]
 [source, bash-shell]
 ----
-kafkacat -b localhost:29092 -t songs -C -K:
+kcat -b localhost:29092 -t songs -C -K:
 ----
+--
+kcat in Docker::
++
+--
+[.console-input]
+[source, bash-shell]
+----
+docker run -it --network=host edenhill/kcat:1.7.0 kcat -b localhost:29092 -t songs -C -K:
+----
+====
 
 [.console-output]
 [source, bash-shell,subs="+macros,+attributes"]
@@ -255,12 +315,26 @@ Key: sebi : 1
 
 Then in the terminal 1, run again the `kafkacat` command to insert again the played songs:
 
+[tabs]
+====
+kcat::
++
+--
 [.console-input]
-[source, bash-shell,subs="+macros,+attributes"]
+[source, bash-shell]
 ----
-kafkacat -b localhost:29092 -t played -P -l -K: apps/windowing/first-batch.json
+kcat -b localhost:29092 -t played -P -l -K: apps/windowing/first-batch.json
 ----
-
+--
+kcat in Docker::
++
+--
+[.console-input]
+[source, bash-shell]
+----
+docker run -it --network=host edenhill/kcat:1.7.0 kcat -b localhost:29092 -t played -P -l -K: apps/windowing/first-batch.json
+----
+====
 And if you inspect the `kstreamscat` output you'll see:
 
 [.console-output]
@@ -277,11 +351,26 @@ Notice that the played songs have been increased by 2.
 
 Now wait for one minute and then run the `kafkacat` command again to insert again the played songs:
 
+[tabs]
+====
+kcat::
++
+--
 [.console-input]
-[source, bash-shell,subs="+macros,+attributes"]
+[source, bash-shell]
 ----
-kafkacat -b localhost:29092 -t played -P -l -K: apps/windowing/first-batch.json
+kcat -b localhost:29092 -t played -P -l -K: apps/windowing/first-batch.json
 ----
+--
+kcat in Docker::
++
+--
+[.console-input]
+[source, bash-shell]
+----
+docker run -it --network=host edenhill/kcat:1.7.0 kcat -b localhost:29092 -t played -P -l -K: apps/windowing/first-batch.json
+----
+====
 
 And if you inspect the `kstreamscat` output you'll see:
 
@@ -318,12 +407,26 @@ With Kafka cluster started, prepare *but do not execute* the next command in ter
 
 In terminal 1, run the next command, and then immediatelly run the commandd you've prepared in terminal 2:
 
+[tabs]
+====
+kcat::
++
+--
 [.console-input]
-[source, bash-shell,subs="+macros,+attributes"]
+[source, bash-shell]
 ----
-kafkacat -b localhost:29092 -t played -P -l -K: apps/windowing/first-batch.json
+kcat -b localhost:29092 -t played -P -l -K: apps/windowing/first-batch.json
 ----
-
+--
+kcat in Docker::
++
+--
+[.console-input]
+[source, bash-shell]
+----
+docker run -it --network=host edenhill/kcat:1.7.0 kcat -b localhost:29092 -t played -P -l -K: apps/windowing/first-batch.json
+----
+====
 And run the command that you've prepared in the terminal 2:
 
 [.console-input]

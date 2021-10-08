@@ -2,7 +2,7 @@
 include::_attributes.adoc[]
 
 Probably, you've noticed that you are exposing two ports the `9092` and `29092`.
-The reason for this is that we want to be able to access Kafka broker not only from outside the Docker Host (for example when `kafkacat` tool is used), but also from inside the Docker Host (for example when we were deploying Java services inside Docker).
+The reason for this is that we want to be able to access Kafka broker not only from outside the Docker Host (for example when `kcat` tool is used), but also from inside the Docker Host (for example when we were deploying Java services inside Docker).
 
 When a client starts, it requests some metadata from the Kafka broker. 
 One of these data is the endpoint of the current Kafka leader broker for a partition.
@@ -29,11 +29,26 @@ That's why two ports are exposed in the current course.
 
 You can run the next commands to visualize how broker host differs depending on the port:
 
+[tabs]
+====
+kcat::
++
+--
 [.console-input]
 [source, bash-shell]
 ----
-kafkacat -b localhost:29092 -L
+kcat -b localhost:29092 -L
 ----
+--
+kcat in Docker::
++
+--
+[.console-input]
+[source, bash-shell]
+----
+docker run -it --network=host edenhill/kcat:1.7.0 kcat -b localhost:29092 -L
+----
+====
 
 [.console-output]
 [source, bash-shell]
@@ -44,12 +59,27 @@ Metadata for all topics (from broker 0: localhost:29092/0):
  0 topics:
 ----
 
+
+[tabs]
+====
+kcat::
++
+--
 [.console-input]
 [source, bash-shell]
 ----
-kafkacat -b localhost:9092 -L
+kcat -b localhost:9092 -L
 ----
-
+--
+kcat in Docker::
++
+--
+[.console-input]
+[source, bash-shell]
+----
+docker run -it --network=host edenhill/kcat:1.7.0 kcat -b localhost:29092 -L
+----
+====
 [.console-output]
 [source, bash-shell]
 ----

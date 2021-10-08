@@ -19,6 +19,8 @@ include::https://raw.githubusercontent.com/redhat-developer-demos/rhd-tutorial-c
 |https://adoptopenjdk.net/[Download]
 |https://adoptopenjdk.net/[Download]
 |https://adoptopenjdk.net/[Download]
+
+IMPORTANT: An alternative for running `kcat` is to use the following Docker command and image  `docker run -it --network=host edenhill/kcat:1.7.0 kcat`
 |===
 
 include::https://raw.githubusercontent.com/redhat-developer-demos/rhd-tutorial-common/master/optional-requisites.adoc[]
@@ -80,11 +82,28 @@ IMPORTANT: Notice that Kafka container is exposing two ports to outside. The rea
 
 Verify that the Kafka cluster is correctly started and configured by running the following command:
 
+[tabs]
+====
+kcat::
++
+--
 [.console-input]
 [source, bash-shell]
 ----
-kafkacat -b localhost:9092 -L
+kcat -b localhost:9092 -L
 ----
+--
+kcat in Docker::
++
+--
+[.console-input]
+[source, bash-shell]
+----
+docker run -it --network=host edenhill/kcat:1.7.0 kcat -b localhost:29092 -L
+----
+====
+
+
 
 [.console-output]
 [source,bash,subs="+macros,+attributes"]
@@ -94,3 +113,6 @@ Metadata for all topics (from broker 0: localhost:9092/0):
   broker 0 at localhost:9092 (controller)
  0 topics:
 ----
+
+
+
