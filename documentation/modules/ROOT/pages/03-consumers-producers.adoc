@@ -38,20 +38,35 @@ The consumer is "subscribed" to a partition.
 
 == Consume and Produce Messages
 
-Before digging into how to produce and consume data from Java, let's see how to use `kafkacat` to do it.
+Before digging into how to produce and consume data from Java, let's see how to use `kcat` to do it.
 
-`kafkacat` is a great tool for these use cases, and it is the _de-facto_ tool to inspect data in Kafka.
+`kcat` is a great tool for these use cases, and it is the _de-facto_ tool to inspect data in Kafka.
 
 [#consume-kafkacat]
 === Consuming messages with Kafkacat
 
 Open a new terminal, _terminal 1_, and run the following command:
 
+[tabs]
+====
+kcat::
++
+--
 [.console-input]
 [source, bash-shell]
 ----
-kafkacat -b localhost:29092 -t songs -C -K:
+kcat -b localhost:29092 -t songs -C -K:
 ----
+--
+kcat in Docker::
++
+--
+[.console-input]
+[source, bash-shell]
+----
+docker run -it --network=host edenhill/kcat:1.7.0 kcat -b localhost:29092 -t songs -C -K:
+----
+====
 
 [.console-output]
 [source, bash-shell]
@@ -74,13 +89,29 @@ include::example$initial_songs.json[]
 Then insert each of this line as a new message.
 The number before the `:` is taken as an id.
 
+[tabs]
+====
+kcat::
++
+--
 [.console-input]
 [source, bash-shell]
 ----
-kafkacat -b localhost:29092 -t songs -P -l -K: initial_songs
+kcat -b localhost:29092 -t songs -P -l -K: initial_songs
+----
+--
+kcat in Docker::
++
+--
+[.console-input]
+[source, bash-shell]
+----
+docker run -it --network=host edenhill/kcat:1.7.0 kcat -b localhost:29092 -t songs -P -l -K: initial_songs
 ----
 
-Switch back to _terminal 1_ where you are running `kafkacat` as a consumer.
+====
+
+Switch back to _terminal 1_ where you are running `kcat` as a consumer.
 You've defined this at <<Consuming messages with Kafkacat>> section.
 
 Now the output of the terminal has been updated showing the consumed messages:
@@ -99,15 +130,30 @@ Notice that the `offset` of this consumer has been updated to 2, as the two firs
 === Playing with Offsets
 
 A Producer always produces content at the end of a topic, meanwhile, a consumer can consume from any offset.
-Still on _terminal 1_, stop the `kafkacat` process by typing kbd:[Ctrl + C].
+Still on _terminal 1_, stop the `kcat` process by typing kbd:[Ctrl + C].
 
-Then start again `kafkacat` with the same command:
+Then start again `kcat` with the same command:
 
+[tabs]
+====
+kcat::
++
+--
 [.console-input]
 [source, bash-shell]
 ----
-kafkacat -b localhost:29092 -t songs -C -K:
+kcat -b localhost:29092 -t songs -P -l -K: initial_songs
 ----
+--
+kcat in Docker::
++
+--
+[.console-input]
+[source, bash-shell]
+----
+docker run -it --network=host edenhill/kcat:1.7.0 kcat -b localhost:29092 -t songs -P -l -K: initial_songs
+----
+====
 
 [.console-output]
 [source, bash-shell]
@@ -118,18 +164,35 @@ kafkacat -b localhost:29092 -t songs -C -K:
 ----
 
 Notice that all stream is consumed.
-This is happening because by default `kafkacat` is getting all the content from a topic since the beginning of the stream.
+This is happening because by default `kcat` is getting all the content from a topic since the beginning of the stream.
 But you can change that.
 
-Stop again `kafkacat` process by typing kbd:[Ctrl + C].
+Stop again `kcat` process by typing kbd:[Ctrl + C].
 
 And start again with the following command:
 
+[tabs]
+====
+kcat::
++
+--
 [.console-input]
 [source, bash-shell]
 ----
-kafkacat -b localhost:29092 -t songs -o 1 -C -K:
+kcat -b localhost:29092 -t songs -o 1 -C -K:
+
 ----
+--
+kcat in Docker::
++
+--
+[.console-input]
+[source, bash-shell]
+----
+docker run -it --network=host edenhill/kcat:1.7.0 kcat -b localhost:29092 -t songs -o 1 -C -K:
+
+----
+====
 
 [.console-output]
 [source, bash-shell]
@@ -183,19 +246,49 @@ Topic: songs	PartitionCount: 1	ReplicationFactor: 1	Configs: segment.bytes=10737
 
 In one terminal produce data again:
 
+[tabs]
+====
+kcat::
++
+--
 [.console-input]
 [source, bash-shell]
 ----
-kafkacat -b localhost:29092 -t songs -P -l -K: initial_songs
+kcat -b localhost:29092 -t songs -P -l -K: initial_songs
 ----
+--
+kcat in Docker::
++
+--
+[.console-input]
+[source, bash-shell]
+----
+docker run -it --network=host edenhill/kcat:1.7.0 kcat -b localhost:29092 -t songs -P -l -K: initial_songs
+----
+====
 
 In the other terminal consume this data so you know that it has been inserted correctly:
 
+[tabs]
+====
+kcat::
++
+--
 [.console-input]
 [source, bash-shell]
 ----
-kafkacat -b localhost:29092 -t songs -C -K:
+kcat -b localhost:29092 -t songs -C -K:
 ----
+--
+kcat in Docker::
++
+--
+[.console-input]
+[source, bash-shell]
+----
+docker run -it --network=host edenhill/kcat:1.7.0 kcat -b localhost:29092 -t songs -C -K:
+----
+====
 
 [.console-output]
 [source, bash-shell]
@@ -205,16 +298,30 @@ kafkacat -b localhost:29092 -t songs -C -K:
 % Reached end of topic songs [0] at offset 2
 ----
 
-Stop the `kafkacat` process by typing kbd:[Ctrl + C] and wait for ~10 seconds (ie `sleep 15`).
+Stop the `kcat` process by typing kbd:[Ctrl + C] and wait for ~10 seconds (ie `sleep 15`).
 
-Run the `kafkacat` in consumer mode again:
+Run the `kcat` in consumer mode again:
 
+[tabs]
+====
+kcat::
++
+--
 [.console-input]
 [source, bash-shell]
 ----
-kafkacat -b localhost:29092 -t songs -C -K:
+kcat -b localhost:29092 -t songs -C -K:
 ----
-
+--
+kcat in Docker::
++
+--
+[.console-input]
+[source, bash-shell]
+----
+docker run -it --network=host edenhill/kcat:1.7.0 kcat -b localhost:29092 -t songs -C -K:
+----
+====
 [.console-output]
 [source, bash-shell]
 ----
@@ -270,17 +377,32 @@ Now that the topic is deleted, you can run the `exit` command:
 exit
 ----
 
-If you run `kafkacat` again, you'll see that no data is in the topic:
+If you run `kcat` again, you'll see that no data is in the topic:
 
+[tabs]
+====
+kcat::
++
+--
 [.console-input]
 [source, bash-shell]
 ----
-kafkacat -b localhost:29092 -t songs -C -K:
+kcat -b localhost:29092 -t songs -C -K:
 ----
+--
+kcat in Docker::
++
+--
+[.console-input]
+[source, bash-shell]
+----
+docker run -it --network=host edenhill/kcat:1.7.0 kcat -b localhost:29092 -t songs -C -K:
+----
+====
 
-Stop `kafkacat` process by typing kbd:[Ctrl + C].
+Stop `kcat` process by typing kbd:[Ctrl + C].
 
 [#kafkacat-cleanup]
 === Clean Up
 
-Stop the current `kafkacat` process by typing kbd:[Ctrl + C] on the terminal.
+Stop the current `kcat` process by typing kbd:[Ctrl + C] on the terminal.

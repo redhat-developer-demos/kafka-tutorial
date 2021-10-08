@@ -105,13 +105,28 @@ exit
 [#topic-info]
 == Get Topic information
 
-You can get topic information by using `kafkacat`:
+You can get topic information by using `kcat`:
 
+[tabs]
+====
+kcat::
++
+--
 [.console-input]
 [source, bash-shell]
 ----
-kafkacat -b localhost:29092 -L
+kcat -b localhost:29092 -L
 ----
+--
+kcat in Docker::
++
+--
+[.console-input]
+[source, bash-shell]
+----
+docker run -it --network=host edenhill/kcat:1.7.0 kcat -b localhost:29092 -L
+----
+====
 
 [.console-output]
 [source, bash-shell]
