@@ -1,4 +1,4 @@
-= Produces and Consumers
+= Producers and Consumers
 include::_attributes.adoc[]
 
 [#producer]
