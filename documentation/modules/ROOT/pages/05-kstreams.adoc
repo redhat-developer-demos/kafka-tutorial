@@ -154,7 +154,7 @@ kcat::
 [.console-input]
 [source, bash-shell]
 ----
-kcat -b localhost:29092 -t songs -P -l -K: update2_songs
+kcat -b localhost:29092 -t songs -P -l -K: update_songs2
 ----
 --
 kcat in Docker::
@@ -287,7 +287,7 @@ In terminal 1, run the next command, and then immediatelly run the commandd you'
 [.console-input]
 [source, bash-shell,subs="+macros,+attributes"]
 ----
-kafkacat -b localhost:29092 -t played -P -l -K: apps/windowing/first-batch.json
+kcat -b localhost:29092 -t played -P -l -K: apps/windowing/first-batch.json
 ----
 
 And run the command that you've prepared in the terminal 2:
