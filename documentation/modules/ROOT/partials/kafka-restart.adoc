@@ -1,26 +1,27 @@
-To restart Kafka (and Zookeeper) go to `docker-compose` terminal and stop the process by typing kbd:[Ctrl + C].
+To restart Kafka (and ZooKeeper) go to the `docker compose` terminal and stop the process by typing kbd:[Ctrl + C].
 
 Then run:
 
 [.lines_1]
 [source, bash-session]
 ----
-docker-compose rm 
+docker compose rm 
 
-Going to remove kafka, it_zookeeper_1
-Are you sure? [yN] y
-Removing kafka          ... done
-Removing it_zookeeper_1 ... done
+? Going to remove kafka, zookeeper (y/N) -> y
+[+] Running 2/0
+ ⠿ Container zookeeper  Removed
+ ⠿ Container kafka      Removed
 ----
 
 [.lines_1]
 [source, bash-session]
 ----
-docker-compose up --remove-orphans
+docker compose up --remove-orphans
 
-kafka        | [2020-05-04 11:30:27,392] INFO [SocketServer brokerId=0] Started data-plane processors for 2 acceptors (kafka.network.SocketServer)
-kafka        | [2020-05-04 11:30:27,396] INFO Kafka version: 2.4.0 (org.apache.kafka.common.utils.AppInfoParser)
-kafka        | [2020-05-04 11:30:27,397] INFO Kafka commitId: 77a89fcf8d7fa018 (org.apache.kafka.common.utils.AppInfoParser)
-kafka        | [2020-05-04 11:30:27,397] INFO Kafka startTimeMs: 1588591827393 (org.apache.kafka.common.utils.AppInfoParser)
-kafka        | [2020-05-04 11:30:27,398] INFO [KafkaServer id=0] started (kafka.server.KafkaServer)
+kafka      | [2022-12-15 08:59:25,688] INFO Kafka version: 3.3.1 (org.apache.kafka.common.utils.AppInfoParser)
+kafka      | [2022-12-15 08:59:25,688] INFO Kafka commitId: e23c59d00e687ff5 (org.apache.kafka.common.utils.AppInfoParser)
+kafka      | [2022-12-15 08:59:25,688] INFO Kafka startTimeMs: 1671094765681 (org.apache.kafka.common.utils.AppInfoParser)
+kafka      | [2022-12-15 08:59:25,689] INFO [KafkaServer id=0] started (kafka.server.KafkaServer)
+kafka      | [2022-12-15 08:59:25,750] INFO [BrokerToControllerChannelManager broker=0 name=forwarding]: Recorded new controller, from now on will use broker kafka:9092 (id: 0 rack: null) (kafka.server.BrokerToControllerRequestThread)
+kafka      | [2022-12-15 08:59:25,751] INFO [BrokerToControllerChannelManager broker=0 name=alterPartition]: Recorded new controller, from now on will use broker kafka:9092 (id: 0 rack: null) (kafka.server.BrokerToControllerRequestThread)
 ----

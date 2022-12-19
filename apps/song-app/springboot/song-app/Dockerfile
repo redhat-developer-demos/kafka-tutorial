@@ -1,8 +1,9 @@
-FROM quay.io/rhdevelopers/ubi8-java-11
+FROM registry.access.redhat.com/ubi8/openjdk-17:1.14
 
-COPY target/song-app.jar /deployments/song-app.jar
+ENV LANGUAGE='en_US:en'
+
+COPY --chown=185 target/song-app-0.0.1-SNAPSHOT.jar /deployments/song-app.jar
 
 EXPOSE 8080
-USER 1001
-
-ENTRYPOINT [ "/deployments/run-java.sh" ]
+USER 185
+ENV JAVA_APP_JAR="/deployments/song-app.jar"

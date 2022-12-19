@@ -6,12 +6,18 @@ Kubernetes is an open source container orchestration platform that automates man
 
 Kubernetes is an ideal platform for hosting cloud-native applications that require rapid scaling, like real-time data streaming through Apache Kafka.
 
-But deploying a Kafka cluster with Zookeeper and more than one broker, it is not an easy task and https://strimzi.io/[Strimzi] makes this task a simple task.
+But deploying a Kafka cluster with - or in newer versions without ZooKeeper - and more than one broker, is not an easy task. It is particularly challenging to get the following three aspects right:
+
+* networking
+* storage
+* security
+
+Instead of trying to manually configure everything from scratch which is both, cumbersome and error-prone, we should delegate this to Kubernetes operators. To do so, we can use https://strimzi.io/[Strimzi] which offers a powerful and convenient way to deploy different Kafka cluster architectures to Kubernetes.
 
 [#kubernetes]
 == Kubernetes
 
-To run this part you need a Kubernetes cluster running.
+For this part of the tutorial you need a Kubernetes cluster running.
 
 [#install-minikube]
 === Install Minikube
@@ -91,7 +97,7 @@ kubectl get pods
 [source, bash-shell,subs="+macros,+attributes"]
 ----
 NAME                                          READY   STATUS    RESTARTS   AGE
-strimzi-cluster-operator-59b99fc7cf-h4kf8     1/1     Running   0          6m53s
+strimzi-cluster-operator-f696c85f7-9fggx      1/1     Running   0          6m53s
 ----
 --
 OpenShift::
@@ -116,15 +122,15 @@ kubectl get crds | grep kafka
 [source, bash-shell,subs="+macros,+attributes"]
 ----
 NAME                                  CREATED AT
-kafkabridges.kafka.strimzi.io         2020-05-07T07:50:38Z
-kafkaconnectors.kafka.strimzi.io      2020-05-07T07:50:38Z
-kafkaconnects.kafka.strimzi.io        2020-05-07T07:50:38Z
-kafkaconnects2is.kafka.strimzi.io     2020-05-07T07:50:38Z
-kafkamirrormaker2s.kafka.strimzi.io   2020-05-07T07:50:37Z
-kafkamirrormakers.kafka.strimzi.io    2020-05-07T07:50:39Z
-kafkas.kafka.strimzi.io               2020-05-07T07:50:37Z
-kafkatopics.kafka.strimzi.io          2020-05-07T07:50:38Z
-kafkausers.kafka.strimzi.io           2020-05-07T07:50:37Z
+kafkabridges.kafka.strimzi.io         2022-12-19T07:16:50Z
+kafkaconnectors.kafka.strimzi.io      2022-12-19T07:16:50Z
+kafkaconnects.kafka.strimzi.io        2022-12-19T07:16:50Z
+kafkamirrormaker2s.kafka.strimzi.io   2022-12-19T07:16:50Z
+kafkamirrormakers.kafka.strimzi.io    2022-12-19T07:16:50Z
+kafkarebalances.kafka.strimzi.io      2022-12-19T07:16:50Z
+kafkas.kafka.strimzi.io               2022-12-19T07:16:50Z
+kafkatopics.kafka.strimzi.io          2022-12-19T07:16:50Z
+kafkausers.kafka.strimzi.io           2022-12-19T07:16:50Z
 ----
 
 [#deploy-kafka]
@@ -134,7 +140,7 @@ To deploy the cluster, you need to create a Kafka resource file using the Kafka 
 
 In this case, you are going to deploy a Kafka cluster with 3 instances and ephemeral storage.
 
-The file you are going to apply is the next one:
+The file you are going to apply is shown below:
 
 [.console-input]
 [source, bash-shell]
@@ -157,7 +163,7 @@ kubectl apply -f https://strimzi.io/examples/latest/kafka/kafka-ephemeral.yaml -
 kafka.kafka.strimzi.io/my-cluster created
 ----
 
-To wait until Kafka cluster is up and running, you can run the following comamnd:
+To wait until Kafka cluster is up and running, you can run the following command:
 
 [.console-input]
 [source, bash-shell]
@@ -182,15 +188,15 @@ kubectl get pods
 [.console-output]
 [source, bash-shell,subs="+macros,+attributes"]
 ----
-NAME                                          READY   STATUS    RESTARTS   AGE
-my-cluster-entity-operator-77b5dd5594-hl7cf   3/3     Running   0          44s
-my-cluster-kafka-0                            2/2     Running   0          70s
-my-cluster-kafka-1                            2/2     Running   0          70s
-my-cluster-kafka-2                            2/2     Running   0          70s
-my-cluster-zookeeper-0                        2/2     Running   0          108s
-my-cluster-zookeeper-1                        2/2     Running   0          108s
-my-cluster-zookeeper-2                        2/2     Running   0          108s
-strimzi-cluster-operator-59b99fc7cf-h4kf8     1/1     Running   0          6m53s
+NAME                                          READY   STATUS    RESTARTS      AGE
+my-cluster-entity-operator-7dfb85ccf9-28dqd   3/3     Running   0             95s
+my-cluster-kafka-0                            1/1     Running   0             118s
+my-cluster-kafka-1                            1/1     Running   0             118s
+my-cluster-kafka-2                            1/1     Running   0             118s
+my-cluster-zookeeper-0                        1/1     Running   0             2m21s
+my-cluster-zookeeper-1                        1/1     Running   0             2m21s
+my-cluster-zookeeper-2                        1/1     Running   0             2m21s
+strimzi-cluster-operator-f696c85f7-9fggx      1/1     Running   0             7m49s
 ----
 
 And services:
@@ -204,45 +210,45 @@ kubectl get services
 [.console-output]
 [source, bash-shell,subs="+macros,+attributes"]
 ----
-NAME                          TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)                      AGE
-kubernetes                    ClusterIP   10.96.0.1        <none>        443/TCP                      11m
-my-cluster-kafka-bootstrap    ClusterIP   10.103.67.179    <none>        9091/TCP,9092/TCP,9093/TCP   92s
-my-cluster-kafka-brokers      ClusterIP   None             <none>        9091/TCP,9092/TCP,9093/TCP   92s
-my-cluster-zookeeper-client   ClusterIP   10.101.161.217   <none>        2181/TCP                     2m11s
-my-cluster-zookeeper-nodes    ClusterIP   None             <none>        2181/TCP,2888/TCP,3888/TCP   2m11s
+NAME                          TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)                               AGE
+kubernetes                    ClusterIP   10.96.0.1       <none>        443/TCP                               10m33s
+my-cluster-kafka-bootstrap    ClusterIP   10.98.94.157    <none>        9091/TCP,9092/TCP,9093/TCP            3m12s
+my-cluster-kafka-brokers      ClusterIP   None            <none>        9090/TCP,9091/TCP,9092/TCP,9093/TCP   3m12s
+my-cluster-zookeeper-client   ClusterIP   10.104.185.52   <none>        2181/TCP                              3m35s
+my-cluster-zookeeper-nodes    ClusterIP   None            <none>        2181/TCP,2888/TCP,3888/TCP            3m35s
 ----
 
 [#deploy-service-strimzi]
 == Deploying Services
 
 Let's deploy the example done at <<Developing Consumers and Producers in Java>>, but in Kubernetes instead of Docker.
-At this time, Quarkus version of the `song` - `song-indexer` application is deployed.
+This time, the Quarkus versions of the `song` / `song-indexer` applications are deployed.
 
 [#kubernetes-song-app]
 === Deploy Song Service
 
-To deploy the Song Service go to:
+To deploy the `song-app` service go to its folder and build the application
 
 [.console-input]
 [source, bash-shell]
 ----
 cd $TUTORIAL_HOME/apps/song-app/quarkus/song-app
+./mvnw clean package
 ----
 
-And use `kubectl` to deploy the service:
+After a successful build use `kubectl` to deploy it:
 
 [.console-input]
 [source, bash-shell]
 ----
-kubectl apply -f src/main/kubernetes/kubernetes.yml
+kubectl apply -f target/kubernetes/kubernetes.yml
 ----
 
 [.console-output]
 [source, bash-shell,subs="+macros,+attributes"]
 ----
-serviceaccount/kafka-tutorial-song-app created
-service/kafka-tutorial-song-app created
-deployment.apps/kafka-tutorial-song-app created
+service/kafka-tutorial-song-app-quarkus created
+deployment.apps/kafka-tutorial-song-app-quarkus created
 ----
 
 Verify that the service has been deployed correctly:
@@ -256,42 +262,43 @@ kubectl get pods
 [.console-output]
 [source, bash-shell,subs="+macros,+attributes"]
 ----
-kafka-tutorial-song-app-84f8476bc8-vhr4k           1/1     Running   0          8m53s
-my-cluster-entity-operator-77b5dd5594-hl7cf        3/3     Running   3          8h
-my-cluster-kafka-0                                 2/2     Running   3          8h
-my-cluster-kafka-1                                 2/2     Running   3          8h
-my-cluster-kafka-2                                 2/2     Running   3          8h
-my-cluster-zookeeper-0                             2/2     Running   2          8h
-my-cluster-zookeeper-1                             2/2     Running   2          8h
-my-cluster-zookeeper-2                             2/2     Running   2          8h
-strimzi-cluster-operator-59b99fc7cf-h4kf8          1/1     Running   1          8h
+NAME                                                       READY   STATUS    RESTARTS      AGE
+kafka-tutorial-song-app-quarkus-55df95589f-fg5v2           1/1     Running   0             7m23s
+my-cluster-entity-operator-7dfb85ccf9-28dqd                3/3     Running   0             21m
+my-cluster-kafka-0                                         1/1     Running   0             21m
+my-cluster-kafka-1                                         1/1     Running   0             21m
+my-cluster-kafka-2                                         1/1     Running   0             21m
+my-cluster-zookeeper-0                                     1/1     Running   0             22m
+my-cluster-zookeeper-1                                     1/1     Running   0             22m
+my-cluster-zookeeper-2                                     1/1     Running   0             22m
+strimzi-cluster-operator-f696c85f7-9fggx                   1/1     Running   0             37m49s
 ----
 
 [#kubernetes-song-indexer-app]
 === Deploy Song Indexer Service
 
-To deploy the Song Indexer Service go to:
+To deploy the `song-indexer-app` service go to its folder and build the application
 
 [.console-input]
 [source, bash-shell]
 ----
 cd $TUTORIAL_HOME/apps/song-indexer-app/quarkus/song-indexer-app
+./mvnw clean package
 ----
 
-And use `kubectl` to deploy the service:
+And use `kubectl` to deploy the it:
 
 [.console-input]
 [source, bash-shell]
 ----
-kubectl apply -f src/main/kubernetes/kubernetes.yml
+kubectl apply -f target/kubernetes/kubernetes.yml
 ----
 
 [.console-output]
 [source, bash-shell,subs="+macros,+attributes"]
 ----
-serviceaccount/kafka-tutorial-song-indexer-app created
-service/kafka-tutorial-song-indexer-app created
-deployment.apps/kafka-tutorial-song-indexer-app created
+service/kafka-tutorial-song-indexer-app-quarkus created
+deployment.apps/kafka-tutorial-song-indexer-app-quarkus created
 ----
 
 Verify that the service has been deployed correctly:
@@ -305,17 +312,17 @@ kubectl get pods
 [.console-output]
 [source, bash-shell,subs="+macros,+attributes"]
 ----
-NAME                                               READY   STATUS    RESTARTS   AGE
-kafka-tutorial-song-app-84f8476bc8-vhr4k           1/1     Running   0          8m53s
-kafka-tutorial-song-indexer-app-58fbc7d6fd-979zw   1/1     Running   0          4m6s
-my-cluster-entity-operator-77b5dd5594-hl7cf        3/3     Running   3          8h
-my-cluster-kafka-0                                 2/2     Running   3          8h
-my-cluster-kafka-1                                 2/2     Running   3          8h
-my-cluster-kafka-2                                 2/2     Running   3          8h
-my-cluster-zookeeper-0                             2/2     Running   2          8h
-my-cluster-zookeeper-1                             2/2     Running   2          8h
-my-cluster-zookeeper-2                             2/2     Running   2          8h
-strimzi-cluster-operator-59b99fc7cf-h4kf8          1/1     Running   1          8h
+NAME                                                       READY   STATUS    RESTARTS      AGE
+kafka-tutorial-song-app-quarkus-55df95589f-fg5v2           1/1     Running   0             9m21s
+kafka-tutorial-song-indexer-app-quarkus-6c4b56f448-xgshm   1/1     Running   0             1m10s
+my-cluster-entity-operator-7dfb85ccf9-28dqd                3/3     Running   0             23m
+my-cluster-kafka-0                                         1/1     Running   0             23m
+my-cluster-kafka-1                                         1/1     Running   0             23m
+my-cluster-kafka-2                                         1/1     Running   0             23m
+my-cluster-zookeeper-0                                     1/1     Running   0             24m
+my-cluster-zookeeper-1                                     1/1     Running   0             24m
+my-cluster-zookeeper-2                                     1/1     Running   0             24m
+strimzi-cluster-operator-f696c85f7-9fggx                   1/1     Running   0             39m33s
 ----
 
 [#kubernetes-testing]
@@ -323,52 +330,76 @@ strimzi-cluster-operator-59b99fc7cf-h4kf8          1/1     Running   1          
 
 Let's test that it works as expected.
 
-The first thing that you need to know is the exposed port of each of the services.
+The first thing we do is create tunnels to the corresponding services of the two applications. This can be easily done with the `minikube service` command.
+
+In a separate terminal window run the following:
 
 [.console-input]
 [source, bash-shell]
 ----
-kubectl get services
+minikube service kafka-tutorial-song-indexer-app-quarkus
 ----
+
+Your console output should look similar (minikube IP and ports in use may vary of course). In case a browser window opens automatically you can close it because it's not needed in our case.
 
 [.console-output]
 [source, bash-shell,subs="+macros,+attributes"]
 ----
-NAME                              TYPE           CLUSTER-IP       EXTERNAL-IP   PORT(S)                      AGE
-kafka-tutorial-song-app           LoadBalancer   10.99.68.119     <pending>     8080:31834/TCP               5m15s
-kafka-tutorial-song-indexer-app   LoadBalancer   10.103.172.33    <pending>     8080:30581/TCP               28s
-kubernetes                        ClusterIP      10.96.0.1        <none>        443/TCP                      8h
-my-cluster-kafka-bootstrap        ClusterIP      10.103.67.179    <none>        9091/TCP,9092/TCP,9093/TCP   8h
-my-cluster-kafka-brokers          ClusterIP      None             <none>        9091/TCP,9092/TCP,9093/TCP   8h
-my-cluster-zookeeper-client       ClusterIP      10.101.161.217   <none>        2181/TCP                     8h
-my-cluster-zookeeper-nodes        ClusterIP      None             <none>        2181/TCP,2888/TCP,3888/TCP   8h
+|-----------|---------------------------------|-------------|---------------------------|
+| NAMESPACE |              NAME               | TARGET PORT |            URL            |
+|-----------|---------------------------------|-------------|---------------------------|
+| default   | kafka-tutorial-song-app-quarkus | http/80     | http://192.168.49.2:30588 |
+|-----------|---------------------------------|-------------|---------------------------|
+🏃  Starting tunnel for service kafka-tutorial-song-app-quarkus.
+|-----------|---------------------------------|-------------|------------------------|
+| NAMESPACE |              NAME               | TARGET PORT |          URL           |
+|-----------|---------------------------------|-------------|------------------------|
+| default   | kafka-tutorial-song-app-quarkus |             | http://127.0.0.1:65000 |
+|-----------|---------------------------------|-------------|------------------------|
+🎉  Opening service default/kafka-tutorial-song-app-quarkus in default browser...
 ----
 
-In this specific case, `kafka-tutorial-song-app` port is `31834` and `kafka-tutorial-song-indexer-app` is `30581` but this is going to change every time you deploy these services.
+The important part is shown in the lower right box, namely use `127.0.0.1:65000` as host and port for any HTTP commands against the `song-app`.
 
-Then you need the IP to connect.
-This IP is the minikube IP and it is known by running the following command:
+Again, in a separate terminal window run the following:
 
 [.console-input]
 [source, bash-shell]
 ----
-minikube ip -p kafka
+minikube service kafka-tutorial-song-indexer-app-quarkus
 ----
+
+Your console output should look similar (minikube IP and ports in use may vary of course). In case a browser window opens automatically you can close it because it's not needed in our case.
 
 [.console-output]
 [source, bash-shell,subs="+macros,+attributes"]
 ----
-192.168.99.107
+|-----------|-----------------------------------------|-------------|---------------------------|
+| NAMESPACE |                  NAME                   | TARGET PORT |            URL            |
+|-----------|-----------------------------------------|-------------|---------------------------|
+| default   | kafka-tutorial-song-indexer-app-quarkus | http/80     | http://192.168.49.2:32548 |
+|-----------|-----------------------------------------|-------------|---------------------------|
+🏃  Starting tunnel for service kafka-tutorial-song-indexer-app-quarkus.
+|-----------|-----------------------------------------|-------------|------------------------|
+| NAMESPACE |                  NAME                   | TARGET PORT |          URL           |
+|-----------|-----------------------------------------|-------------|------------------------|
+| default   | kafka-tutorial-song-indexer-app-quarkus |             | http://127.0.0.1:64938 |
+|-----------|-----------------------------------------|-------------|------------------------|
+🎉  Opening service default/kafka-tutorial-song-indexer-app-quarkus in default browser...
 ----
 
-Open 2 terminal windows, one for populating songs, and another one to get the result from the indexer service.
+The important part is shown in the lower right box, namely use `127.0.0.1:64938` as host and port for any HTTP commands against the `song-indexer-app`.
 
-In the terminal 1 run the following command:
+With the above, you successfully created tunnels to the two services and you are now ready to communicate with the applications from you host machine. 
+
+Open another 2 terminal windows, one for populating songs, and another one to get the SSE stream from the indexer service.
+
+In the terminal 1 run the following command against the `song-indexer-app`:
 
 [.console-input]
 [source, bash-shell]
 ----
-http GET 192.168.99.107:30581/events --stream --timeout=600
+http GET 127.0.0.1:64938/events --stream --timeout=600
 ----
 
 [.console-output]
@@ -379,26 +410,36 @@ Content-Type: text/event-stream
 transfer-encoding: chunked
 ----
 
-In the terminal 2 run the following command:
+In the terminal 2 run the following command against the `song-app`:
 
 [.console-input]
 [source, bash-shell]
 ----
-http POST 192.168.99.107:31834/songs id=107 name=Portals author='Alan Silvestri'
+http POST 127.0.0.1:65000/songs id=107 name=Portals author='Alan Silvestri'
 ----
-
-Inspect the output of terminal 2, to check that the song has been processed by indexer service.
 
 [.console-output]
 [source, bash-shell,subs="+macros,+attributes"]
 ----
-data: {"author":"Alan Silvestri","id":107,"name":"Portals","op":"ADD"}
+HTTP/1.1 201 Created
+content-length: 0
+----
+
+Inspect the output of terminal 1, to check that the published song data has been processed by the `song-indexer-app`:
+
+[.console-output]
+[source, bash-shell,subs="+macros,+attributes"]
+----
+
+id:7d92d0ed-ab04-4182-96b0-0bc4f97156c5
+data:Song 107 processed
+
 ----
 
 [#kubernetes-cleanup]
 == Clean Up
 
-To clean the namespace run:
+To clean up the whole namespace run:
 
 [.console-input]
 [source, bash-shell]

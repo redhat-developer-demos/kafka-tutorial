@@ -1,2 +1,1 @@
-Rememeber to have Zookeeper and Apache Kafka up and running.
-If not, you can follow <<Setup Kafka>> section to learn how to do it using _docker-compose_.
+Remember you need to have both, ZooKeeper and Apache Kafka correctly configured as well as up and running. If not, you can follow the <<Setup Kafka>> section to learn how to do it using _docker compose_.

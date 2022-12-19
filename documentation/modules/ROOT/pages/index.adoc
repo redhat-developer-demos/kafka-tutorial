@@ -1,18 +1,23 @@
-= Welcome to Kafka Tutorial
+= Welcome to the Kafka Tutorial
 :page-layout: home
 :!sectids:
 
 [.text-center.strong]
 == Kafka
 
-A Kafka tutorial to show you the basic concepts of Kafka, how to deploy it to Kubernetes, develop services that consume and produce from/to Kafka topic in Java, and how to stream data with KStreams.
+This is a Kafka tutorial to explain and show you:
+
+* how to run Kafka locally with Docker Compose
+* the basic concepts and fundamental terminology of Kafka
+* how to develop services that consume and produce from/to Kafka topic(s) in Java
+* how to deploy Kafka into Kubernetes with Strimzi operators
 
 [.tiles.browse]
 == Browse modules
 
 [.tile]
 .xref:01-setup.adoc[Get Started]
-* xref:01-setup.adoc#kafka[Install Kafka]
+* xref:01-setup.adoc#kafka[Run Kafka locally]
 
 [.tile]
 .xref:02-topic-partitions.adoc[Topics & Partitions]

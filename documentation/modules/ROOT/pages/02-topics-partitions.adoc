@@ -2,53 +2,51 @@
 include::_attributes.adoc[]
 
 Apache Kafka is a distributed robust publish/subscribe system.
-It acts as a message queue but it offers two major advantages over traditional pub/sub systems.
+It can act as a message queue but it offers two major advantages over traditional pub/sub systems.
 
 . Storing records with Fault Tolerance.
-. Processing streams (data-streams) as they occur in real-time instead of in a batch.
+. Processing data streams as they occur in near real-time instead of in large batches.
 
 image::cbp.png[]
 
 Notice in the next figure, the difference in how the entities are stored in a Kafka topic VS how they are stored in an RDBMS.
-Events are always stored as they are applied in the log and they are never overridden, meanwhile, in RDBMS, you are storing a snapshot of an entity, when you update an entity you are modifying the original record.
+Events are always stored as they are appended in the log and they are never overridden, whereas in an RDBMS, you are storing a snapshot of an entity and when you update an entity you are modifying the original record "in place".
  
 image::dbvsevent.png[]
 
 Other differences are:
 
-* Real Time vs Batch processing.
-* Distributed/Fault Tolerant vs "None" Distributed by construction.
+* Real Time vs batch processing
+* Distributed / Fault Tolerant vs none-distributed / single point of failure
 
 [#topics]
 == What are Topics?
 
-A topic is an ordered collection of events that are persisted to disk, replicated for fault-tolerance and they have a duration, as an event can be available for just some minutes or forever.
+A topic is a collection of events that are persisted to disk. Topics support the concept of data retention such that events can be appended and kept for longer periods (e.g. days/weeks/months) or only be stored short-lived (e.g. minutes/hours)
 
 image::cbtp.png[]
 
 [#partitions]
 == What are Partitions?
 
-A topic might be divided into several partitions to improve the performance in cases of heavy load.
+A topic is further divided into multipe partitions - at least one, but can be 10s or 100s - to improve the performance in cases of heavy load. The number of topic partitions defines the maximum parallelism a single consuming application consisting of multiple instances can achive for processing the stored events.
 
-The partitions of a topic are distributed across all the Apache Kafka brokers to maximize the parallelism when working with topics.
+The partitions of a topic are distributed (i.e. replicated) across all the Kafka brokers to achieve fault-tolerance and to increase the parallelism when working with topics.
 
-The sum of all events of all the partitions is what conforms a topic.
+The sum of all events in all the topic's partitions is what conforms a topic as a whole.
 
 image::pbtpc.png[]
 
-Each partition can be configured to be replicated across different Kafka brokers.
+Topic partitions can be configured to be replicated across different Kafka brokers.
 
 image::bp.png[]
 
-Each partition can be replicated and one of the partition is designed the leader.
-All events are produced and consumed from the leader, and the other replicas just stay in sync  with the leader. 
-If the leader becomes unavailable, one of the synced replicas becomes the new leader.
+For each replicated topic partition one of the partitions is the designated leader.
+Usually all events are produced to and consumed from the leader, and the other replicas stay in sync with the leader. If the leader becomes unavailable, one of the synced replicas becomes the new leader.
 
 [IMPORTANT]
 ====
-From Apache Kafka 2.4.0, the previous statement is not strictly true.
-Although this is the most used behaviour, now a consumer can get messages from the closer replicas even though they aren't leaders.
+Starting with Apache Kafka 2.4.0 a consumer also can be configured to process messages from other replicas even though they aren't leaders.
 
 .Red Partitions are the leaders
 image::After-KIP-392.png[]
@@ -59,33 +57,32 @@ Also a `ReplicaSelector` interface is provided so you can implement a custom sel
 [#messages]
 == What are Messages?
 
-A message is a Key/Value pair that is stored inside a topic.
-This message is persisted and durable during the configured lifespan.
+A message (also known as a Kafka record) is a key/value pair that is stored inside a topic partition. Message are persisted and durable in accordance with the configured retention settings for a topic.
 
-A message is a typical small chunk of data with two parts the key (optional) to identify the message and it is used by default to decide in which partition the message is stored, and the value which is the content of the message which can be in any format.
+A message is typically a "smallish" chunk of data consisting of its key (optional) to identify the message. If the key is present it is used by default to decide in which topic partition a message should get stored. The value represents the payload of the message. Both, keys and values, can support different serialization formats such as Avro, Json or Protobuf. Kafka brokers themselves don't care about the data format at all and only store sequences of bytes.
 
-Moreover, each message contains a metadata timestamp attribute that is either set by the producer at creation time or by the broker on insertion time.
+Additionally, each message contains metadata such as a timestamp attribute that is either set by the producer at creation time or by the broker on insertion time.
 
-IMPORTANT: Although you can configure Apache Kafka to work with large messages, the default max size is `1 MB`, being a few KB the recommended maximum size of a message.
+IMPORTANT: Although you can configure Apache Kafka to work with larger messages, the default maximum size is `1 MB`. Note that the Kafka record size is ideally within that limit and is often around a few 100 KBs.
 
 image::pkp.png[]
 
 [#topic-creation]
 == Create a Topic
 
-Apache Kafka auto-creates topics when a message is published to the topic.
+Apache Kafka can be configured to auto-create topics which means it is possible to publish a message to a non-existant topic that will be created on the fly. However, it is not recommended to work with topic auto-creation in production scenarios.
 
-You can also use `kafka-topic.sh` tool to create a topic manually.
+You can also use tools such as `kafka-topic.sh` to pre-create your topic(s) manually.
 
 include::partial$docker-exec.adoc[]
 
-Inside the container, create a topic with name `songs` with a single partition and only one replica:
+Inside the container, create a topic with the name `songs` having a single partition and only one replica:
 
 [.console-input]
 [source, bash-shell]
 ----
-./bin/kafka-topics.sh --create --bootstrap-server localhost:29092 --replication-factor 1 --partitions 1 --topic songs
-./bin/kafka-topics.sh --list --bootstrap-server localhost:29092
+./bin/kafka-topics.sh --create --bootstrap-server kafka:9092 --replication-factor 1 --partitions 1 --topic songs
+./bin/kafka-topics.sh --list --bootstrap-server kafka:9092
 ----
 
 [.console-output]
@@ -94,7 +91,7 @@ Inside the container, create a topic with name `songs` with a single partition a
 songs
 ----
 
-Now that the topic is created and you've validated that the topic has been created, you can run the `exit` command:
+Now that you have valdiated the topic exists you can run the `exit` to leave the container
 
 [.console-input]
 [source, bash-shell]
@@ -105,7 +102,7 @@ exit
 [#topic-info]
 == Get Topic information
 
-You can get topic information by using `kcat`:
+You can also get the topic information by using `kcat` from your host OS:
 
 [tabs]
 ====
@@ -117,17 +114,6 @@ kcat::
 ----
 kcat -b localhost:29092 -L
 ----
---
-kcat in Docker::
-+
---
-[.console-input]
-[source, bash-shell]
-----
-docker run -it --network=host edenhill/kcat:1.7.0 kcat -b localhost:29092 -L
-----
-====
-
 [.console-output]
 [source, bash-shell]
 ----
@@ -138,3 +124,24 @@ Metadata for all topics (from broker 0: localhost:29092/0):
   topic "songs" with 1 partitions:
     partition 0, leader 0, replicas: 0, isrs: 0
 ----
+--
+kcat in Docker::
++
+--
+[.console-input]
+[source, bash-shell]
+----
+docker run --rm -it --network=kafka-tutorial edenhill/kcat:1.7.1 kcat -b kafka:9092 -L
+----
+[.console-output]
+[source, bash-shell]
+----
+Metadata for all topics (from broker 0: kafka:9092/0):
+ 1 brokers:
+  broker 0 at kafka:9092 (controller)
+ 1 topics:
+  topic "songs" with 1 partitions:
+    partition 0, leader 0, replicas: 0, isrs: 0
+----
+--
+====
