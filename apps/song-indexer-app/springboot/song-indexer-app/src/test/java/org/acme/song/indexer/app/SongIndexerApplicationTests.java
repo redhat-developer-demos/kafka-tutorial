@@ -1,10 +1,10 @@
-package org.acme.song.app;
+package org.acme.song.indexer.app;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class SongAppApplicationTests {
+class SongIndexerApplicationTests {
 
 	@Test
 	void contextLoads() {

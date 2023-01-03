@@ -1,40 +1,20 @@
 package org.acme.song.indexer.app;
 
-public class Song {
+public record Song(int id, String name, String author, Operation op) {
 
-    int id;
-    String name;
-    String author;
-    Operation op;
-
-    public Song() {
+    public enum Operation {
+        ADD, MODIFY
     }
 
-    public Song(int id, String name, String author) {
+    public Song(int id, String name, String author, Operation op) {
         this.id = id;
         this.name = name;
         this.author = author;
+        this.op = (op == null ? Operation.ADD : op);
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getAuthor() {
-        return author;
-    }
-
-    public Operation getOp() {
-        return op;
-    }
-
-    @Override
-    public String toString() {
-        return "Song [author=" + author + ", id=" + id + ", name=" + name + ", operation=" + op + "]";
+    public Song(int id, String name, String author) {
+        this(id, name, author, Operation.ADD);
     }
 
 }

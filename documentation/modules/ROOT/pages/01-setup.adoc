@@ -5,25 +5,22 @@ include::_attributes.adoc[]
 == Prerequisite CLI tools
 
 include::https://raw.githubusercontent.com/redhat-developer-demos/rhd-tutorial-common/master/prerequisites-kubernetes.adoc[]
-|`Kafkacat`
-|https://github.com/edenhill/kafkacat[Download] or `brew install kafkacat`
-|https://github.com/edenhill/kafkacat[Download]
-|https://github.com/edenhill/kafkacat[Download]
+|`kcat`
+|https://github.com/edenhill/kcat[Download] or `brew install kcat`
+|https://github.com/edenhill/kcat[Download]
+|https://github.com/edenhill/kcat[Download]
 
-|`Kstreamscat`
-|https://github.com/lordofthejars/kstreamscat/releases/download/v0.0.1/kstreamscat.jar[Download]
-|https://github.com/lordofthejars/kstreamscat/releases/download/v0.0.1/kstreamscat.jar[Download]
-|https://github.com/lordofthejars/kstreamscat/releases/download/v0.0.1/kstreamscat.jar[Download]
+IMPORTANT: An alternative for running `kcat` is to use the following Docker container image https://hub.docker.com/r/edenhill/kcat (documentation see https://github.com/edenhill/kcat#try-it-out-with-docker)
 
 |`Java 11`
-|https://adoptopenjdk.net/[Download]
-|https://adoptopenjdk.net/[Download]
-|https://adoptopenjdk.net/[Download]
+|https://adoptium.net/en-GB/temurin/releases/?version=11[Download]
+|https://adoptium.net/en-GB/temurin/releases/?version=11[Download]
+|https://adoptium.net/en-GB/temurin/releases/?version=11[Download]
 
-IMPORTANT: An alternative for running `kcat` is to use the following Docker command and image  `docker run -it --network=host edenhill/kcat:1.7.0 kcat`
 |===
 
 include::https://raw.githubusercontent.com/redhat-developer-demos/rhd-tutorial-common/master/optional-requisites.adoc[]
+
 |===
 
 [#downloadconfiguresources]
@@ -41,7 +38,7 @@ Assuming you've got https://docs.docker.com/get-docker/[Docker & Docker Compose 
 [source, bash-shell]
 ----
 cd $TUTORIAL_HOME/apps/it
-docker-compose up --remove-orphans
+docker compose up --remove-orphans
 ----
 
 [.console-output]
@@ -49,15 +46,18 @@ docker-compose up --remove-orphans
 ----
 ...
 
-kafka_1      | [2020-04-27 05:51:56,560] INFO [Transaction Marker Channel Manager 0]: Starting (kafka.coordinator.transaction.TransactionMarkerChannelManager)
-kafka_1      | [2020-04-27 05:51:56,561] INFO [TransactionCoordinator id=0] Startup complete. (kafka.coordinator.transaction.TransactionCoordinator)
-kafka_1      | [2020-04-27 05:51:56,597] INFO [ExpirationReaper-0-AlterAcls]: Starting (kafka.server.DelayedOperationPurgatory$ExpiredOperationReaper)
-kafka_1      | [2020-04-27 05:51:56,641] INFO [/config/changes-event-process-thread]: Starting (kafka.common.ZkNodeChangeNotificationListener$ChangeEventProcessThread)
-kafka_1      | [2020-04-27 05:51:56,656] INFO [SocketServer brokerId=0] Started data-plane processors for 1 acceptors (kafka.network.SocketServer)
-kafka_1      | [2020-04-27 05:51:56,666] INFO Kafka version: 2.4.0 (org.apache.kafka.common.utils.AppInfoParser)
-kafka_1      | [2020-04-27 05:51:56,666] INFO Kafka commitId: 77a89fcf8d7fa018 (org.apache.kafka.common.utils.AppInfoParser)
-kafka_1      | [2020-04-27 05:51:56,667] INFO Kafka startTimeMs: 1587966716657 (org.apache.kafka.common.utils.AppInfoParser)
-kafka_1      | [2020-04-27 05:51:56,669] INFO [KafkaServer id=0] started (kafka.server.KafkaServer)
+kafka      | [2022-12-09 08:29:01,867] INFO [Transaction Marker Channel Manager 0]: Starting (kafka.coordinator.transaction.TransactionMarkerChannelManager)
+kafka      | [2022-12-09 08:29:01,878] INFO [MetadataCache brokerId=0] Updated cache from existing <empty> to latest FinalizedFeaturesAndEpoch(features=Map(), epoch=0). (kafka.server.metadata.ZkMetadataCache)
+kafka      | [2022-12-09 08:29:01,893] INFO [ExpirationReaper-0-AlterAcls]: Starting (kafka.server.DelayedOperationPurgatory$ExpiredOperationReaper)
+kafka      | [2022-12-09 08:29:01,929] INFO [/config/changes-event-process-thread]: Starting (kafka.common.ZkNodeChangeNotificationListener$ChangeEventProcessThread)
+kafka      | [2022-12-09 08:29:01,946] INFO [SocketServer listenerType=ZK_BROKER, nodeId=0] Enabling request processing. (kafka.network.SocketServer)
+kafka      | [2022-12-09 08:29:01,974] INFO Kafka version: 3.3.1 (org.apache.kafka.common.utils.AppInfoParser)
+kafka      | [2022-12-09 08:29:01,974] INFO Kafka commitId: e23c59d00e687ff5 (org.apache.kafka.common.utils.AppInfoParser)
+kafka      | [2022-12-09 08:29:01,974] INFO Kafka startTimeMs: 1670574541958 (org.apache.kafka.common.utils.AppInfoParser)
+kafka      | [2022-12-09 08:29:01,975] INFO [KafkaServer id=0] started (kafka.server.KafkaServer)
+kafka      | [2022-12-09 08:29:02,093] INFO [BrokerToControllerChannelManager broker=0 name=forwarding]: Recorded new controller, from now on will use broker kafka:9092 (id: 0 rack: null) (kafka.server.BrokerToControllerRequestThread)
+kafka      | [2022-12-09 08:29:02,113] INFO [BrokerToControllerChannelManager broker=0 name=alterPartition]: Recorded new controller, from now on will use broker kafka:9092 (id: 0 rack: null) (kafka.server.BrokerToControllerRequestThread)
+
 ----
 
 Open a new terminal to run Kafka commands:
@@ -73,12 +73,12 @@ docker ps
 [.console-output]
 [source,bash,subs="+macros,+attributes"]
 ----
-CONTAINER ID        IMAGE                              COMMAND                  CREATED             STATUS              PORTS                                                                    NAMES
-5152b0eabe99        strimzi/kafka:0.17.0-kafka-2.4.0   "sh -c 'bin/kafka-se…"   43 seconds ago      Up 42 seconds       0.0.0.0:9092->9092/tcp, 0.0.0.0:29092->29092/tcp                         kafka
-e3417f63ac61        strimzi/kafka:0.17.0-kafka-2.4.0   "sh -c 'bin/zookeepe…"   43 seconds ago      Up 43 seconds       0.0.0.0:2181->2181/tcp, 0.0.0.0:2888->2888/tcp, 0.0.0.0:3888->3888/tcp   it_zookeeper_1
+CONTAINER ID   IMAGE                                      COMMAND                  CREATED         STATUS         PORTS                                              NAMES
+0d4bc6ec2ddf   quay.io/strimzi/kafka:0.32.0-kafka-3.3.1   "sh -c 'bin/kafka-se…"   2 minutes ago   Up 2 minutes   0.0.0.0:9092->9092/tcp, 0.0.0.0:29092->29092/tcp   kafka
+d8fdbab971c6   quay.io/strimzi/kafka:0.32.0-kafka-3.3.1   "sh -c 'bin/zookeepe…"   2 minutes ago   Up 2 minutes   0.0.0.0:2181->2181/tcp                             zookeeper
 ----
 
-IMPORTANT: Notice that Kafka container is exposing two ports to outside. The reason is that Kafka requires one port for accessing from host machine, and another one for accessing from Docker host machine. You can find a full explanation of this at xref:08-kafka-listeners.adoc[Kafka Listeners].
+IMPORTANT: Notice that the Kafka container is exposing two ports to outside. The reason is that Kafka requires one port for being accessed from your host machine, and another one for being accessed from the Docker host machine. You can find a full explanation of this at xref:08-kafka-listeners.adoc[Kafka Listeners].
 
 Verify that the Kafka cluster is correctly started and configured by running the following command:
 
@@ -90,7 +90,15 @@ kcat::
 [.console-input]
 [source, bash-shell]
 ----
-kcat -b localhost:9092 -L
+kcat -b localhost:29092 -L
+----
+[.console-output]
+[source,bash,subs="+macros,+attributes"]
+----
+Metadata for all topics (from broker 0: localhost:29092/0):
+ 1 brokers:
+  broker 0 at localhost:29092 (controller)
+ 0 topics:
 ----
 --
 kcat in Docker::
@@ -99,20 +107,14 @@ kcat in Docker::
 [.console-input]
 [source, bash-shell]
 ----
-docker run -it --network=host edenhill/kcat:1.7.0 kcat -b localhost:29092 -L
+docker run --rm -it --network=kafka-tutorial edenhill/kcat:1.7.1 -b kafka:9092 -L
 ----
-====
-
-
-
 [.console-output]
 [source,bash,subs="+macros,+attributes"]
 ----
-Metadata for all topics (from broker 0: localhost:9092/0):
+Metadata for all topics (from broker 0: kafka:9092/0):
  1 brokers:
-  broker 0 at localhost:9092 (controller)
+  broker 0 at kafka:9092 (controller)
  0 topics:
 ----
-
-
-
+====

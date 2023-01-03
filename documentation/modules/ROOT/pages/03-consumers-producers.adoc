@@ -4,13 +4,15 @@ include::_attributes.adoc[]
 [#producer]
 == What are Producers?
 
-Producers publish messages to a topic at the end of a partition.
-By default, if a message contains a key, the hashed value of the key is used to decide in which partition the message is stored.
-If the key is `null`, then a round-robin algorithm is used to balance the messages across all partitions.
+Producers publish messages by appending to the end of a topic partition.
+By default, if a message contains a key (i.e. the key is NOT `null`), the hashed value of the key is used to decide in which partition the message is stored. If there is a specific key set for the message, then the producer's default hash partitioning guarantees that long as no new partitions are added, all messages with the same key will be stored in the same topic partition. This behaviour is essential whenever you want to ensure that message for one and the same key are consumed and processed in order from the same topic partition.
 
-Kafka guarantees that all as long as no new partitions are added, elements with the same key will be stored in the same partition.
+If the key is `null`, the producer behaves differently according to the Kafka version:
 
-If you want you can also implement a custom partitioning strategy to store messages in a specific partition following any kind of business rule.
+* **up to Kafka 2.3:** a round-robin partitioner is used to balance the messages across all partitions
+* **Kafka 2.4 or newer:** a sticky partitioner is used which leads to larger batches and reduced latency and is particularly beneficial for very high throughput scenarios
+
+You can also implement your own custom partitioning strategy to store messages in a specific partition following any kind of business rule.
 
 image::p.png[]
 
@@ -19,31 +21,26 @@ image::p.png[]
 
 Each message published to a topic is delivered to a consumer that is subscribed to that topic.
 
-A consumer can read data from any position of the partition, and internally it is stored as a pointer called `offset`.
-In most of the cases, a consumer advances its `offset` linearly, but it could be in any order, or starting from any given position.
+A consumer can read data from any position of the partition, and internally the position is stored as a pointer called `offset`. In most of the cases, a consumer advances its `offset` linearly, but it could be in any order, or starting from any given position.
 
-Each consumer belongs to a consumer group.
-A consumer group is a list of consumer instances that ensures the scalability for processing messages and also fault tolerance.
+Each consumer belongs to a consumer group. A consumer group may consist of multiple consumer instances. This is the reason why a consumer group can be both, fault tolerant and scalable. If one of several consumer instances in a group dies, the topic partitions are reassigned to other consumer instances such that the remaining ones continue to process messages form all partitions. If a consumer group contains more than one consumer instance, each consumer will only receive messages from a subset of the partitions. When a consumer group only contains one consumer instance, this consumer is responsible for processing all messages of all topic partitions.
 
-When a consumer group only contains one consumer, this consumer is responsible for processing all messages of all partitions.
-
-The more consumers you add to a group, each consumer will only receive messages from a subset of the partitions.
+Message consumption can be parallelized in a consumer group by adding more consumer instances to the group, up to the number of a topic's partitions. Concretely, if a topic e.g. has 8 partitions, a consumer group can support up to 8 consumer instances which all consume in parallel, each from 1 topic partition. 
 
 image::c.png[]
 
 IMPORTANT: If you add more consumers in a consumer group than the number of partitions for a topic, then they will stay in an idle state, without getting any message.
 
-As you can see what is registered to a topic is the _consumer group_ and not the consumer.
-The consumer is "subscribed" to a partition.
+As you can see what is registered to a topic is the _consumer group_ and not the consumer instance. The consumer instance is "subscribed" to (a subset of) topic partitions.
 
 == Consume and Produce Messages
 
 Before digging into how to produce and consume data from Java, let's see how to use `kcat` to do it.
 
-`kcat` is a great tool for these use cases, and it is the _de-facto_ tool to inspect data in Kafka.
+`kcat` is a great tool for these use cases, and it is one of the most popular CLI tools to work with data in Kafka topics.
 
-[#consume-kafkacat]
-=== Consuming messages with Kafkacat
+[#consume-kcat]
+=== Consuming messages with kcat
 
 Open a new terminal, _terminal 1_, and run the following command:
 
@@ -64,7 +61,7 @@ kcat in Docker::
 [.console-input]
 [source, bash-shell]
 ----
-docker run -it --network=host edenhill/kcat:1.7.0 kcat -b localhost:29092 -t songs -C -K:
+docker run --rm -it --network=kafka-tutorial edenhill/kcat:1.7.1 kcat -b kafka:9092 -t songs -C -K:
 ----
 ====
 
@@ -74,10 +71,10 @@ docker run -it --network=host edenhill/kcat:1.7.0 kcat -b localhost:29092 -t son
 % Reached end of topic songs [0] at offset 0
 ----
 
-[#produce-kafkacat]
-== Producing messages with Kafkacat
+[#produce-kcat]
+=== Producing messages with kcat
 
-Open a new terminal, _terminal 2_, and create a new file with the next content:
+Open a new terminal, _terminal 2_, and create a new file named `initial_songs` with the content shown below:
 
 [.console-input]
 [source, json]
@@ -86,8 +83,7 @@ Open a new terminal, _terminal 2_, and create a new file with the next content:
 include::example$initial_songs.json[]
 ----
 
-Then insert each of this line as a new message.
-The number before the `:` is taken as an id.
+Then use `kcat` to produce a new message to the `songs` topic for each line in the `initial_songs` file. Note that the number before the colon `:` is taken as the message key.
 
 [tabs]
 ====
@@ -106,13 +102,13 @@ kcat in Docker::
 [.console-input]
 [source, bash-shell]
 ----
-docker run -it --network=host edenhill/kcat:1.7.0 kcat -b localhost:29092 -t songs -P -l -K: initial_songs
+docker run --rm -it --network=kafka-tutorial -v $(pwd)/documentation/modules/ROOT/examples/initial_songs.json:/home/initial_songs edenhill/kcat:1.7.1 kcat -b kafka:9092 -t songs -P -l -K: /home/initial_songs
 ----
 
 ====
 
 Switch back to _terminal 1_ where you are running `kcat` as a consumer.
-You've defined this at <<Consuming messages with Kafkacat>> section.
+You've defined this at <<Consuming messages with kcat>> section.
 
 Now the output of the terminal has been updated showing the consumed messages:
 
@@ -124,15 +120,16 @@ Now the output of the terminal has been updated showing the consumed messages:
 % Reached end of topic songs [0] at offset 2
 ----
 
-Notice that the `offset` of this consumer has been updated to 2, as the two first records has been consumed from the topic.
+Notice that the `offset` of this consumer has been updated to 2, as the two first records have been consumed from the topic.
 
 [#playingwithoffsets]
 === Playing with Offsets
 
-A Producer always produces content at the end of a topic, meanwhile, a consumer can consume from any offset.
+A producer always produces content at the end of a topic, meanwhile, a consumer can consume from any offset.
 Still on _terminal 1_, stop the `kcat` process by typing kbd:[Ctrl + C].
 
-Then start again `kcat` with the same command:
+Start `kcat` once more with the same command as further above for consuming from the `songs` topic again:
+
 
 [tabs]
 ====
@@ -142,7 +139,7 @@ kcat::
 [.console-input]
 [source, bash-shell]
 ----
-kcat -b localhost:29092 -t songs -P -l -K: initial_songs
+kcat -b localhost:29092 -t songs -C -K:
 ----
 --
 kcat in Docker::
@@ -151,7 +148,7 @@ kcat in Docker::
 [.console-input]
 [source, bash-shell]
 ----
-docker run -it --network=host edenhill/kcat:1.7.0 kcat -b localhost:29092 -t songs -P -l -K: initial_songs
+docker run --rm -it --network=kafka-tutorial edenhill/kcat:1.7.1 kcat -b kafka:9092 -t songs -C -K:
 ----
 ====
 
@@ -163,13 +160,11 @@ docker run -it --network=host edenhill/kcat:1.7.0 kcat -b localhost:29092 -t son
 % Reached end of topic songs [0] at offset 2
 ----
 
-Notice that all stream is consumed.
-This is happening because by default `kcat` is getting all the content from a topic since the beginning of the stream.
-But you can change that.
+Notice that the whole topic with all messages is consumed again. This is happening because by default `kcat` is reading from the beginning of the topic (i.e. the oldest message that is still stored). But you can change that anytime.
 
 Stop again `kcat` process by typing kbd:[Ctrl + C].
 
-And start again with the following command:
+Now start `kcat` again with the `-o` flag and the offset number `1`.
 
 [tabs]
 ====
@@ -189,7 +184,7 @@ kcat in Docker::
 [.console-input]
 [source, bash-shell]
 ----
-docker run -it --network=host edenhill/kcat:1.7.0 kcat -b localhost:29092 -t songs -o 1 -C -K:
+docker run --rm -it --network=kafka-tutorial edenhill/kcat:1.7.1 kcat -b kafka:9092 -t songs -o 1 -C -K:
 
 ----
 ====
@@ -201,32 +196,31 @@ docker run -it --network=host edenhill/kcat:1.7.0 kcat -b localhost:29092 -t son
 % Reached end of topic songs [0] at offset 2
 ----
 
-Now the initial offset was not set to the beginning but from the second element.
+This time, the initial offset was explicitly set to `1` i.e. the consumption was beginning at the 2nd message.
 
 [#changingretention]
 === Changing Retention
 
-By default, Kafka retains data on a topic for 168 hours (7 days).
-But retention can be changed, let's change it to 1 minute.
+By default, Kafka retains messages in a topic for 168 hours (7 days). But retention time can be changed, so let's modify it to e.g. 1 minute.
 
-You can also use `kafka-topic.sh` tool to change the retention time of a topic.
+You can use `kafka-topic.sh` tool to change the retention time of a topic.
 
 Open a third terminal:
 
 include::partial$docker-exec.adoc[]
 
-Inside the container run:
+Inside the container's bash run:
 
 [.console-input]
 [source, bash-shell]
 ----
-./bin/kafka-configs.sh --zookeeper zookeeper_1:2181 --alter --entity-type topics --entity-name songs --add-config 'retention.ms=10000'
+./bin/kafka-configs.sh --bootstrap-server kafka:9092 --entity-type topics --entity-name songs --alter --add-config retention.ms=60000
 ----
 
 [.console-output]
 [source, bash-shell]
 ----
-Completed Updating config for entity: topic 'songs'.
+Completed updating config for topic songs.
 ----
 
 And check that it has been configured correctly:
@@ -234,40 +228,17 @@ And check that it has been configured correctly:
 [.console-input]
 [source, bash-shell]
 ----
-./bin/kafka-topics.sh --describe --bootstrap-server localhost:29092 --topic songs
+./bin/kafka-topics.sh --describe --bootstrap-server kafka:9092 --topic songs
 ----
 
 [.console-output]
 [source, bash-shell]
 ----
-Topic: songs	PartitionCount: 1	ReplicationFactor: 1	Configs: segment.bytes=1073741824,retention.ms=10000
-    Topic: songs	Partition: 0	Leader: 0	Replicas: 0	Isr: 0
+Topic: songs	TopicId: h2aw0peOTHuWYleUpZxj-Q	PartitionCount: 1	ReplicationFactor: 1	Configs: retention.ms=60000
+	Topic: songs	Partition: 0	Leader: 0	Replicas: 0	Isr: 0
 ----
 
-In one terminal produce data again:
-
-[tabs]
-====
-kcat::
-+
---
-[.console-input]
-[source, bash-shell]
-----
-kcat -b localhost:29092 -t songs -P -l -K: initial_songs
-----
---
-kcat in Docker::
-+
---
-[.console-input]
-[source, bash-shell]
-----
-docker run -it --network=host edenhill/kcat:1.7.0 kcat -b localhost:29092 -t songs -P -l -K: initial_songs
-----
-====
-
-In the other terminal consume this data so you know that it has been inserted correctly:
+In your other terminal, stop the `kcat` process by typing kbd:[Ctrl + C] and wait for ~60 seconds (ie `sleep 60`). After the time has passed run the `kcat` in consumer mode again:
 
 [tabs]
 ====
@@ -286,40 +257,7 @@ kcat in Docker::
 [.console-input]
 [source, bash-shell]
 ----
-docker run -it --network=host edenhill/kcat:1.7.0 kcat -b localhost:29092 -t songs -C -K:
-----
-====
-
-[.console-output]
-[source, bash-shell]
-----
-1: {"id": 1, "name": "The Ecstasy of Gold", "author":"Ennio Morricone", "op":"ADD"}
-2: {"id": 2, "name": "Still Loving you", "author":"Scorpions", "op":"ADD"}
-% Reached end of topic songs [0] at offset 2
-----
-
-Stop the `kcat` process by typing kbd:[Ctrl + C] and wait for ~10 seconds (ie `sleep 15`).
-
-Run the `kcat` in consumer mode again:
-
-[tabs]
-====
-kcat::
-+
---
-[.console-input]
-[source, bash-shell]
-----
-kcat -b localhost:29092 -t songs -C -K:
-----
---
-kcat in Docker::
-+
---
-[.console-input]
-[source, bash-shell]
-----
-docker run -it --network=host edenhill/kcat:1.7.0 kcat -b localhost:29092 -t songs -C -K:
+docker run --rm -it --network=kafka-tutorial edenhill/kcat:1.7.1 kcat -b kafka:9092 -t songs -C -K:
 ----
 ====
 [.console-output]
@@ -328,30 +266,22 @@ docker run -it --network=host edenhill/kcat:1.7.0 kcat -b localhost:29092 -t son
 % Reached end of topic songs [0] at offset 2
 ----
 
-The important part is the last line, notice that it returns no messages, but the offset is `2`.
-The reason is that the messages are expired and deleted from the topic, but the offset has its retention period.
-By default, this retention period is 1 week, so although there is no data, the current offset for a consumer is '2'.
+The important part is the last line, notice that it returns no messages, but the offset is `2`. The reason is that the messages are expired and deleted from the topic, but the offset has its retention period. By default, this retention period is 1 week, so although there is no data, the current offset for a consumer is '2'.
+
+Also note, that Kafka brokers have a configuration for `log.retention.check.interval.ms` and this setting must be lower than/equal to a topic's `retention.ms`, otherwise cleaning out offsets will not be effective "immeadiately" but only after the log cleaner ran to do its job. In other words, it may take longer (up to `log.retention.check.interval.ms`) before you can actually observe the data retention happening in the corresponding Kafka topic.
 
 Change retention time to the default one by running in the third terminal (the one you did `docker exec`), the following command:
 
 [.console-input]
 [source, bash-shell]
 ----
-./bin/kafka-configs.sh --zookeeper zookeeper_1:2181 --alter --entity-type topics --entity-name songs --delete-config retention.ms
+./bin/kafka-configs.sh --bootstrap-server kafka:9092 --entity-type topics --entity-name songs --alter --delete-config retention.ms
 ----
 
 [.console-output]
 [source, bash-shell]
 ----
-Completed Updating config for entity: topic 'songs'.
-----
-
-Now that the topic configuration is back to default, you can run the `exit` command:
-
-[.console-input]
-[source, bash-shell]
-----
-exit
+Completed updating config for topic songs.
 ----
 
 [#deletetopiccontent]
@@ -366,7 +296,7 @@ Inside the container run:
 [.console-input]
 [source, bash-shell]
 ----
-./bin/kafka-topics.sh --delete --bootstrap-server localhost:29092 --topic songs
+./bin/kafka-topics.sh --delete --bootstrap-server kafka:9092 --topic songs
 ----
 
 Now that the topic is deleted, you can run the `exit` command:
@@ -377,32 +307,7 @@ Now that the topic is deleted, you can run the `exit` command:
 exit
 ----
 
-If you run `kcat` again, you'll see that no data is in the topic:
-
-[tabs]
-====
-kcat::
-+
---
-[.console-input]
-[source, bash-shell]
-----
-kcat -b localhost:29092 -t songs -C -K:
-----
---
-kcat in Docker::
-+
---
-[.console-input]
-[source, bash-shell]
-----
-docker run -it --network=host edenhill/kcat:1.7.0 kcat -b localhost:29092 -t songs -C -K:
-----
-====
-
-Stop `kcat` process by typing kbd:[Ctrl + C].
-
-[#kafkacat-cleanup]
+[#cleanup]
 === Clean Up
 
-Stop the current `kcat` process by typing kbd:[Ctrl + C] on the terminal.
+Also make sure to stop still running `kcat` processes in any of your tutorial related terminal windows by typing kbd:[Ctrl + C].

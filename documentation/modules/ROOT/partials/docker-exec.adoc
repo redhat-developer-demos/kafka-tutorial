@@ -1,4 +1,4 @@
-This tool is bundled inside Kafka installation, so let's `exec` a `bash` terminal inside the Kafka container.
+This tool is bundled with the Kafka container image, so let's `exec` a `bash` terminal inside the running Kafka container.
 
 [.lines_1]
 [source, bash-shell]
