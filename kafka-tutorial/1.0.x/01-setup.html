@@ -95,13 +95,13 @@
     <a class="nav-link" href="03-consumers-producers.html#consumer">Consumer</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="03-consumers-producers.html#consume-kafkacat">Kafkacat Consumer</a>
+    <a class="nav-link" href="03-consumers-producers.html#consume-kcat">kcat Consumer</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="03-consumers-producers.html#produce-kafkacat">Kafkacat Producer</a>
+    <a class="nav-link" href="03-consumers-producers.html#produce-kcat">kcat Producer</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="03-consumers-producers.html#playingwithoffsets">Kafkacat Offsets</a>
+    <a class="nav-link" href="03-consumers-producers.html#playingwithoffsets">kcat Offsets</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="03-consumers-producers.html#changingretention">Changing Retention</a>
@@ -110,7 +110,7 @@
     <a class="nav-link" href="03-consumers-producers.html#deletetopiccontent">Delete Topic Content</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="03-consumers-producers.html#kafkacat-cleanup">Clean Up</a>
+    <a class="nav-link" href="03-consumers-producers.html#cleanup">Clean Up</a>
   </li>
 </ul>
   </li>
@@ -337,8 +337,8 @@ Please have them installed and configured before you get started with any of the
 <tr>
 <td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://github.com/wercker/stern">stern</a></p></td>
 <td class="tableblock halign-center valign-top"><p class="tableblock"><code>brew install stern</code></p></td>
-<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://github.com/wercker/stern/releases/download/1.11.0/stern_linux_amd64">Download</a></p></td>
-<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://github.com/wercker/stern/releases/download/1.11.0/stern_windows_amd64.exe">Download</a></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://github.com/stern/stern/releases/download/v1.22.0/stern_1.22.0_linux_amd64.tar.gz">Download</a></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://github.com/stern/stern/releases/download/v1.22.0/stern_1.22.0_windows_amd64.tar.gz">Download</a></p></td>
 </tr>
 <tr>
 <td class="tableblock halign-center valign-top"><p class="tableblock"><code>Apache Maven 3.6.3</code></p></td>
@@ -347,23 +347,17 @@ Please have them installed and configured before you get started with any of the
 <td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://archive.apache.org/dist/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz">Download</a></p></td>
 </tr>
 <tr>
-<td class="tableblock halign-center valign-top"><p class="tableblock"><code>Kafkacat</code></p></td>
-<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://github.com/edenhill/kafkacat">Download</a> or <code>brew install kafkacat</code></p></td>
-<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://github.com/edenhill/kafkacat">Download</a></p></td>
-<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://github.com/edenhill/kafkacat">Download</a></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-center valign-top"><p class="tableblock"><code>Kstreamscat</code></p></td>
-<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://github.com/lordofthejars/kstreamscat/releases/download/v0.0.1/kstreamscat.jar">Download</a></p></td>
-<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://github.com/lordofthejars/kstreamscat/releases/download/v0.0.1/kstreamscat.jar">Download</a></p></td>
-<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://github.com/lordofthejars/kstreamscat/releases/download/v0.0.1/kstreamscat.jar">Download</a></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><code>kcat</code></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://github.com/edenhill/kcat">Download</a> or <code>brew install kcat</code></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://github.com/edenhill/kcat">Download</a></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://github.com/edenhill/kcat">Download</a></p>
+<p class="tableblock">IMPORTANT: An alternative for running <code>kcat</code> is to use the following Docker container image <a href="https://hub.docker.com/r/edenhill/kcat" class="bare">https://hub.docker.com/r/edenhill/kcat</a> (documentation see <a href="https://github.com/edenhill/kcat#try-it-out-with-docker" class="bare">https://github.com/edenhill/kcat#try-it-out-with-docker</a>)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-center valign-top"><p class="tableblock"><code>Java 11</code></p></td>
-<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://adoptopenjdk.net/">Download</a></p></td>
-<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://adoptopenjdk.net/">Download</a></p></td>
-<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://adoptopenjdk.net/">Download</a></p>
-<p class="tableblock">IMPORTANT: An alternative for running <code>kcat</code> is to use the following Docker command and image  <code>docker run -it --network=host edenhill/kcat:1.7.0 kcat</code></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://adoptium.net/en-GB/temurin/releases/?version=11">Download</a></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://adoptium.net/en-GB/temurin/releases/?version=11">Download</a></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://adoptium.net/en-GB/temurin/releases/?version=11">Download</a></p></td>
 </tr>
 </tbody>
 </table>
@@ -421,7 +415,7 @@ Although they are used in the tutorial, you could use others without any problem
 <td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://github.com/rakyll/hey">hey</a></p></td>
 <td class="tableblock halign-center valign-top"><p class="tableblock"><code>brew install hey</code></p></td>
 <td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://storage.googleapis.com/jblabs/dist/hey_linux_v0.1.2">Download</a></p></td>
-<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://storage.googleapis.com/jblabs/dist/hey_win_v0.1.2.exe">Download</a></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://hey-release.s3.us-east-2.amazonaws.com/hey_windows_amd64">Download</a></p></td>
 </tr>
 </tbody>
 </table>
@@ -459,22 +453,24 @@ Although they are used in the tutorial, you could use others without any problem
 <div class="listingblock console-input">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">cd $TUTORIAL_HOME/apps/it
-docker-compose up --remove-orphans</code></pre>
+docker compose up --remove-orphans</code></pre>
 </div>
 </div>
 <div class="listingblock console-output">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">...
 
-kafka_1      | [2020-04-27 05:51:56,560] INFO [Transaction Marker Channel Manager 0]: Starting (kafka.coordinator.transaction.TransactionMarkerChannelManager)
-kafka_1      | [2020-04-27 05:51:56,561] INFO [TransactionCoordinator id=0] Startup complete. (kafka.coordinator.transaction.TransactionCoordinator)
-kafka_1      | [2020-04-27 05:51:56,597] INFO [ExpirationReaper-0-AlterAcls]: Starting (kafka.server.DelayedOperationPurgatory$ExpiredOperationReaper)
-kafka_1      | [2020-04-27 05:51:56,641] INFO [/config/changes-event-process-thread]: Starting (kafka.common.ZkNodeChangeNotificationListener$ChangeEventProcessThread)
-kafka_1      | [2020-04-27 05:51:56,656] INFO [SocketServer brokerId=0] Started data-plane processors for 1 acceptors (kafka.network.SocketServer)
-kafka_1      | [2020-04-27 05:51:56,666] INFO Kafka version: 2.4.0 (org.apache.kafka.common.utils.AppInfoParser)
-kafka_1      | [2020-04-27 05:51:56,666] INFO Kafka commitId: 77a89fcf8d7fa018 (org.apache.kafka.common.utils.AppInfoParser)
-kafka_1      | [2020-04-27 05:51:56,667] INFO Kafka startTimeMs: 1587966716657 (org.apache.kafka.common.utils.AppInfoParser)
-kafka_1      | [2020-04-27 05:51:56,669] INFO [KafkaServer id=0] started (kafka.server.KafkaServer)</code></pre>
+kafka      | [2022-12-09 08:29:01,867] INFO [Transaction Marker Channel Manager 0]: Starting (kafka.coordinator.transaction.TransactionMarkerChannelManager)
+kafka      | [2022-12-09 08:29:01,878] INFO [MetadataCache brokerId=0] Updated cache from existing &lt;empty&gt; to latest FinalizedFeaturesAndEpoch(features=Map(), epoch=0). (kafka.server.metadata.ZkMetadataCache)
+kafka      | [2022-12-09 08:29:01,893] INFO [ExpirationReaper-0-AlterAcls]: Starting (kafka.server.DelayedOperationPurgatory$ExpiredOperationReaper)
+kafka      | [2022-12-09 08:29:01,929] INFO [/config/changes-event-process-thread]: Starting (kafka.common.ZkNodeChangeNotificationListener$ChangeEventProcessThread)
+kafka      | [2022-12-09 08:29:01,946] INFO [SocketServer listenerType=ZK_BROKER, nodeId=0] Enabling request processing. (kafka.network.SocketServer)
+kafka      | [2022-12-09 08:29:01,974] INFO Kafka version: 3.3.1 (org.apache.kafka.common.utils.AppInfoParser)
+kafka      | [2022-12-09 08:29:01,974] INFO Kafka commitId: e23c59d00e687ff5 (org.apache.kafka.common.utils.AppInfoParser)
+kafka      | [2022-12-09 08:29:01,974] INFO Kafka startTimeMs: 1670574541958 (org.apache.kafka.common.utils.AppInfoParser)
+kafka      | [2022-12-09 08:29:01,975] INFO [KafkaServer id=0] started (kafka.server.KafkaServer)
+kafka      | [2022-12-09 08:29:02,093] INFO [BrokerToControllerChannelManager broker=0 name=forwarding]: Recorded new controller, from now on will use broker kafka:9092 (id: 0 rack: null) (kafka.server.BrokerToControllerRequestThread)
+kafka      | [2022-12-09 08:29:02,113] INFO [BrokerToControllerChannelManager broker=0 name=alterPartition]: Recorded new controller, from now on will use broker kafka:9092 (id: 0 rack: null) (kafka.server.BrokerToControllerRequestThread)</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -490,9 +486,9 @@ kafka_1      | [2020-04-27 05:51:56,669] INFO [KafkaServer id=0] started (kafka.
 </div>
 <div class="listingblock console-output">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">CONTAINER ID        IMAGE                              COMMAND                  CREATED             STATUS              PORTS                                                                    NAMES
-5152b0eabe99        strimzi/kafka:0.17.0-kafka-2.4.0   "sh -c 'bin/kafka-se…"   43 seconds ago      Up 42 seconds       0.0.0.0:9092-&gt;9092/tcp, 0.0.0.0:29092-&gt;29092/tcp                         kafka
-e3417f63ac61        strimzi/kafka:0.17.0-kafka-2.4.0   "sh -c 'bin/zookeepe…"   43 seconds ago      Up 43 seconds       0.0.0.0:2181-&gt;2181/tcp, 0.0.0.0:2888-&gt;2888/tcp, 0.0.0.0:3888-&gt;3888/tcp   it_zookeeper_1</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">CONTAINER ID   IMAGE                                      COMMAND                  CREATED         STATUS         PORTS                                              NAMES
+0d4bc6ec2ddf   quay.io/strimzi/kafka:0.32.0-kafka-3.3.1   "sh -c 'bin/kafka-se…"   2 minutes ago   Up 2 minutes   0.0.0.0:9092-&gt;9092/tcp, 0.0.0.0:29092-&gt;29092/tcp   kafka
+d8fdbab971c6   quay.io/strimzi/kafka:0.32.0-kafka-3.3.1   "sh -c 'bin/zookeepe…"   2 minutes ago   Up 2 minutes   0.0.0.0:2181-&gt;2181/tcp                             zookeeper</code></pre>
 </div>
 </div>
 <div class="admonitionblock important">
@@ -502,7 +498,7 @@ e3417f63ac61        strimzi/kafka:0.17.0-kafka-2.4.0   "sh -c 'bin/zookeepe…" 
 <i class="fa icon-important" title="Important"></i>
 </td>
 <td class="content">
-Notice that Kafka container is exposing two ports to outside. The reason is that Kafka requires one port for accessing from host machine, and another one for accessing from Docker host machine. You can find a full explanation of this at <a href="08-kafka-listeners.html" class="page">Kafka Listeners</a>.
+Notice that the Kafka container is exposing two ports to outside. The reason is that Kafka requires one port for being accessed from your host machine, and another one for being accessed from the Docker host machine. You can find a full explanation of this at <a href="08-kafka-listeners.html" class="page">Kafka Listeners</a>.
 </td>
 </tr>
 </table>
@@ -525,25 +521,33 @@ Notice that Kafka container is exposing two ports to outside. The reason is that
 <div class="tab-pane" aria-labelledby="tabset1_kcat">
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">kcat -b localhost:9092 -L</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">kcat -b localhost:29092 -L</code></pre>
+</div>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">Metadata for all topics (from broker 0: localhost:29092/0):
+ 1 brokers:
+  broker 0 at localhost:29092 (controller)
+ 0 topics:</code></pre>
 </div>
 </div>
 </div>
 <div class="tab-pane" aria-labelledby="tabset1_kcat-in-docker">
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker run -it --network=host edenhill/kcat:1.7.0 kcat -b localhost:29092 -L</code></pre>
-</div>
-</div>
-</div>
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker run --rm -it --network=kafka-tutorial edenhill/kcat:1.7.1 -b kafka:9092 -L</code></pre>
 </div>
 </div>
 <div class="listingblock console-output">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">Metadata for all topics (from broker 0: localhost:9092/0):
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">Metadata for all topics (from broker 0: kafka:9092/0):
  1 brokers:
-  broker 0 at localhost:9092 (controller)
+  broker 0 at kafka:9092 (controller)
  0 topics:</code></pre>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>

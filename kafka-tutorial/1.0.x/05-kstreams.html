@@ -95,13 +95,13 @@
     <a class="nav-link" href="03-consumers-producers.html#consumer">Consumer</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="03-consumers-producers.html#consume-kafkacat">Kafkacat Consumer</a>
+    <a class="nav-link" href="03-consumers-producers.html#consume-kcat">kcat Consumer</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="03-consumers-producers.html#produce-kafkacat">Kafkacat Producer</a>
+    <a class="nav-link" href="03-consumers-producers.html#produce-kcat">kcat Producer</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="03-consumers-producers.html#playingwithoffsets">Kafkacat Offsets</a>
+    <a class="nav-link" href="03-consumers-producers.html#playingwithoffsets">kcat Offsets</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="03-consumers-producers.html#changingretention">Changing Retention</a>
@@ -110,7 +110,7 @@
     <a class="nav-link" href="03-consumers-producers.html#deletetopiccontent">Delete Topic Content</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="03-consumers-producers.html#kafkacat-cleanup">Clean Up</a>
+    <a class="nav-link" href="03-consumers-producers.html#cleanup">Clean Up</a>
   </li>
 </ul>
   </li>
@@ -350,8 +350,7 @@ We&#8217;ll take a look later.</p>
 <p>Let&#8217;s see some of the Kafka-Streams concepts in action.</p>
 </div>
 <div class="paragraph">
-<p>Rememeber to have Zookeeper and Apache Kafka up and running.
-If not, you can follow <a href="#Setup Kafka">[Setup Kafka]</a> section to learn how to do it using <em>docker-compose</em>.</p>
+<p>Remember you need to have both, ZooKeeper and Apache Kafka correctly configured as well as up and running. If not, you can follow the <a href="#Setup Kafka">[Setup Kafka]</a> section to learn how to do it using <em>docker compose</em>.</p>
 </div>
 <div class="sect2">
 <h3 id="kstreamscat-tables"><a class="anchor" href="#kstreamscat-tables"></a>Tables</h3>
@@ -579,30 +578,31 @@ For this reason, only the update event of <em>The Imperial March</em> is shown, 
 <div class="sect3">
 <h4 id="_clean_up"><a class="anchor" href="#_clean_up"></a>Clean Up</h4>
 <div class="paragraph">
-<p>To restart Kafka (and Zookeeper) go to <code>docker-compose</code> terminal and stop the process by typing <span class="keyseq"><kbd>Ctrl</kbd>+<kbd>C</kbd></span>.</p>
+<p>To restart Kafka (and ZooKeeper) go to the <code>docker compose</code> terminal and stop the process by typing <span class="keyseq"><kbd>Ctrl</kbd>+<kbd>C</kbd></span>.</p>
 </div>
 <div class="paragraph">
 <p>Then run:</p>
 </div>
 <div class="listingblock lines_1">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-session hljs" data-lang="bash-session">docker-compose rm
+<pre class="highlightjs highlight"><code class="language-bash-session hljs" data-lang="bash-session">docker compose rm
 
-Going to remove kafka, it_zookeeper_1
-Are you sure? [yN] y
-Removing kafka          ... done
-Removing it_zookeeper_1 ... done</code></pre>
+? Going to remove kafka, zookeeper (y/N) -&gt; y
+[+] Running 2/0
+ ⠿ Container zookeeper  Removed
+ ⠿ Container kafka      Removed</code></pre>
 </div>
 </div>
 <div class="listingblock lines_1">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-session hljs" data-lang="bash-session">docker-compose up --remove-orphans
+<pre class="highlightjs highlight"><code class="language-bash-session hljs" data-lang="bash-session">docker compose up --remove-orphans
 
-kafka        | [2020-05-04 11:30:27,392] INFO [SocketServer brokerId=0] Started data-plane processors for 2 acceptors (kafka.network.SocketServer)
-kafka        | [2020-05-04 11:30:27,396] INFO Kafka version: 2.4.0 (org.apache.kafka.common.utils.AppInfoParser)
-kafka        | [2020-05-04 11:30:27,397] INFO Kafka commitId: 77a89fcf8d7fa018 (org.apache.kafka.common.utils.AppInfoParser)
-kafka        | [2020-05-04 11:30:27,397] INFO Kafka startTimeMs: 1588591827393 (org.apache.kafka.common.utils.AppInfoParser)
-kafka        | [2020-05-04 11:30:27,398] INFO [KafkaServer id=0] started (kafka.server.KafkaServer)</code></pre>
+kafka      | [2022-12-15 08:59:25,688] INFO Kafka version: 3.3.1 (org.apache.kafka.common.utils.AppInfoParser)
+kafka      | [2022-12-15 08:59:25,688] INFO Kafka commitId: e23c59d00e687ff5 (org.apache.kafka.common.utils.AppInfoParser)
+kafka      | [2022-12-15 08:59:25,688] INFO Kafka startTimeMs: 1671094765681 (org.apache.kafka.common.utils.AppInfoParser)
+kafka      | [2022-12-15 08:59:25,689] INFO [KafkaServer id=0] started (kafka.server.KafkaServer)
+kafka      | [2022-12-15 08:59:25,750] INFO [BrokerToControllerChannelManager broker=0 name=forwarding]: Recorded new controller, from now on will use broker kafka:9092 (id: 0 rack: null) (kafka.server.BrokerToControllerRequestThread)
+kafka      | [2022-12-15 08:59:25,751] INFO [BrokerToControllerChannelManager broker=0 name=alterPartition]: Recorded new controller, from now on will use broker kafka:9092 (id: 0 rack: null) (kafka.server.BrokerToControllerRequestThread)</code></pre>
 </div>
 </div>
 </div>
@@ -826,30 +826,31 @@ Key: sebi : 1</code></pre>
 <p>Stop <code>kstreamscat</code> process by typing <span class="keyseq"><kbd>Ctrl</kbd>+<kbd>C</kbd></span> in the terminal 2.</p>
 </div>
 <div class="paragraph">
-<p>To restart Kafka (and Zookeeper) go to <code>docker-compose</code> terminal and stop the process by typing <span class="keyseq"><kbd>Ctrl</kbd>+<kbd>C</kbd></span>.</p>
+<p>To restart Kafka (and ZooKeeper) go to the <code>docker compose</code> terminal and stop the process by typing <span class="keyseq"><kbd>Ctrl</kbd>+<kbd>C</kbd></span>.</p>
 </div>
 <div class="paragraph">
 <p>Then run:</p>
 </div>
 <div class="listingblock lines_1">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-session hljs" data-lang="bash-session">docker-compose rm
+<pre class="highlightjs highlight"><code class="language-bash-session hljs" data-lang="bash-session">docker compose rm
 
-Going to remove kafka, it_zookeeper_1
-Are you sure? [yN] y
-Removing kafka          ... done
-Removing it_zookeeper_1 ... done</code></pre>
+? Going to remove kafka, zookeeper (y/N) -&gt; y
+[+] Running 2/0
+ ⠿ Container zookeeper  Removed
+ ⠿ Container kafka      Removed</code></pre>
 </div>
 </div>
 <div class="listingblock lines_1">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-session hljs" data-lang="bash-session">docker-compose up --remove-orphans
+<pre class="highlightjs highlight"><code class="language-bash-session hljs" data-lang="bash-session">docker compose up --remove-orphans
 
-kafka        | [2020-05-04 11:30:27,392] INFO [SocketServer brokerId=0] Started data-plane processors for 2 acceptors (kafka.network.SocketServer)
-kafka        | [2020-05-04 11:30:27,396] INFO Kafka version: 2.4.0 (org.apache.kafka.common.utils.AppInfoParser)
-kafka        | [2020-05-04 11:30:27,397] INFO Kafka commitId: 77a89fcf8d7fa018 (org.apache.kafka.common.utils.AppInfoParser)
-kafka        | [2020-05-04 11:30:27,397] INFO Kafka startTimeMs: 1588591827393 (org.apache.kafka.common.utils.AppInfoParser)
-kafka        | [2020-05-04 11:30:27,398] INFO [KafkaServer id=0] started (kafka.server.KafkaServer)</code></pre>
+kafka      | [2022-12-15 08:59:25,688] INFO Kafka version: 3.3.1 (org.apache.kafka.common.utils.AppInfoParser)
+kafka      | [2022-12-15 08:59:25,688] INFO Kafka commitId: e23c59d00e687ff5 (org.apache.kafka.common.utils.AppInfoParser)
+kafka      | [2022-12-15 08:59:25,688] INFO Kafka startTimeMs: 1671094765681 (org.apache.kafka.common.utils.AppInfoParser)
+kafka      | [2022-12-15 08:59:25,689] INFO [KafkaServer id=0] started (kafka.server.KafkaServer)
+kafka      | [2022-12-15 08:59:25,750] INFO [BrokerToControllerChannelManager broker=0 name=forwarding]: Recorded new controller, from now on will use broker kafka:9092 (id: 0 rack: null) (kafka.server.BrokerToControllerRequestThread)
+kafka      | [2022-12-15 08:59:25,751] INFO [BrokerToControllerChannelManager broker=0 name=alterPartition]: Recorded new controller, from now on will use broker kafka:9092 (id: 0 rack: null) (kafka.server.BrokerToControllerRequestThread)</code></pre>
 </div>
 </div>
 </div>
@@ -982,30 +983,31 @@ The new window is created in the last batch because the last batch is inserted a
 <p>Stop <code>kstreamscat</code> process by typing <span class="keyseq"><kbd>Ctrl</kbd>+<kbd>C</kbd></span> in the terminal 2.</p>
 </div>
 <div class="paragraph">
-<p>To restart Kafka (and Zookeeper) go to <code>docker-compose</code> terminal and stop the process by typing <span class="keyseq"><kbd>Ctrl</kbd>+<kbd>C</kbd></span>.</p>
+<p>To restart Kafka (and ZooKeeper) go to the <code>docker compose</code> terminal and stop the process by typing <span class="keyseq"><kbd>Ctrl</kbd>+<kbd>C</kbd></span>.</p>
 </div>
 <div class="paragraph">
 <p>Then run:</p>
 </div>
 <div class="listingblock lines_1">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-session hljs" data-lang="bash-session">docker-compose rm
+<pre class="highlightjs highlight"><code class="language-bash-session hljs" data-lang="bash-session">docker compose rm
 
-Going to remove kafka, it_zookeeper_1
-Are you sure? [yN] y
-Removing kafka          ... done
-Removing it_zookeeper_1 ... done</code></pre>
+? Going to remove kafka, zookeeper (y/N) -&gt; y
+[+] Running 2/0
+ ⠿ Container zookeeper  Removed
+ ⠿ Container kafka      Removed</code></pre>
 </div>
 </div>
 <div class="listingblock lines_1">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-session hljs" data-lang="bash-session">docker-compose up --remove-orphans
+<pre class="highlightjs highlight"><code class="language-bash-session hljs" data-lang="bash-session">docker compose up --remove-orphans
 
-kafka        | [2020-05-04 11:30:27,392] INFO [SocketServer brokerId=0] Started data-plane processors for 2 acceptors (kafka.network.SocketServer)
-kafka        | [2020-05-04 11:30:27,396] INFO Kafka version: 2.4.0 (org.apache.kafka.common.utils.AppInfoParser)
-kafka        | [2020-05-04 11:30:27,397] INFO Kafka commitId: 77a89fcf8d7fa018 (org.apache.kafka.common.utils.AppInfoParser)
-kafka        | [2020-05-04 11:30:27,397] INFO Kafka startTimeMs: 1588591827393 (org.apache.kafka.common.utils.AppInfoParser)
-kafka        | [2020-05-04 11:30:27,398] INFO [KafkaServer id=0] started (kafka.server.KafkaServer)</code></pre>
+kafka      | [2022-12-15 08:59:25,688] INFO Kafka version: 3.3.1 (org.apache.kafka.common.utils.AppInfoParser)
+kafka      | [2022-12-15 08:59:25,688] INFO Kafka commitId: e23c59d00e687ff5 (org.apache.kafka.common.utils.AppInfoParser)
+kafka      | [2022-12-15 08:59:25,688] INFO Kafka startTimeMs: 1671094765681 (org.apache.kafka.common.utils.AppInfoParser)
+kafka      | [2022-12-15 08:59:25,689] INFO [KafkaServer id=0] started (kafka.server.KafkaServer)
+kafka      | [2022-12-15 08:59:25,750] INFO [BrokerToControllerChannelManager broker=0 name=forwarding]: Recorded new controller, from now on will use broker kafka:9092 (id: 0 rack: null) (kafka.server.BrokerToControllerRequestThread)
+kafka      | [2022-12-15 08:59:25,751] INFO [BrokerToControllerChannelManager broker=0 name=alterPartition]: Recorded new controller, from now on will use broker kafka:9092 (id: 0 rack: null) (kafka.server.BrokerToControllerRequestThread)</code></pre>
 </div>
 </div>
 </div>

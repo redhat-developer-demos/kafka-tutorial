@@ -95,13 +95,13 @@
     <a class="nav-link" href="03-consumers-producers.html#consumer">Consumer</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="03-consumers-producers.html#consume-kafkacat">Kafkacat Consumer</a>
+    <a class="nav-link" href="03-consumers-producers.html#consume-kcat">kcat Consumer</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="03-consumers-producers.html#produce-kafkacat">Kafkacat Producer</a>
+    <a class="nav-link" href="03-consumers-producers.html#produce-kcat">kcat Producer</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="03-consumers-producers.html#playingwithoffsets">Kafkacat Offsets</a>
+    <a class="nav-link" href="03-consumers-producers.html#playingwithoffsets">kcat Offsets</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="03-consumers-producers.html#changingretention">Changing Retention</a>
@@ -110,7 +110,7 @@
     <a class="nav-link" href="03-consumers-producers.html#deletetopiccontent">Delete Topic Content</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="03-consumers-producers.html#kafkacat-cleanup">Clean Up</a>
+    <a class="nav-link" href="03-consumers-producers.html#cleanup">Clean Up</a>
   </li>
 </ul>
   </li>
@@ -284,7 +284,7 @@
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>In this example, we are going to develop an example where there is one service that is putting songs description to the <code>songs</code> topic.</p>
+<p>In this example, we are going to develop two simple services which will produce data to and consume data from a Kafka topic named <code>songs</code>.</p>
 </div>
 <div class="admonitionblock tip">
 <table>
@@ -299,15 +299,13 @@ By default, it is not necessary to create the Kafka topic manually, Kafka create
 </table>
 </div>
 <div class="paragraph">
-<p>Then there is another service that consumes from the <code>songs</code> topic these songs.
-Notice that usually this consumer would take the songs and process them (i.e adding them in a graph database like Neo4J, or an ElasticSearch for searching capabilities), but for the sake of simplicity, in this case, the service is printing them in the console.</p>
+<p>The first service acts as a Kafka producer to write song related information (e.g. <em>id</em>, <em>author</em>, <em>name</em>) into the <code>songs</code> topic. Then there is a second service acting as a Kafka consumer which reads this data from the <code>songs</code> topic. Usually this consumer would perform some "real business logic" such as taking the songs data and process it somehow, e.g. adding songs in a graph database like Neo4J, or build a fulltext search index based on Elastic. However, for the sake of simplicity, our service is just printing the consumed data to the console and exposes every consumed Kafka record over a server-sent event (SSE) stream for connected HTTP clients.</p>
 </div>
 <div class="paragraph">
-<p>Rememeber to have Zookeeper and Apache Kafka up and running.
-If not, you can follow <a href="#Setup Kafka">[Setup Kafka]</a> section to learn how to do it using <em>docker-compose</em>.</p>
+<p>Remember you need to have both, ZooKeeper and Apache Kafka correctly configured as well as up and running. If not, you can follow the <a href="#Setup Kafka">[Setup Kafka]</a> section to learn how to do it using <em>docker compose</em>.</p>
 </div>
 <div class="paragraph">
-<p>You need to open 4 terminal windows to run this example, 2 terminals for running the services, and 2 terminals for sending requests.</p>
+<p>It&#8217;s best to have 4 terminal windows open for running this example, 2 terminals for the producer and consumer services, and another 2 terminals for sending and receiving HTTP requests/responses.</p>
 </div>
 <div class="imageblock">
 <div class="content">
@@ -326,7 +324,7 @@ If not, you can follow <a href="#Setup Kafka">[Setup Kafka]</a> section to learn
 <h3 id="deploying-producer"><a class="anchor" href="#deploying-producer"></a>Deploying Producer</h3>
 <div class="paragraph">
 <p>In this case, the Spring Boot service is deployed to produce songs.
-You&#8217;ve got two options, using Docker or building yourself the service.
+You&#8217;ve got two options, using Docker or building the service yourself from the sources.
 In terminal 1, run one of these two options:</p>
 </div>
 <div class="tabset is-loading">
@@ -350,35 +348,35 @@ In terminal 1, run one of these two options:</p>
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker build -t quay.io/rhdevelopers/kafka-tutorial-song-app:springboot .</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker build -t quay.io/rhdevelopers/kafka-tutorial-song-app-springboot:latest .</code></pre>
 </div>
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker run --rm -ti -p 8080:8080 --link=kafka:kafka quay.io/rhdevelopers/kafka-tutorial-song-app:springboot</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker run --rm --network=kafka-tutorial -p 8080:8080 quay.io/rhdevelopers/kafka-tutorial-song-app-springboot:latest</code></pre>
 </div>
 </div>
 <div class="listingblock console-output">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">2020-04-29 09:38:23.290  INFO 3309 --- [main] o.s.web.context.ContextLoader            : Root WebApplicationContext: initialization completed in 921 ms
-2020-04-29 09:38:23.484  INFO 3309 --- [main] o.s.s.concurrent.ThreadPoolTaskExecutor  : Initializing ExecutorService 'applicationTaskExecutor'
-2020-04-29 09:38:23.670  INFO 3309 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8080 (http) with context path ''
-2020-04-29 09:38:23.674  INFO 3309 --- [main] org.acme.song.app.SongAppApplication     : Started SongAppApplication in 1.719 seconds (JVM running for 2.096)</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">2022-12-19T12:31:01.985Z  INFO 1 --- [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2022-12-19T12:31:01.986Z  INFO 1 --- [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 646 ms
+2022-12-19T12:31:02.334Z  INFO 1 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8080 (http) with context path ''
+2022-12-19T12:31:02.349Z  INFO 1 --- [           main] org.acme.song.app.SongApplication        : Started SongApplication in 1.382 seconds (process running for 1.821)</code></pre>
 </div>
 </div>
 </div>
 <div class="tab-pane" aria-labelledby="tabset1_docker">
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker run --rm -ti -p 8080:8080 --link=kafka:kafka quay.io/rhdevelopers/kafka-tutorial-song-app:springboot</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker run --rm --network=kafka-tutorial -p 8080:8080 quay.io/rhdevelopers/kafka-tutorial-song-app-springboot:v22.12</code></pre>
 </div>
 </div>
 <div class="listingblock console-output">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">2020-04-29 09:38:23.290  INFO 3309 --- [main] o.s.web.context.ContextLoader            : Root WebApplicationContext: initialization completed in 921 ms
-2020-04-29 09:38:23.484  INFO 3309 --- [main] o.s.s.concurrent.ThreadPoolTaskExecutor  : Initializing ExecutorService 'applicationTaskExecutor'
-2020-04-29 09:38:23.670  INFO 3309 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8080 (http) with context path ''
-2020-04-29 09:38:23.674  INFO 3309 --- [main] org.acme.song.app.SongAppApplication     : Started SongAppApplication in 1.719 seconds (JVM running for 2.096)</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">2022-12-19T12:31:01.985Z  INFO 1 --- [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2022-12-19T12:31:01.986Z  INFO 1 --- [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 646 ms
+2022-12-19T12:31:02.334Z  INFO 1 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8080 (http) with context path ''
+2022-12-19T12:31:02.349Z  INFO 1 --- [           main] org.acme.song.app.SongApplication        : Started SongApplication in 1.382 seconds (process running for 1.821)</code></pre>
 </div>
 </div>
 </div>
@@ -397,7 +395,7 @@ In terminal 1, run one of these two options:</p>
 <h3 id="deploying-consumer"><a class="anchor" href="#deploying-consumer"></a>Deploying Consumer</h3>
 <div class="paragraph">
 <p>In this case, the Spring Boot service is deployed to consume songs.
-You&#8217;ve got two options, using Docker or building yourself the service.
+You&#8217;ve got two options, using Docker or building the service yourself from the sources.
 In terminal 2, run one of these two options:</p>
 </div>
 <div class="tabset is-loading">
@@ -421,39 +419,43 @@ In terminal 2, run one of these two options:</p>
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker build -t quay.io/rhdevelopers/kafka-tutorial-song-indexer-app:springboot .</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker build -t quay.io/rhdevelopers/kafka-tutorial-song-indexer-app-springboot:latest .</code></pre>
 </div>
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker run --rm -ti -p 9090:8080 --link=kafka:kafka quay.io/rhdevelopers/kafka-tutorial-song-indexer-app:springboot</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker run --rm --network=kafka-tutorial -p 9090:8080 quay.io/rhdevelopers/kafka-tutorial-song-indexer-app-springboot:latest</code></pre>
 </div>
 </div>
 <div class="listingblock console-output">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">2020-04-29 14:37:03.530  INFO 1 --- [ntainer#0-0-C-1] o.a.k.c.c.internals.AbstractCoordinator  : [Consumer clientId=consumer-1, groupId=G1] Successfully joined group with generation 3
-2020-04-29 14:37:03.534  INFO 1 --- [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-1, groupId=G1] Setting newly assigned partitions: songs-0
-2020-04-29 14:37:03.542  INFO 1 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8080 (http) with context path ''
-2020-04-29 14:37:03.545  INFO 1 --- [main] o.a.s.i.app.SongIndexerAppApplication    : Started SongIndexerAppApplication in 3.062 seconds (JVM running for 3.524)
-2020-04-29 14:37:03.556  INFO 1 --- [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-1, groupId=G1] Setting offset for partition songs-0 to the committed offset FetchPosition{offset=3, offsetEpoch=Optional.empty, currentLeader=LeaderAndEpoch{leader=kafka:9092 (id: 0 rack: null), epoch=0}}
-2020-04-29 14:37:03.565  INFO 1 --- [ntainer#0-0-C-1] o.s.k.l.KafkaMessageListenerContainer    : G1: partitions assigned: [songs-0]</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">2022-12-15T09:35:14.545+01:00  INFO 43531 --- [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-G1-1, groupId=G1] (Re-)joining group
+2022-12-15T09:35:14.549+01:00  INFO 43531 --- [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-G1-1, groupId=G1] Successfully joined group with generation Generation{generationId=35, memberId='consumer-G1-1-678970e3-7deb-4679-a469-10b1b53a200c', protocol='range'}
+2022-12-15T09:35:14.550+01:00  INFO 43531 --- [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-G1-1, groupId=G1] Finished assignment for group at generation 35: {consumer-G1-1-678970e3-7deb-4679-a469-10b1b53a200c=Assignment(partitions=[songs-0])}
+2022-12-15T09:35:14.555+01:00  INFO 43531 --- [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-G1-1, groupId=G1] Successfully synced group in generation Generation{generationId=35, memberId='consumer-G1-1-678970e3-7deb-4679-a469-10b1b53a200c', protocol='range'}
+2022-12-15T09:35:14.555+01:00  INFO 43531 --- [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-G1-1, groupId=G1] Notifying assignor about the new Assignment(partitions=[songs-0])
+2022-12-15T09:35:14.557+01:00  INFO 43531 --- [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-G1-1, groupId=G1] Adding newly assigned partitions: songs-0
+2022-12-15T09:35:14.564+01:00  INFO 43531 --- [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-G1-1, groupId=G1] Setting offset for partition songs-0 to the committed offset FetchPosition{offset=49, offsetEpoch=Optional.empty, currentLeader=LeaderAndEpoch{leader=Optional[localhost:29092 (id: 0 rack: null)], epoch=0}}
+2022-12-15T09:35:14.565+01:00  INFO 43531 --- [ntainer#0-0-C-1] o.s.k.l.KafkaMessageListenerContainer    : G1: partitions assigned: [songs-0]</code></pre>
 </div>
 </div>
 </div>
 <div class="tab-pane" aria-labelledby="tabset2_docker">
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker run --rm -ti -p 9090:8080 --link=kafka:kafka quay.io/rhdevelopers/kafka-tutorial-song-indexer-app:springboot</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker run --rm --network=kafka-tutorial -p 9090:8080 quay.io/rhdevelopers/kafka-tutorial-song-indexer-app-springboot:v22.12</code></pre>
 </div>
 </div>
 <div class="listingblock console-output">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">2020-04-29 14:37:03.530  INFO 1 --- [ntainer#0-0-C-1] o.a.k.c.c.internals.AbstractCoordinator  : [Consumer clientId=consumer-1, groupId=G1] Successfully joined group with generation 3
-2020-04-29 14:37:03.534  INFO 1 --- [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-1, groupId=G1] Setting newly assigned partitions: songs-0
-2020-04-29 14:37:03.542  INFO 1 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8080 (http) with context path ''
-2020-04-29 14:37:03.545  INFO 1 --- [main] o.a.s.i.app.SongIndexerAppApplication    : Started SongIndexerAppApplication in 3.062 seconds (JVM running for 3.524)
-2020-04-29 14:37:03.556  INFO 1 --- [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-1, groupId=G1] Setting offset for partition songs-0 to the committed offset FetchPosition{offset=3, offsetEpoch=Optional.empty, currentLeader=LeaderAndEpoch{leader=kafka:9092 (id: 0 rack: null), epoch=0}}
-2020-04-29 14:37:03.565  INFO 1 --- [ntainer#0-0-C-1] o.s.k.l.KafkaMessageListenerContainer    : G1: partitions assigned:</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">2022-12-15T09:44:02.594+01:00  INFO 45680 --- [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-G1-1, groupId=G1] Finished assignment for group at generation 1: {consumer-G1-1-95c3358a-e4a1-4d93-bd10-37453f8d21ed=Assignment(partitions=[songs-0])}
+2022-12-15T09:44:02.632+01:00  INFO 45680 --- [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-G1-1, groupId=G1] Successfully synced group in generation Generation{generationId=1, memberId='consumer-G1-1-95c3358a-e4a1-4d93-bd10-37453f8d21ed', protocol='range'}
+2022-12-15T09:44:02.633+01:00  INFO 45680 --- [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-G1-1, groupId=G1] Notifying assignor about the new Assignment(partitions=[songs-0])
+2022-12-15T09:44:02.637+01:00  INFO 45680 --- [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-G1-1, groupId=G1] Adding newly assigned partitions: songs-0
+2022-12-15T09:44:02.646+01:00  INFO 45680 --- [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-G1-1, groupId=G1] Found no committed offset for partition songs-0
+2022-12-15T09:44:02.651+01:00  INFO 45680 --- [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-G1-1, groupId=G1] Found no committed offset for partition songs-0
+2022-12-15T09:44:02.660+01:00  INFO 45680 --- [ntainer#0-0-C-1] o.a.k.c.c.internals.SubscriptionState    : [Consumer clientId=consumer-G1-1, groupId=G1] Resetting offset for partition songs-0 to position FetchPosition{offset=0, offsetEpoch=Optional.empty, currentLeader=LeaderAndEpoch{leader=Optional[localhost:29092 (id: 0 rack: null)], epoch=0}}.
+2022-12-15T09:44:02.682+01:00  INFO 45680 --- [ntainer#0-0-C-1] o.s.k.l.KafkaMessageListenerContainer    : G1: partitions assigned: [songs-0]</code></pre>
 </div>
 </div>
 </div>
@@ -463,8 +465,8 @@ In terminal 2, run one of these two options:</p>
 <div class="sect2">
 <h3 id="providing-song"><a class="anchor" href="#providing-song"></a>Providing Songs</h3>
 <div class="paragraph">
-<p>Song Indexer Service is exposing using Server-Side Events, the songs that are published to <code>songs</code> topic.
-In the terminal 3, run the following command to start listening for the events:</p>
+<p>The song indexer service consume songs that have been produced to the <code>songs</code> topic. Besides printing the song to the console it exposes every consumed record as sever-sent event (SSE) over HTTP.
+In the terminal 3, run the following command to start listening for sever-sent events over the HTTP connection:</p>
 </div>
 <div class="listingblock console-input">
 <div class="content">
@@ -472,12 +474,12 @@ In the terminal 3, run the following command to start listening for the events:<
 </div>
 </div>
 <div class="paragraph">
-<p>Song Service exposes an endpoint to publish songs into <code>songs</code> topic.
+<p>The song service can produce songs into the <code>songs</code> the topic. For that, it exposes an HTTP POST endpoint which allows us to publish songs.
 In the terminal 4, run the following command to publish a song:</p>
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">http POST localhost:8080/songs id=1000 name=Portals author='Alan Silvestri'</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">http POST localhost:8080/songs id=1000 name='Portals' author='Alan Silvestri'</code></pre>
 </div>
 </div>
 <div class="listingblock console-ouput">
@@ -485,28 +487,33 @@ In the terminal 4, run the following command to publish a song:</p>
 <pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">HTTP/1.1 201
 Connection: keep-alive
 Content-Length: 0
-Date: Wed, 29 Apr 2020 14:34:27 GMT
+Date: Thu, 15 Dec 2022 08:46:57 GMT
 Keep-Alive: timeout=60</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>To verify that the song has been processed, check terminal 2 (<code>song indexer service</code>) for the next logline:</p>
+<p>To verify that the song has been processed, check terminal 2 (<code>song indexer service</code>) for the last couple of log lines:</p>
 </div>
 <div class="listingblock console-output">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">2020-04-29 14:34:18.340  INFO 1 --- [nio-8080-exec-1] reactor.Flux.EmitterProcessor.1          : onSubscribe(EmitterProcessor.EmitterInner)
-2020-04-29 14:34:18.343  INFO 1 --- [nio-8080-exec-1] reactor.Flux.EmitterProcessor.1          : request(1)
-2020-04-29 14:34:18.345  INFO 1 --- [nio-8080-exec-1] reactor.Flux.EmitterProcessor.1          : onNext(ServerSentEvent [id = '20ad9cdd-4629-4683-8442-4943b0161354', event='null', retry=null, comment='null', data=Song 1000 processed])
-2020-04-29 14:34:18.352  INFO 1 --- [         task-1] reactor.Flux.EmitterProcessor.1          : request(1)
-Song [author=Alan Silvestri, id=1000, name=Portals] indexed.</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">2022-12-15T09:47:08.234+01:00  INFO 45680 --- [ntainer#0-0-C-1] o.s.k.l.KafkaMessageListenerContainer    : G1: partitions assigned: [songs-0]
+Song[id=1000, name=Portals, author=Alan Silvestri, op=ADD] indexed.
+2022-12-15T09:49:09.068+01:00  INFO 46855 --- [ntainer#0-0-C-1] reactor.Flux.SinkManyBestEffort.1        : onNext(ServerSentEvent [id = '6fad2b6f-6400-45a1-9dc9-8bcfed7b5399', event='null', retry=null, comment='null', data=Song 1000 processed])</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>And in the termianl 4, you should see that en event has been streamed:</p>
+<p>And in the terminal 4, you should see that the sever-sent event has been streamed successfully:</p>
 </div>
 <div class="listingblock console-output">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">id:04ad6bd0-463a-4fd7-a39c-59ce042f54a4
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">HTTP/1.1 200 OK
+Content-Type: text/event-stream;charset=UTF-8
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
+transfer-encoding: chunked
+
+id:6fad2b6f-6400-45a1-9dc9-8bcfed7b5399
 data:Song 1000 processed</code></pre>
 </div>
 </div>
@@ -520,30 +527,31 @@ data:Song 1000 processed</code></pre>
 <p>Stop the processes that are running in the terminal 1 and 2 by typing <span class="keyseq"><kbd>Ctrl</kbd>+<kbd>C</kbd></span>.</p>
 </div>
 <div class="paragraph">
-<p>To restart Kafka (and Zookeeper) go to <code>docker-compose</code> terminal and stop the process by typing <span class="keyseq"><kbd>Ctrl</kbd>+<kbd>C</kbd></span>.</p>
+<p>To restart Kafka (and ZooKeeper) go to the <code>docker compose</code> terminal and stop the process by typing <span class="keyseq"><kbd>Ctrl</kbd>+<kbd>C</kbd></span>.</p>
 </div>
 <div class="paragraph">
 <p>Then run:</p>
 </div>
 <div class="listingblock lines_1">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-session hljs" data-lang="bash-session">docker-compose rm
+<pre class="highlightjs highlight"><code class="language-bash-session hljs" data-lang="bash-session">docker compose rm
 
-Going to remove kafka, it_zookeeper_1
-Are you sure? [yN] y
-Removing kafka          ... done
-Removing it_zookeeper_1 ... done</code></pre>
+? Going to remove kafka, zookeeper (y/N) -&gt; y
+[+] Running 2/0
+ ⠿ Container zookeeper  Removed
+ ⠿ Container kafka      Removed</code></pre>
 </div>
 </div>
 <div class="listingblock lines_1">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-session hljs" data-lang="bash-session">docker-compose up --remove-orphans
+<pre class="highlightjs highlight"><code class="language-bash-session hljs" data-lang="bash-session">docker compose up --remove-orphans
 
-kafka        | [2020-05-04 11:30:27,392] INFO [SocketServer brokerId=0] Started data-plane processors for 2 acceptors (kafka.network.SocketServer)
-kafka        | [2020-05-04 11:30:27,396] INFO Kafka version: 2.4.0 (org.apache.kafka.common.utils.AppInfoParser)
-kafka        | [2020-05-04 11:30:27,397] INFO Kafka commitId: 77a89fcf8d7fa018 (org.apache.kafka.common.utils.AppInfoParser)
-kafka        | [2020-05-04 11:30:27,397] INFO Kafka startTimeMs: 1588591827393 (org.apache.kafka.common.utils.AppInfoParser)
-kafka        | [2020-05-04 11:30:27,398] INFO [KafkaServer id=0] started (kafka.server.KafkaServer)</code></pre>
+kafka      | [2022-12-15 08:59:25,688] INFO Kafka version: 3.3.1 (org.apache.kafka.common.utils.AppInfoParser)
+kafka      | [2022-12-15 08:59:25,688] INFO Kafka commitId: e23c59d00e687ff5 (org.apache.kafka.common.utils.AppInfoParser)
+kafka      | [2022-12-15 08:59:25,688] INFO Kafka startTimeMs: 1671094765681 (org.apache.kafka.common.utils.AppInfoParser)
+kafka      | [2022-12-15 08:59:25,689] INFO [KafkaServer id=0] started (kafka.server.KafkaServer)
+kafka      | [2022-12-15 08:59:25,750] INFO [BrokerToControllerChannelManager broker=0 name=forwarding]: Recorded new controller, from now on will use broker kafka:9092 (id: 0 rack: null) (kafka.server.BrokerToControllerRequestThread)
+kafka      | [2022-12-15 08:59:25,751] INFO [BrokerToControllerChannelManager broker=0 name=alterPartition]: Recorded new controller, from now on will use broker kafka:9092 (id: 0 rack: null) (kafka.server.BrokerToControllerRequestThread)</code></pre>
 </div>
 </div>
 </div>

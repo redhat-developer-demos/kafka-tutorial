@@ -95,13 +95,13 @@
     <a class="nav-link" href="#consumer">Consumer</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="#consume-kafkacat">Kafkacat Consumer</a>
+    <a class="nav-link" href="#consume-kcat">kcat Consumer</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="#produce-kafkacat">Kafkacat Producer</a>
+    <a class="nav-link" href="#produce-kcat">kcat Producer</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="#playingwithoffsets">Kafkacat Offsets</a>
+    <a class="nav-link" href="#playingwithoffsets">kcat Offsets</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="#changingretention">Changing Retention</a>
@@ -110,7 +110,7 @@
     <a class="nav-link" href="#deletetopiccontent">Delete Topic Content</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="#kafkacat-cleanup">Clean Up</a>
+    <a class="nav-link" href="#cleanup">Clean Up</a>
   </li>
 </ul>
   </li>
@@ -285,15 +285,24 @@
 <h2 id="producer"><a class="anchor" href="#producer"></a>What are Producers?</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Producers publish messages to a topic at the end of a partition.
-By default, if a message contains a key, the hashed value of the key is used to decide in which partition the message is stored.
-If the key is <code>null</code>, then a round-robin algorithm is used to balance the messages across all partitions.</p>
+<p>Producers publish messages by appending to the end of a topic partition.
+By default, if a message contains a key (i.e. the key is NOT <code>null</code>), the hashed value of the key is used to decide in which partition the message is stored. If there is a specific key set for the message, then the producer&#8217;s default hash partitioning guarantees that long as no new partitions are added, all messages with the same key will be stored in the same topic partition. This behaviour is essential whenever you want to ensure that message for one and the same key are consumed and processed in order from the same topic partition.</p>
 </div>
 <div class="paragraph">
-<p>Kafka guarantees that all as long as no new partitions are added, elements with the same key will be stored in the same partition.</p>
+<p>If the key is <code>null</code>, the producer behaves differently according to the Kafka version:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>up to Kafka 2.3:</strong> a round-robin partitioner is used to balance the messages across all partitions</p>
+</li>
+<li>
+<p><strong>Kafka 2.4 or newer:</strong> a sticky partitioner is used which leads to larger batches and reduced latency and is particularly beneficial for very high throughput scenarios</p>
+</li>
+</ul>
 </div>
 <div class="paragraph">
-<p>If you want you can also implement a custom partitioning strategy to store messages in a specific partition following any kind of business rule.</p>
+<p>You can also implement your own custom partitioning strategy to store messages in a specific partition following any kind of business rule.</p>
 </div>
 <div class="imageblock">
 <div class="content">
@@ -309,18 +318,13 @@ If the key is <code>null</code>, then a round-robin algorithm is used to balance
 <p>Each message published to a topic is delivered to a consumer that is subscribed to that topic.</p>
 </div>
 <div class="paragraph">
-<p>A consumer can read data from any position of the partition, and internally it is stored as a pointer called <code>offset</code>.
-In most of the cases, a consumer advances its <code>offset</code> linearly, but it could be in any order, or starting from any given position.</p>
+<p>A consumer can read data from any position of the partition, and internally the position is stored as a pointer called <code>offset</code>. In most of the cases, a consumer advances its <code>offset</code> linearly, but it could be in any order, or starting from any given position.</p>
 </div>
 <div class="paragraph">
-<p>Each consumer belongs to a consumer group.
-A consumer group is a list of consumer instances that ensures the scalability for processing messages and also fault tolerance.</p>
+<p>Each consumer belongs to a consumer group. A consumer group may consist of multiple consumer instances. This is the reason why a consumer group can be both, fault tolerant and scalable. If one of several consumer instances in a group dies, the topic partitions are reassigned to other consumer instances such that the remaining ones continue to process messages form all partitions. If a consumer group contains more than one consumer instance, each consumer will only receive messages from a subset of the partitions. When a consumer group only contains one consumer instance, this consumer is responsible for processing all messages of all topic partitions.</p>
 </div>
 <div class="paragraph">
-<p>When a consumer group only contains one consumer, this consumer is responsible for processing all messages of all partitions.</p>
-</div>
-<div class="paragraph">
-<p>The more consumers you add to a group, each consumer will only receive messages from a subset of the partitions.</p>
+<p>Message consumption can be parallelized in a consumer group by adding more consumer instances to the group, up to the number of a topic&#8217;s partitions. Concretely, if a topic e.g. has 8 partitions, a consumer group can support up to 8 consumer instances which all consume in parallel, each from 1 topic partition.</p>
 </div>
 <div class="imageblock">
 <div class="content">
@@ -340,8 +344,7 @@ If you add more consumers in a consumer group than the number of partitions for 
 </table>
 </div>
 <div class="paragraph">
-<p>As you can see what is registered to a topic is the <em>consumer group</em> and not the consumer.
-The consumer is "subscribed" to a partition.</p>
+<p>As you can see what is registered to a topic is the <em>consumer group</em> and not the consumer instance. The consumer instance is "subscribed" to (a subset of) topic partitions.</p>
 </div>
 </div>
 </div>
@@ -352,10 +355,10 @@ The consumer is "subscribed" to a partition.</p>
 <p>Before digging into how to produce and consume data from Java, let&#8217;s see how to use <code>kcat</code> to do it.</p>
 </div>
 <div class="paragraph">
-<p><code>kcat</code> is a great tool for these use cases, and it is the <em>de-facto</em> tool to inspect data in Kafka.</p>
+<p><code>kcat</code> is a great tool for these use cases, and it is one of the most popular CLI tools to work with data in Kafka topics.</p>
 </div>
 <div class="sect2">
-<h3 id="consume-kafkacat"><a class="anchor" href="#consume-kafkacat"></a>Consuming messages with Kafkacat</h3>
+<h3 id="consume-kcat"><a class="anchor" href="#consume-kcat"></a>Consuming messages with kcat</h3>
 <div class="paragraph">
 <p>Open a new terminal, <em>terminal 1</em>, and run the following command:</p>
 </div>
@@ -381,7 +384,7 @@ The consumer is "subscribed" to a partition.</p>
 <div class="tab-pane" aria-labelledby="tabset1_kcat-in-docker">
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker run -it --network=host edenhill/kcat:1.7.0 kcat -b localhost:29092 -t songs -C -K:</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker run --rm -it --network=kafka-tutorial edenhill/kcat:1.7.1 kcat -b kafka:9092 -t songs -C -K:</code></pre>
 </div>
 </div>
 </div>
@@ -393,13 +396,10 @@ The consumer is "subscribed" to a partition.</p>
 </div>
 </div>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="produce-kafkacat"><a class="anchor" href="#produce-kafkacat"></a>Producing messages with Kafkacat</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="produce-kcat"><a class="anchor" href="#produce-kcat"></a>Producing messages with kcat</h3>
 <div class="paragraph">
-<p>Open a new terminal, <em>terminal 2</em>, and create a new file with the next content:</p>
+<p>Open a new terminal, <em>terminal 2</em>, and create a new file named <code>initial_songs</code> with the content shown below:</p>
 </div>
 <div class="listingblock console-input">
 <div class="title">initial_songs</div>
@@ -409,8 +409,7 @@ The consumer is "subscribed" to a partition.</p>
 </div>
 </div>
 <div class="paragraph">
-<p>Then insert each of this line as a new message.
-The number before the <code>:</code> is taken as an id.</p>
+<p>Then use <code>kcat</code> to produce a new message to the <code>songs</code> topic for each line in the <code>initial_songs</code> file. Note that the number before the colon <code>:</code> is taken as the message key.</p>
 </div>
 <div class="tabset is-loading">
 <div class="ulist tabs">
@@ -434,7 +433,7 @@ The number before the <code>:</code> is taken as an id.</p>
 <div class="tab-pane" aria-labelledby="tabset2_kcat-in-docker">
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker run -it --network=host edenhill/kcat:1.7.0 kcat -b localhost:29092 -t songs -P -l -K: initial_songs</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker run --rm -it --network=kafka-tutorial -v $(pwd)/documentation/modules/ROOT/examples/initial_songs.json:/home/initial_songs edenhill/kcat:1.7.1 kcat -b kafka:9092 -t songs -P -l -K: /home/initial_songs</code></pre>
 </div>
 </div>
 </div>
@@ -442,7 +441,7 @@ The number before the <code>:</code> is taken as an id.</p>
 </div>
 <div class="paragraph">
 <p>Switch back to <em>terminal 1</em> where you are running <code>kcat</code> as a consumer.
-You&#8217;ve defined this at <a href="#consume-kafkacat">Consuming messages with Kafkacat</a> section.</p>
+You&#8217;ve defined this at <a href="#consume-kcat">Consuming messages with kcat</a> section.</p>
 </div>
 <div class="paragraph">
 <p>Now the output of the terminal has been updated showing the consumed messages:</p>
@@ -455,16 +454,17 @@ You&#8217;ve defined this at <a href="#consume-kafkacat">Consuming messages with
 </div>
 </div>
 <div class="paragraph">
-<p>Notice that the <code>offset</code> of this consumer has been updated to 2, as the two first records has been consumed from the topic.</p>
+<p>Notice that the <code>offset</code> of this consumer has been updated to 2, as the two first records have been consumed from the topic.</p>
+</div>
 </div>
 <div class="sect2">
 <h3 id="playingwithoffsets"><a class="anchor" href="#playingwithoffsets"></a>Playing with Offsets</h3>
 <div class="paragraph">
-<p>A Producer always produces content at the end of a topic, meanwhile, a consumer can consume from any offset.
+<p>A producer always produces content at the end of a topic, meanwhile, a consumer can consume from any offset.
 Still on <em>terminal 1</em>, stop the <code>kcat</code> process by typing <span class="keyseq"><kbd>Ctrl</kbd>+<kbd>C</kbd></span>.</p>
 </div>
 <div class="paragraph">
-<p>Then start again <code>kcat</code> with the same command:</p>
+<p>Start <code>kcat</code> once more with the same command as further above for consuming from the <code>songs</code> topic again:</p>
 </div>
 <div class="tabset is-loading">
 <div class="ulist tabs">
@@ -481,14 +481,14 @@ Still on <em>terminal 1</em>, stop the <code>kcat</code> process by typing <span
 <div class="tab-pane" aria-labelledby="tabset3_kcat">
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">kcat -b localhost:29092 -t songs -P -l -K: initial_songs</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">kcat -b localhost:29092 -t songs -C -K:</code></pre>
 </div>
 </div>
 </div>
 <div class="tab-pane" aria-labelledby="tabset3_kcat-in-docker">
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker run -it --network=host edenhill/kcat:1.7.0 kcat -b localhost:29092 -t songs -P -l -K: initial_songs</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker run --rm -it --network=kafka-tutorial edenhill/kcat:1.7.1 kcat -b kafka:9092 -t songs -C -K:</code></pre>
 </div>
 </div>
 </div>
@@ -502,15 +502,13 @@ Still on <em>terminal 1</em>, stop the <code>kcat</code> process by typing <span
 </div>
 </div>
 <div class="paragraph">
-<p>Notice that all stream is consumed.
-This is happening because by default <code>kcat</code> is getting all the content from a topic since the beginning of the stream.
-But you can change that.</p>
+<p>Notice that the whole topic with all messages is consumed again. This is happening because by default <code>kcat</code> is reading from the beginning of the topic (i.e. the oldest message that is still stored). But you can change that anytime.</p>
 </div>
 <div class="paragraph">
 <p>Stop again <code>kcat</code> process by typing <span class="keyseq"><kbd>Ctrl</kbd>+<kbd>C</kbd></span>.</p>
 </div>
 <div class="paragraph">
-<p>And start again with the following command:</p>
+<p>Now start <code>kcat</code> again with the <code>-o</code> flag and the offset number <code>1</code>.</p>
 </div>
 <div class="tabset is-loading">
 <div class="ulist tabs">
@@ -534,7 +532,7 @@ But you can change that.</p>
 <div class="tab-pane" aria-labelledby="tabset4_kcat-in-docker">
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker run -it --network=host edenhill/kcat:1.7.0 kcat -b localhost:29092 -t songs -o 1 -C -K:</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker run --rm -it --network=kafka-tutorial edenhill/kcat:1.7.1 kcat -b kafka:9092 -t songs -o 1 -C -K:</code></pre>
 </div>
 </div>
 </div>
@@ -547,23 +545,22 @@ But you can change that.</p>
 </div>
 </div>
 <div class="paragraph">
-<p>Now the initial offset was not set to the beginning but from the second element.</p>
+<p>This time, the initial offset was explicitly set to <code>1</code> i.e. the consumption was beginning at the 2nd message.</p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="changingretention"><a class="anchor" href="#changingretention"></a>Changing Retention</h3>
 <div class="paragraph">
-<p>By default, Kafka retains data on a topic for 168 hours (7 days).
-But retention can be changed, let&#8217;s change it to 1 minute.</p>
+<p>By default, Kafka retains messages in a topic for 168 hours (7 days). But retention time can be changed, so let&#8217;s modify it to e.g. 1 minute.</p>
 </div>
 <div class="paragraph">
-<p>You can also use <code>kafka-topic.sh</code> tool to change the retention time of a topic.</p>
+<p>You can use <code>kafka-topic.sh</code> tool to change the retention time of a topic.</p>
 </div>
 <div class="paragraph">
 <p>Open a third terminal:</p>
 </div>
 <div class="paragraph">
-<p>This tool is bundled inside Kafka installation, so let&#8217;s <code>exec</code> a <code>bash</code> terminal inside the Kafka container.</p>
+<p>This tool is bundled with the Kafka container image, so let&#8217;s <code>exec</code> a <code>bash</code> terminal inside the running Kafka container.</p>
 </div>
 <div class="listingblock lines_1 console-input">
 <div class="content">
@@ -571,16 +568,16 @@ But retention can be changed, let&#8217;s change it to 1 minute.</p>
 </div>
 </div>
 <div class="paragraph">
-<p>Inside the container run:</p>
+<p>Inside the container&#8217;s bash run:</p>
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">./bin/kafka-configs.sh --zookeeper zookeeper_1:2181 --alter --entity-type topics --entity-name songs --add-config 'retention.ms=10000'</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">./bin/kafka-configs.sh --bootstrap-server kafka:9092 --entity-type topics --entity-name songs --alter --add-config retention.ms=60000</code></pre>
 </div>
 </div>
 <div class="listingblock console-output">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">Completed Updating config for entity: topic 'songs'.</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">Completed updating config for topic songs.</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -588,17 +585,17 @@ But retention can be changed, let&#8217;s change it to 1 minute.</p>
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">./bin/kafka-topics.sh --describe --bootstrap-server localhost:29092 --topic songs</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">./bin/kafka-topics.sh --describe --bootstrap-server kafka:9092 --topic songs</code></pre>
 </div>
 </div>
 <div class="listingblock console-output">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">Topic: songs	PartitionCount: 1	ReplicationFactor: 1	Configs: segment.bytes=1073741824,retention.ms=10000
-    Topic: songs	Partition: 0	Leader: 0	Replicas: 0	Isr: 0</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">Topic: songs	TopicId: h2aw0peOTHuWYleUpZxj-Q	PartitionCount: 1	ReplicationFactor: 1	Configs: retention.ms=60000
+	Topic: songs	Partition: 0	Leader: 0	Replicas: 0	Isr: 0</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>In one terminal produce data again:</p>
+<p>In your other terminal, stop the <code>kcat</code> process by typing <span class="keyseq"><kbd>Ctrl</kbd>+<kbd>C</kbd></span> and wait for ~60 seconds (ie <code>sleep 60</code>). After the time has passed run the <code>kcat</code> in consumer mode again:</p>
 </div>
 <div class="tabset is-loading">
 <div class="ulist tabs">
@@ -615,86 +612,14 @@ But retention can be changed, let&#8217;s change it to 1 minute.</p>
 <div class="tab-pane" aria-labelledby="tabset5_kcat">
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">kcat -b localhost:29092 -t songs -P -l -K: initial_songs</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">kcat -b localhost:29092 -t songs -C -K:</code></pre>
 </div>
 </div>
 </div>
 <div class="tab-pane" aria-labelledby="tabset5_kcat-in-docker">
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker run -it --network=host edenhill/kcat:1.7.0 kcat -b localhost:29092 -t songs -P -l -K: initial_songs</code></pre>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="paragraph">
-<p>In the other terminal consume this data so you know that it has been inserted correctly:</p>
-</div>
-<div class="tabset is-loading">
-<div class="ulist tabs">
-<ul>
-<li>
-<p><a id="tabset6_kcat"></a>kcat</p>
-</li>
-<li>
-<p><a id="tabset6_kcat-in-docker"></a>kcat in Docker</p>
-</li>
-</ul>
-</div>
-<div class="content">
-<div class="tab-pane" aria-labelledby="tabset6_kcat">
-<div class="listingblock console-input">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">kcat -b localhost:29092 -t songs -C -K:</code></pre>
-</div>
-</div>
-</div>
-<div class="tab-pane" aria-labelledby="tabset6_kcat-in-docker">
-<div class="listingblock console-input">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker run -it --network=host edenhill/kcat:1.7.0 kcat -b localhost:29092 -t songs -C -K:</code></pre>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="listingblock console-output">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">1: {"id": 1, "name": "The Ecstasy of Gold", "author":"Ennio Morricone", "op":"ADD"}
-2: {"id": 2, "name": "Still Loving you", "author":"Scorpions", "op":"ADD"}
-% Reached end of topic songs [0] at offset 2</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Stop the <code>kcat</code> process by typing <span class="keyseq"><kbd>Ctrl</kbd>+<kbd>C</kbd></span> and wait for ~10 seconds (ie <code>sleep 15</code>).</p>
-</div>
-<div class="paragraph">
-<p>Run the <code>kcat</code> in consumer mode again:</p>
-</div>
-<div class="tabset is-loading">
-<div class="ulist tabs">
-<ul>
-<li>
-<p><a id="tabset7_kcat"></a>kcat</p>
-</li>
-<li>
-<p><a id="tabset7_kcat-in-docker"></a>kcat in Docker</p>
-</li>
-</ul>
-</div>
-<div class="content">
-<div class="tab-pane" aria-labelledby="tabset7_kcat">
-<div class="listingblock console-input">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">kcat -b localhost:29092 -t songs -C -K:</code></pre>
-</div>
-</div>
-</div>
-<div class="tab-pane" aria-labelledby="tabset7_kcat-in-docker">
-<div class="listingblock console-input">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker run -it --network=host edenhill/kcat:1.7.0 kcat -b localhost:29092 -t songs -C -K:</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker run --rm -it --network=kafka-tutorial edenhill/kcat:1.7.1 kcat -b kafka:9092 -t songs -C -K:</code></pre>
 </div>
 </div>
 </div>
@@ -706,29 +631,22 @@ But retention can be changed, let&#8217;s change it to 1 minute.</p>
 </div>
 </div>
 <div class="paragraph">
-<p>The important part is the last line, notice that it returns no messages, but the offset is <code>2</code>.
-The reason is that the messages are expired and deleted from the topic, but the offset has its retention period.
-By default, this retention period is 1 week, so although there is no data, the current offset for a consumer is '2'.</p>
+<p>The important part is the last line, notice that it returns no messages, but the offset is <code>2</code>. The reason is that the messages are expired and deleted from the topic, but the offset has its retention period. By default, this retention period is 1 week, so although there is no data, the current offset for a consumer is '2'.</p>
+</div>
+<div class="paragraph">
+<p>Also note, that Kafka brokers have a configuration for <code>log.retention.check.interval.ms</code> and this setting must be lower than/equal to a topic&#8217;s <code>retention.ms</code>, otherwise cleaning out offsets will not be effective "immeadiately" but only after the log cleaner ran to do its job. In other words, it may take longer (up to <code>log.retention.check.interval.ms</code>) before you can actually observe the data retention happening in the corresponding Kafka topic.</p>
 </div>
 <div class="paragraph">
 <p>Change retention time to the default one by running in the third terminal (the one you did <code>docker exec</code>), the following command:</p>
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">./bin/kafka-configs.sh --zookeeper zookeeper_1:2181 --alter --entity-type topics --entity-name songs --delete-config retention.ms</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">./bin/kafka-configs.sh --bootstrap-server kafka:9092 --entity-type topics --entity-name songs --alter --delete-config retention.ms</code></pre>
 </div>
 </div>
 <div class="listingblock console-output">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">Completed Updating config for entity: topic 'songs'.</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Now that the topic configuration is back to default, you can run the <code>exit</code> command:</p>
-</div>
-<div class="listingblock console-input">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">exit</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">Completed updating config for topic songs.</code></pre>
 </div>
 </div>
 </div>
@@ -738,7 +656,7 @@ By default, this retention period is 1 week, so although there is no data, the c
 <p>You can also use <code>kafka-topic.sh</code> tool to delete the content of a topic manually.</p>
 </div>
 <div class="paragraph">
-<p>This tool is bundled inside Kafka installation, so let&#8217;s <code>exec</code> a <code>bash</code> terminal inside the Kafka container.</p>
+<p>This tool is bundled with the Kafka container image, so let&#8217;s <code>exec</code> a <code>bash</code> terminal inside the running Kafka container.</p>
 </div>
 <div class="listingblock lines_1 console-input">
 <div class="content">
@@ -750,7 +668,7 @@ By default, this retention period is 1 week, so although there is no data, the c
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">./bin/kafka-topics.sh --delete --bootstrap-server localhost:29092 --topic songs</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">./bin/kafka-topics.sh --delete --bootstrap-server kafka:9092 --topic songs</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -761,45 +679,11 @@ By default, this retention period is 1 week, so although there is no data, the c
 <pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">exit</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>If you run <code>kcat</code> again, you&#8217;ll see that no data is in the topic:</p>
-</div>
-<div class="tabset is-loading">
-<div class="ulist tabs">
-<ul>
-<li>
-<p><a id="tabset8_kcat"></a>kcat</p>
-</li>
-<li>
-<p><a id="tabset8_kcat-in-docker"></a>kcat in Docker</p>
-</li>
-</ul>
-</div>
-<div class="content">
-<div class="tab-pane" aria-labelledby="tabset8_kcat">
-<div class="listingblock console-input">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">kcat -b localhost:29092 -t songs -C -K:</code></pre>
-</div>
-</div>
-</div>
-<div class="tab-pane" aria-labelledby="tabset8_kcat-in-docker">
-<div class="listingblock console-input">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker run -it --network=host edenhill/kcat:1.7.0 kcat -b localhost:29092 -t songs -C -K:</code></pre>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="paragraph">
-<p>Stop <code>kcat</code> process by typing <span class="keyseq"><kbd>Ctrl</kbd>+<kbd>C</kbd></span>.</p>
-</div>
 </div>
 <div class="sect2">
-<h3 id="kafkacat-cleanup"><a class="anchor" href="#kafkacat-cleanup"></a>Clean Up</h3>
+<h3 id="cleanup"><a class="anchor" href="#cleanup"></a>Clean Up</h3>
 <div class="paragraph">
-<p>Stop the current <code>kcat</code> process by typing <span class="keyseq"><kbd>Ctrl</kbd>+<kbd>C</kbd></span> on the terminal.</p>
+<p>Also make sure to stop still running <code>kcat</code> processes in any of your tutorial related terminal windows by typing <span class="keyseq"><kbd>Ctrl</kbd>+<kbd>C</kbd></span>.</p>
 </div>
 </div>
 </div>

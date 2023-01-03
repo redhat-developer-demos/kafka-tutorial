@@ -95,13 +95,13 @@
     <a class="nav-link" href="03-consumers-producers.html#consumer">Consumer</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="03-consumers-producers.html#consume-kafkacat">Kafkacat Consumer</a>
+    <a class="nav-link" href="03-consumers-producers.html#consume-kcat">kcat Consumer</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="03-consumers-producers.html#produce-kafkacat">Kafkacat Producer</a>
+    <a class="nav-link" href="03-consumers-producers.html#produce-kcat">kcat Producer</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="03-consumers-producers.html#playingwithoffsets">Kafkacat Offsets</a>
+    <a class="nav-link" href="03-consumers-producers.html#playingwithoffsets">kcat Offsets</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="03-consumers-producers.html#changingretention">Changing Retention</a>
@@ -110,7 +110,7 @@
     <a class="nav-link" href="03-consumers-producers.html#deletetopiccontent">Delete Topic Content</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="03-consumers-producers.html#kafkacat-cleanup">Clean Up</a>
+    <a class="nav-link" href="03-consumers-producers.html#cleanup">Clean Up</a>
   </li>
 </ul>
   </li>
@@ -290,7 +290,23 @@
 <p>Kubernetes is an ideal platform for hosting cloud-native applications that require rapid scaling, like real-time data streaming through Apache Kafka.</p>
 </div>
 <div class="paragraph">
-<p>But deploying a Kafka cluster with Zookeeper and more than one broker, it is not an easy task and <a href="https://strimzi.io/">Strimzi</a> makes this task a simple task.</p>
+<p>But deploying a Kafka cluster with - or in newer versions without ZooKeeper - and more than one broker, is not an easy task. It is particularly challenging to get the following three aspects right:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>networking</p>
+</li>
+<li>
+<p>storage</p>
+</li>
+<li>
+<p>security</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Instead of trying to manually configure everything from scratch which is both, cumbersome and error-prone, we should delegate this to Kubernetes operators. To do so, we can use <a href="https://strimzi.io/">Strimzi</a> which offers a powerful and convenient way to deploy different Kafka cluster architectures to Kubernetes.</p>
 </div>
 </div>
 </div>
@@ -298,7 +314,7 @@
 <h2 id="kubernetes"><a class="anchor" href="#kubernetes"></a>Kubernetes</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>To run this part you need a Kubernetes cluster running.</p>
+<p>For this part of the tutorial you need a Kubernetes cluster running.</p>
 </div>
 <div class="sect2">
 <h3 id="install-minikube"><a class="anchor" href="#install-minikube"></a>Install Minikube</h3>
@@ -637,7 +653,7 @@ customresourcedefinition.apiextensions.k8s.io/kafkamirrormakers.kafka.strimzi.io
 <div class="listingblock console-output">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">NAME                                          READY   STATUS    RESTARTS   AGE
-strimzi-cluster-operator-59b99fc7cf-h4kf8     1/1     Running   0          6m53s</code></pre>
+strimzi-cluster-operator-f696c85f7-9fggx      1/1     Running   0          6m53s</code></pre>
 </div>
 </div>
 </div>
@@ -665,15 +681,15 @@ Then select the <code>Red Hat Integration - AMQ Streams</code> and install it.</
 <div class="listingblock console-output">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">NAME                                  CREATED AT
-kafkabridges.kafka.strimzi.io         2020-05-07T07:50:38Z
-kafkaconnectors.kafka.strimzi.io      2020-05-07T07:50:38Z
-kafkaconnects.kafka.strimzi.io        2020-05-07T07:50:38Z
-kafkaconnects2is.kafka.strimzi.io     2020-05-07T07:50:38Z
-kafkamirrormaker2s.kafka.strimzi.io   2020-05-07T07:50:37Z
-kafkamirrormakers.kafka.strimzi.io    2020-05-07T07:50:39Z
-kafkas.kafka.strimzi.io               2020-05-07T07:50:37Z
-kafkatopics.kafka.strimzi.io          2020-05-07T07:50:38Z
-kafkausers.kafka.strimzi.io           2020-05-07T07:50:37Z</code></pre>
+kafkabridges.kafka.strimzi.io         2022-12-19T07:16:50Z
+kafkaconnectors.kafka.strimzi.io      2022-12-19T07:16:50Z
+kafkaconnects.kafka.strimzi.io        2022-12-19T07:16:50Z
+kafkamirrormaker2s.kafka.strimzi.io   2022-12-19T07:16:50Z
+kafkamirrormakers.kafka.strimzi.io    2022-12-19T07:16:50Z
+kafkarebalances.kafka.strimzi.io      2022-12-19T07:16:50Z
+kafkas.kafka.strimzi.io               2022-12-19T07:16:50Z
+kafkatopics.kafka.strimzi.io          2022-12-19T07:16:50Z
+kafkausers.kafka.strimzi.io           2022-12-19T07:16:50Z</code></pre>
 </div>
 </div>
 </div>
@@ -686,7 +702,7 @@ kafkausers.kafka.strimzi.io           2020-05-07T07:50:37Z</code></pre>
 <p>In this case, you are going to deploy a Kafka cluster with 3 instances and ephemeral storage.</p>
 </div>
 <div class="paragraph">
-<p>The file you are going to apply is the next one:</p>
+<p>The file you are going to apply is shown below:</p>
 </div>
 <div class="listingblock console-input">
 <div class="content">
@@ -696,7 +712,7 @@ metadata:
   name: my-cluster
 spec:
   kafka:
-    version: 3.2.0
+    version: 3.3.1
     replicas: 3
     listeners:
       - name: plain
@@ -713,7 +729,7 @@ spec:
       transaction.state.log.min.isr: 2
       default.replication.factor: 3
       min.insync.replicas: 2
-      inter.broker.protocol.version: "3.2"
+      inter.broker.protocol.version: "3.3"
     storage:
       type: ephemeral
   zookeeper:
@@ -740,7 +756,7 @@ Run the following command to deploy Kafka:</p>
 </div>
 </div>
 <div class="paragraph">
-<p>To wait until Kafka cluster is up and running, you can run the following comamnd:</p>
+<p>To wait until Kafka cluster is up and running, you can run the following command:</p>
 </div>
 <div class="listingblock console-input">
 <div class="content">
@@ -762,15 +778,15 @@ Run the following command to deploy Kafka:</p>
 </div>
 <div class="listingblock console-output">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">NAME                                          READY   STATUS    RESTARTS   AGE
-my-cluster-entity-operator-77b5dd5594-hl7cf   3/3     Running   0          44s
-my-cluster-kafka-0                            2/2     Running   0          70s
-my-cluster-kafka-1                            2/2     Running   0          70s
-my-cluster-kafka-2                            2/2     Running   0          70s
-my-cluster-zookeeper-0                        2/2     Running   0          108s
-my-cluster-zookeeper-1                        2/2     Running   0          108s
-my-cluster-zookeeper-2                        2/2     Running   0          108s
-strimzi-cluster-operator-59b99fc7cf-h4kf8     1/1     Running   0          6m53s</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">NAME                                          READY   STATUS    RESTARTS      AGE
+my-cluster-entity-operator-7dfb85ccf9-28dqd   3/3     Running   0             95s
+my-cluster-kafka-0                            1/1     Running   0             118s
+my-cluster-kafka-1                            1/1     Running   0             118s
+my-cluster-kafka-2                            1/1     Running   0             118s
+my-cluster-zookeeper-0                        1/1     Running   0             2m21s
+my-cluster-zookeeper-1                        1/1     Running   0             2m21s
+my-cluster-zookeeper-2                        1/1     Running   0             2m21s
+strimzi-cluster-operator-f696c85f7-9fggx      1/1     Running   0             7m49s</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -783,12 +799,12 @@ strimzi-cluster-operator-59b99fc7cf-h4kf8     1/1     Running   0          6m53s
 </div>
 <div class="listingblock console-output">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">NAME                          TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)                      AGE
-kubernetes                    ClusterIP   10.96.0.1        &lt;none&gt;        443/TCP                      11m
-my-cluster-kafka-bootstrap    ClusterIP   10.103.67.179    &lt;none&gt;        9091/TCP,9092/TCP,9093/TCP   92s
-my-cluster-kafka-brokers      ClusterIP   None             &lt;none&gt;        9091/TCP,9092/TCP,9093/TCP   92s
-my-cluster-zookeeper-client   ClusterIP   10.101.161.217   &lt;none&gt;        2181/TCP                     2m11s
-my-cluster-zookeeper-nodes    ClusterIP   None             &lt;none&gt;        2181/TCP,2888/TCP,3888/TCP   2m11s</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">NAME                          TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)                               AGE
+kubernetes                    ClusterIP   10.96.0.1       &lt;none&gt;        443/TCP                               10m33s
+my-cluster-kafka-bootstrap    ClusterIP   10.98.94.157    &lt;none&gt;        9091/TCP,9092/TCP,9093/TCP            3m12s
+my-cluster-kafka-brokers      ClusterIP   None            &lt;none&gt;        9090/TCP,9091/TCP,9092/TCP,9093/TCP   3m12s
+my-cluster-zookeeper-client   ClusterIP   10.104.185.52   &lt;none&gt;        2181/TCP                              3m35s
+my-cluster-zookeeper-nodes    ClusterIP   None            &lt;none&gt;        2181/TCP,2888/TCP,3888/TCP            3m35s</code></pre>
 </div>
 </div>
 </div>
@@ -799,31 +815,31 @@ my-cluster-zookeeper-nodes    ClusterIP   None             &lt;none&gt;        2
 <div class="sectionbody">
 <div class="paragraph">
 <p>Let&#8217;s deploy the example done at <a href="#Developing Consumers and Producers in Java">[Developing Consumers and Producers in Java]</a>, but in Kubernetes instead of Docker.
-At this time, Quarkus version of the <code>song</code> - <code>song-indexer</code> application is deployed.</p>
+This time, the Quarkus versions of the <code>song</code> / <code>song-indexer</code> applications are deployed.</p>
 </div>
 <div class="sect2">
 <h3 id="kubernetes-song-app"><a class="anchor" href="#kubernetes-song-app"></a>Deploy Song Service</h3>
 <div class="paragraph">
-<p>To deploy the Song Service go to:</p>
+<p>To deploy the <code>song-app</code> service go to its folder and build the application</p>
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">cd $TUTORIAL_HOME/apps/song-app/quarkus/song-app</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">cd $TUTORIAL_HOME/apps/song-app/quarkus/song-app
+./mvnw clean package</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>And use <code>kubectl</code> to deploy the service:</p>
+<p>After a successful build use <code>kubectl</code> to deploy it:</p>
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">kubectl apply -f src/main/kubernetes/kubernetes.yml</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">kubectl apply -f target/kubernetes/kubernetes.yml</code></pre>
 </div>
 </div>
 <div class="listingblock console-output">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">serviceaccount/kafka-tutorial-song-app created
-service/kafka-tutorial-song-app created
-deployment.apps/kafka-tutorial-song-app created</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">service/kafka-tutorial-song-app-quarkus created
+deployment.apps/kafka-tutorial-song-app-quarkus created</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -836,41 +852,42 @@ deployment.apps/kafka-tutorial-song-app created</code></pre>
 </div>
 <div class="listingblock console-output">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">kafka-tutorial-song-app-84f8476bc8-vhr4k           1/1     Running   0          8m53s
-my-cluster-entity-operator-77b5dd5594-hl7cf        3/3     Running   3          8h
-my-cluster-kafka-0                                 2/2     Running   3          8h
-my-cluster-kafka-1                                 2/2     Running   3          8h
-my-cluster-kafka-2                                 2/2     Running   3          8h
-my-cluster-zookeeper-0                             2/2     Running   2          8h
-my-cluster-zookeeper-1                             2/2     Running   2          8h
-my-cluster-zookeeper-2                             2/2     Running   2          8h
-strimzi-cluster-operator-59b99fc7cf-h4kf8          1/1     Running   1          8h</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">NAME                                                       READY   STATUS    RESTARTS      AGE
+kafka-tutorial-song-app-quarkus-55df95589f-fg5v2           1/1     Running   0             7m23s
+my-cluster-entity-operator-7dfb85ccf9-28dqd                3/3     Running   0             21m
+my-cluster-kafka-0                                         1/1     Running   0             21m
+my-cluster-kafka-1                                         1/1     Running   0             21m
+my-cluster-kafka-2                                         1/1     Running   0             21m
+my-cluster-zookeeper-0                                     1/1     Running   0             22m
+my-cluster-zookeeper-1                                     1/1     Running   0             22m
+my-cluster-zookeeper-2                                     1/1     Running   0             22m
+strimzi-cluster-operator-f696c85f7-9fggx                   1/1     Running   0             37m49s</code></pre>
 </div>
 </div>
 </div>
 <div class="sect2">
 <h3 id="kubernetes-song-indexer-app"><a class="anchor" href="#kubernetes-song-indexer-app"></a>Deploy Song Indexer Service</h3>
 <div class="paragraph">
-<p>To deploy the Song Indexer Service go to:</p>
+<p>To deploy the <code>song-indexer-app</code> service go to its folder and build the application</p>
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">cd $TUTORIAL_HOME/apps/song-indexer-app/quarkus/song-indexer-app</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">cd $TUTORIAL_HOME/apps/song-indexer-app/quarkus/song-indexer-app
+./mvnw clean package</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>And use <code>kubectl</code> to deploy the service:</p>
+<p>And use <code>kubectl</code> to deploy the it:</p>
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">kubectl apply -f src/main/kubernetes/kubernetes.yml</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">kubectl apply -f target/kubernetes/kubernetes.yml</code></pre>
 </div>
 </div>
 <div class="listingblock console-output">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">serviceaccount/kafka-tutorial-song-indexer-app created
-service/kafka-tutorial-song-indexer-app created
-deployment.apps/kafka-tutorial-song-indexer-app created</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">service/kafka-tutorial-song-indexer-app-quarkus created
+deployment.apps/kafka-tutorial-song-indexer-app-quarkus created</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -883,17 +900,17 @@ deployment.apps/kafka-tutorial-song-indexer-app created</code></pre>
 </div>
 <div class="listingblock console-output">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">NAME                                               READY   STATUS    RESTARTS   AGE
-kafka-tutorial-song-app-84f8476bc8-vhr4k           1/1     Running   0          8m53s
-kafka-tutorial-song-indexer-app-58fbc7d6fd-979zw   1/1     Running   0          4m6s
-my-cluster-entity-operator-77b5dd5594-hl7cf        3/3     Running   3          8h
-my-cluster-kafka-0                                 2/2     Running   3          8h
-my-cluster-kafka-1                                 2/2     Running   3          8h
-my-cluster-kafka-2                                 2/2     Running   3          8h
-my-cluster-zookeeper-0                             2/2     Running   2          8h
-my-cluster-zookeeper-1                             2/2     Running   2          8h
-my-cluster-zookeeper-2                             2/2     Running   2          8h
-strimzi-cluster-operator-59b99fc7cf-h4kf8          1/1     Running   1          8h</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">NAME                                                       READY   STATUS    RESTARTS      AGE
+kafka-tutorial-song-app-quarkus-55df95589f-fg5v2           1/1     Running   0             9m21s
+kafka-tutorial-song-indexer-app-quarkus-6c4b56f448-xgshm   1/1     Running   0             1m10s
+my-cluster-entity-operator-7dfb85ccf9-28dqd                3/3     Running   0             23m
+my-cluster-kafka-0                                         1/1     Running   0             23m
+my-cluster-kafka-1                                         1/1     Running   0             23m
+my-cluster-kafka-2                                         1/1     Running   0             23m
+my-cluster-zookeeper-0                                     1/1     Running   0             24m
+my-cluster-zookeeper-1                                     1/1     Running   0             24m
+my-cluster-zookeeper-2                                     1/1     Running   0             24m
+strimzi-cluster-operator-f696c85f7-9fggx                   1/1     Running   0             39m33s</code></pre>
 </div>
 </div>
 </div>
@@ -903,51 +920,80 @@ strimzi-cluster-operator-59b99fc7cf-h4kf8          1/1     Running   1          
 <p>Let&#8217;s test that it works as expected.</p>
 </div>
 <div class="paragraph">
-<p>The first thing that you need to know is the exposed port of each of the services.</p>
+<p>The first thing we do is create tunnels to the corresponding services of the two applications. This can be easily done with the <code>minikube service</code> command.</p>
+</div>
+<div class="paragraph">
+<p>In a separate terminal window run the following:</p>
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">kubectl get services</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">minikube service kafka-tutorial-song-indexer-app-quarkus</code></pre>
 </div>
+</div>
+<div class="paragraph">
+<p>Your console output should look similar (minikube IP and ports in use may vary of course). In case a browser window opens automatically you can close it because it&#8217;s not needed in our case.</p>
 </div>
 <div class="listingblock console-output">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">NAME                              TYPE           CLUSTER-IP       EXTERNAL-IP   PORT(S)                      AGE
-kafka-tutorial-song-app           LoadBalancer   10.99.68.119     &lt;pending&gt;     8080:31834/TCP               5m15s
-kafka-tutorial-song-indexer-app   LoadBalancer   10.103.172.33    &lt;pending&gt;     8080:30581/TCP               28s
-kubernetes                        ClusterIP      10.96.0.1        &lt;none&gt;        443/TCP                      8h
-my-cluster-kafka-bootstrap        ClusterIP      10.103.67.179    &lt;none&gt;        9091/TCP,9092/TCP,9093/TCP   8h
-my-cluster-kafka-brokers          ClusterIP      None             &lt;none&gt;        9091/TCP,9092/TCP,9093/TCP   8h
-my-cluster-zookeeper-client       ClusterIP      10.101.161.217   &lt;none&gt;        2181/TCP                     8h
-my-cluster-zookeeper-nodes        ClusterIP      None             &lt;none&gt;        2181/TCP,2888/TCP,3888/TCP   8h</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">|-----------|---------------------------------|-------------|---------------------------|
+| NAMESPACE |              NAME               | TARGET PORT |            URL            |
+|-----------|---------------------------------|-------------|---------------------------|
+| default   | kafka-tutorial-song-app-quarkus | http/80     | <a href="http://192.168.49.2:30588" class="bare">http://192.168.49.2:30588</a> |
+|-----------|---------------------------------|-------------|---------------------------|
+🏃  Starting tunnel for service kafka-tutorial-song-app-quarkus.
+|-----------|---------------------------------|-------------|------------------------|
+| NAMESPACE |              NAME               | TARGET PORT |          URL           |
+|-----------|---------------------------------|-------------|------------------------|
+| default   | kafka-tutorial-song-app-quarkus |             | <a href="http://127.0.0.1:65000" class="bare">http://127.0.0.1:65000</a> |
+|-----------|---------------------------------|-------------|------------------------|
+🎉  Opening service default/kafka-tutorial-song-app-quarkus in default browser...</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>In this specific case, <code>kafka-tutorial-song-app</code> port is <code>31834</code> and <code>kafka-tutorial-song-indexer-app</code> is <code>30581</code> but this is going to change every time you deploy these services.</p>
+<p>The important part is shown in the lower right box, namely use <code>127.0.0.1:65000</code> as host and port for any HTTP commands against the <code>song-app</code>.</p>
 </div>
 <div class="paragraph">
-<p>Then you need the IP to connect.
-This IP is the minikube IP and it is known by running the following command:</p>
+<p>Again, in a separate terminal window run the following:</p>
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">minikube ip -p kafka</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">minikube service kafka-tutorial-song-indexer-app-quarkus</code></pre>
 </div>
+</div>
+<div class="paragraph">
+<p>Your console output should look similar (minikube IP and ports in use may vary of course). In case a browser window opens automatically you can close it because it&#8217;s not needed in our case.</p>
 </div>
 <div class="listingblock console-output">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">192.168.99.107</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">|-----------|-----------------------------------------|-------------|---------------------------|
+| NAMESPACE |                  NAME                   | TARGET PORT |            URL            |
+|-----------|-----------------------------------------|-------------|---------------------------|
+| default   | kafka-tutorial-song-indexer-app-quarkus | http/80     | <a href="http://192.168.49.2:32548" class="bare">http://192.168.49.2:32548</a> |
+|-----------|-----------------------------------------|-------------|---------------------------|
+🏃  Starting tunnel for service kafka-tutorial-song-indexer-app-quarkus.
+|-----------|-----------------------------------------|-------------|------------------------|
+| NAMESPACE |                  NAME                   | TARGET PORT |          URL           |
+|-----------|-----------------------------------------|-------------|------------------------|
+| default   | kafka-tutorial-song-indexer-app-quarkus |             | <a href="http://127.0.0.1:64938" class="bare">http://127.0.0.1:64938</a> |
+|-----------|-----------------------------------------|-------------|------------------------|
+🎉  Opening service default/kafka-tutorial-song-indexer-app-quarkus in default browser...</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Open 2 terminal windows, one for populating songs, and another one to get the result from the indexer service.</p>
+<p>The important part is shown in the lower right box, namely use <code>127.0.0.1:64938</code> as host and port for any HTTP commands against the <code>song-indexer-app</code>.</p>
 </div>
 <div class="paragraph">
-<p>In the terminal 1 run the following command:</p>
+<p>With the above, you successfully created tunnels to the two services and you are now ready to communicate with the applications from you host machine.</p>
+</div>
+<div class="paragraph">
+<p>Open another 2 terminal windows, one for populating songs, and another one to get the SSE stream from the indexer service.</p>
+</div>
+<div class="paragraph">
+<p>In the terminal 1 run the following command against the <code>song-indexer-app</code>:</p>
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">http GET 192.168.99.107:30581/events --stream --timeout=600</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">http GET 127.0.0.1:64938/events --stream --timeout=600</code></pre>
 </div>
 </div>
 <div class="listingblock console-output">
@@ -958,19 +1004,26 @@ transfer-encoding: chunked</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>In the terminal 2 run the following command:</p>
+<p>In the terminal 2 run the following command against the <code>song-app</code>:</p>
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">http POST 192.168.99.107:31834/songs id=107 name=Portals author='Alan Silvestri'</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">http POST 127.0.0.1:65000/songs id=107 name=Portals author='Alan Silvestri'</code></pre>
 </div>
-</div>
-<div class="paragraph">
-<p>Inspect the output of terminal 2, to check that the song has been processed by indexer service.</p>
 </div>
 <div class="listingblock console-output">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">data: {"author":"Alan Silvestri","id":107,"name":"Portals","op":"ADD"}</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">HTTP/1.1 201 Created
+content-length: 0</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Inspect the output of terminal 1, to check that the published song data has been processed by the <code>song-indexer-app</code>:</p>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">id:7d92d0ed-ab04-4182-96b0-0bc4f97156c5
+data:Song 107 processed</code></pre>
 </div>
 </div>
 </div>
@@ -980,7 +1033,7 @@ transfer-encoding: chunked</code></pre>
 <h2 id="kubernetes-cleanup"><a class="anchor" href="#kubernetes-cleanup"></a>Clean Up</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>To clean the namespace run:</p>
+<p>To clean up the whole namespace run:</p>
 </div>
 <div class="listingblock console-input">
 <div class="content">
