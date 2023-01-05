@@ -3,17 +3,17 @@ package org.acme;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 
 @RegisterForReflection
-public class PlayedSong {
+public class SongStats {
 
     private String songName;
     private int count;
 
-    public PlayedSong() {
+    public SongStats() {
     }
 
-    public PlayedSong aggregate(String song) {
+    public SongStats aggregate(String songName) {
     
-        this.songName = song;
+        this.songName = songName;
         this.count++;
 
         return this;
