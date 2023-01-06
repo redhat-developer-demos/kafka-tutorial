@@ -46,8 +46,8 @@ public class MusicChartTopologyProducer {
         )
         .join(
             songs,
-            (songId, userId) -> songId,
-            (userId, song) -> song.name
+            (songId, username) -> songId,
+            (username, song) -> song.name
         )
         .groupByKey()
         .aggregate(SongStats::new, 
