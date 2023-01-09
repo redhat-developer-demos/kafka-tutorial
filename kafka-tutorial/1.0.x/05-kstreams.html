@@ -234,9 +234,6 @@
     <a class="nav-link" href="07-kubernetes.html#kubernetes-song-indexer-app">Deploy Song Indexer Service</a>
   </li>
   <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="07-kubernetes.html#kubernetes-song-app">Deploy Song Service</a>
-  </li>
-  <li class="nav-item" data-depth="3">
     <a class="nav-link" href="07-kubernetes.html#kubernetes-testing">Test It</a>
   </li>
 </ul>
@@ -284,7 +281,7 @@
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>So far, you&#8217;ve seen that you can consume and produce data into a Kafka topic, but sometimes you want to do things more advanced like joining different topics, aggregating content, or processing on the fly to send it to redirect the result to another topic.</p>
+<p>So far, you&#8217;ve seen that you can produce to and consume from Kafka topics, but sometimes you want to do more advanced things: joining records from different topics, grouping and aggregating records, or processing data on the fly and produce the result into another topic.</p>
 </div>
 </div>
 </div>
@@ -292,11 +289,11 @@
 <h2 id="whatkstreams"><a class="anchor" href="#whatkstreams"></a>What are Kafka Streams?</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Kafka Streams is a Java API that implements all these features, doing in a fault-tolerant, scalable way.
-One of the important things of Kafka Streams application is that it doesn&#8217;t run inside a broker, but it runs in a separate JVM instance, maybe in the same cluster, or maybe in a different cluster but it is a different process.</p>
+<p>Kafka Streams is a Java API that implements all these more advanced features, while processing records in a fault-tolerant and scalable way.
+One of the important things to understand is that a Kafka Streams application does not(!) run inside a broker, but instead runs in a separate JVM instance - maybe in the same or in a different cluster - but it is a different process.</p>
 </div>
 <div class="paragraph">
-<p>A Kafka Stream application instances can run in parallel, in different machines and they will automatically collaborate on the data processing.
+<p>A Kafka Stream application can be horizontally scaled such that multiple instances can run in parallel, in different machines and they will automatically collaborate on the data processing.
 This is what makes Kafka Streams applications fault-tolerance and scalable.</p>
 </div>
 </div>
@@ -304,19 +301,37 @@ This is what makes Kafka Streams applications fault-tolerance and scalable.</p>
 <div class="sect1">
 <h2 id="kstreamsconcepts"><a class="anchor" href="#kstreamsconcepts"></a>Kafka Streams Concepts</h2>
 <div class="sectionbody">
+<div class="paragraph">
+<p>The following is important terminology for Kafka Streams:</p>
+</div>
 <div class="dlist">
 <dl>
+<dt class="hdlist1">Processor Topology</dt>
+<dd>
+<p>A topology specifies the data processing logic that needs to be executed by the Kafka Streams application.</p>
+</dd>
 <dt class="hdlist1">Stream Processor</dt>
 <dd>
-<p>A Stream processor represents an operation to execute to a stream, some examples of built-in operations can be a filter, map, join, or aggregate.
-Usually, a Kafka Stream application is created for one or more operations.</p>
+<p>A stream processor is one particular compute step of the topology. It represents a specific operation to be executed based on a stream. Some examples of built-in operations are: filter, map, join, or aggregate. Usually, a Kafka Streams application is created for one or more such operations defined as the topology.</p>
 </dd>
-<dt class="hdlist1">Table</dt>
+<dt class="hdlist1">KStream</dt>
 <dd>
-<p>A table is a collection of key-value pairs, that represents the last value for the same record key.
-The big difference is that a stream contains the log of all events (ie an insertion of a song, and update of a song, &#8230;&#8203;) and a table contains the last value (ie the last update done in a song).
-There is two kinds of tables, a <em>KTable</em> which represents a table from a partition, and a <em>GlobalKTable</em> which aggregates the content from all partitions of a given topic.
-We&#8217;ll take a look later.</p>
+<p>A KStream is a logical abstraction of and unbounded stream of records. Each record is interpreted as a separate "insert" event.</p>
+</dd>
+<dt class="hdlist1">KTable</dt>
+<dd>
+<p>A KTable is a logical abstraction of a changelog stream of records. Each record is interpreted as an "update" event in case a record with the same key existed before, otherwise it is interpreted as an "insert" event. This results in a table semantic where key-value pairs always represent the latest value for any given key.
+There is two kinds of tables:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><em>KTable</em>: only represents records from a subset of table partitions in case you run multiple application instances</p>
+</li>
+<li>
+<p><em>GlobalKTable</em>: always represents records from all partitions of a given topic for every application instance you run</p>
+</li>
+</ul>
+</div>
 </dd>
 <dt class="hdlist1">Aggregation Operation</dt>
 <dd>
@@ -328,11 +343,11 @@ We&#8217;ll take a look later.</p>
 </dd>
 <dt class="hdlist1">Windowing</dt>
 <dd>
-<p>Group records that have the same key by a window time. For example, you can group which events have occurred between a period of time.</p>
+<p>Allows to control how to group records that have the same key by different types of time windows. For example, you can group records which have occurred during a certain period of time, say 1 hour.</p>
 </dd>
 <dt class="hdlist1">Interactive Queries</dt>
 <dd>
-<p>Treat the stream processing layer as a lightweight embedded database, to directly query the latest state of your stream processing application.</p>
+<p>Treat the stream processing layer as a lightweight embedded key-value store, to directly query the latest state of your stream processing application e.g. based on record keys / key ranges.</p>
 </dd>
 </dl>
 </div>
@@ -394,14 +409,14 @@ The number before the <code>:</code> is taken as an id.</p>
 <div class="tab-pane" aria-labelledby="tabset1_kcat-in-docker">
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker run -it --network=host edenhill/kcat:1.7.0 kcat -b localhost:29092 -t songs -P -l -K: update_songs</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker run --rm -it --network=kafka-tutorial -v $(pwd)/documentation/modules/ROOT/examples/update_songs.json:/home/update_songs edenhill/kcat:1.7.1 kcat -b kafka:9092 -t songs -P -l -K: /home/update_songs</code></pre>
 </div>
 </div>
 </div>
 </div>
 </div>
 <div class="paragraph">
-<p>Then inspect the inserted songs using <code>kafkacat</code>:</p>
+<p>Then inspect the inserted songs using <code>kcat</code>:</p>
 </div>
 <div class="tabset is-loading">
 <div class="ulist tabs">
@@ -425,7 +440,7 @@ The number before the <code>:</code> is taken as an id.</p>
 <div class="tab-pane" aria-labelledby="tabset2_kcat-in-docker">
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker run -it --network=host edenhill/kcat:1.7.0 kcat -b localhost:29092 -t songs -C -K:</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker run --rm -it --network=kafka-tutorial edenhill/kcat:1.7.1 kcat -b kafka:9092 -t songs -C -K:</code></pre>
 </div>
 </div>
 </div>
@@ -442,7 +457,7 @@ The number before the <code>:</code> is taken as an id.</p>
 <p>Stop the process by typing <span class="keyseq"><kbd>Ctrl</kbd>+<kbd>C</kbd></span>.</p>
 </div>
 <div class="paragraph">
-<p>Create a Global Table from <code>songs</code> topic:</p>
+<p>Create a <em>GlobalKTable</em> from <code>songs</code> topic:</p>
 </div>
 <div class="listingblock console-input">
 <div class="content">
@@ -462,7 +477,7 @@ Kafka Stream Threads started
 <p>Stop the process by typing <span class="keyseq"><kbd>Ctrl</kbd>+<kbd>C</kbd></span>.</p>
 </div>
 <div class="paragraph">
-<p>Notice that the output of the <code>kafkacat</code> and <code>kstreamcat</code> is fairly the same.
+<p>Notice that the output of <code>kcat</code> and <code>kstreamscat</code> is fairly the same.
 Probably most of you have noticed that <code>The Imperial March</code> was not written by Alain Silvestri but by John Williams.
 So let&#8217;s fix this.</p>
 </div>
@@ -476,7 +491,7 @@ So let&#8217;s fix this.</p>
 </div>
 </div>
 <div class="paragraph">
-<p>And add it to <code>songs</code> topic:</p>
+<p>And add it to the <code>songs</code> topic:</p>
 </div>
 <div class="tabset is-loading">
 <div class="ulist tabs">
@@ -493,21 +508,21 @@ So let&#8217;s fix this.</p>
 <div class="tab-pane" aria-labelledby="tabset3_kcat">
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">kcat -b localhost:29092 -t songs -P -l -K: update_songs2</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">kcat -b localhost:29092 -t songs -P -l -K: update2_songs</code></pre>
 </div>
 </div>
 </div>
 <div class="tab-pane" aria-labelledby="tabset3_kcat-in-docker">
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker run -it --network=host edenhill/kcat:1.7.0 kcat -b localhost:29092 -t songs -P -l -K: update2_songs</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker run --rm -it --network=kafka-tutorial -v $(pwd)/documentation/modules/ROOT/examples/update2_songs.json:/home/update2_songs edenhill/kcat:1.7.1 kcat -b kafka:9092 -t songs -P -l -K: /home/update2_songs</code></pre>
 </div>
 </div>
 </div>
 </div>
 </div>
 <div class="paragraph">
-<p>Then inspect the inserted songs using <code>kafkacat</code>:</p>
+<p>Then inspect the inserted songs using <code>kcat</code>:</p>
 </div>
 <div class="tabset is-loading">
 <div class="ulist tabs">
@@ -531,7 +546,7 @@ So let&#8217;s fix this.</p>
 <div class="tab-pane" aria-labelledby="tabset4_kcat-in-docker">
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker run -it --network=host edenhill/kcat:1.7.0 kcat -b localhost:29092 -t songs -C -K:</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker run --rm -it --network=kafka-tutorial edenhill/kcat:1.7.1 kcat -b kafka:29092 -t songs -C -K:</code></pre>
 </div>
 </div>
 </div>
@@ -549,7 +564,7 @@ So let&#8217;s fix this.</p>
 <p>Stop the process by typing <span class="keyseq"><kbd>Ctrl</kbd>+<kbd>C</kbd></span>.</p>
 </div>
 <div class="paragraph">
-<p>Create a Global Table from the <code>songs</code> topic:</p>
+<p>Create a <em>GlobalKTable</em> from <code>songs</code> topic:</p>
 </div>
 <div class="listingblock console-input">
 <div class="content">
@@ -569,11 +584,11 @@ Kafka Stream Threads started
 <p>Stop the process by typing <span class="keyseq"><kbd>Ctrl</kbd>+<kbd>C</kbd></span>.</p>
 </div>
 <div class="paragraph">
-<p>Notice that <code>kafkacat</code> shows the content of all the events that have been added into the <code>songs</code> topic, so both events of <em>The Imperial March</em> songs are visible.</p>
+<p>Notice that <code>kcat</code> shows the content of all the events that have been added into the <code>songs</code> topic, so both events referring to the song <em>The Imperial March</em> (key=5/"id":5) are shown.</p>
 </div>
 <div class="paragraph">
-<p>On the other side, Global Table just shows the latest values of the topic.
-For this reason, only the update event of <em>The Imperial March</em> is shown, and not the initial insertion.</p>
+<p>However, the <em>GlobalKTable</em> just shows the latest values for each key in the topic.
+For this reason, only the update event of <em>The Imperial March</em> (key=5/"id":5) is shown, and not the initial insertion.</p>
 </div>
 <div class="sect3">
 <h4 id="_clean_up"><a class="anchor" href="#_clean_up"></a>Clean Up</h4>
@@ -611,7 +626,7 @@ kafka      | [2022-12-15 08:59:25,751] INFO [BrokerToControllerChannelManager br
 <h3 id="kstreamscat-windowing"><a class="anchor" href="#kstreamscat-windowing"></a>Windowing</h3>
 <div class="paragraph">
 <p>Windowing allows you to control how to group records that have the same key based on a time window.
-For example, you can answer questions like <em>how many songs each user has played the last 30 minutes</em> or <em>how many songs each user has played every day</em>.</p>
+For example, you can answer questions like <em>how many songs has each user played within the last 30 minutes</em> or <em>how many songs has each user played per day</em>.</p>
 </div>
 <div class="paragraph">
 <p>There are 4 types of windows:</p>
@@ -684,14 +699,13 @@ Retention configures the time that a window might remain open to process events 
 <div class="sect3">
 <h4 id="kstreamscat-timewindow"><a class="anchor" href="#kstreamscat-timewindow"></a>Tumbling time window</h4>
 <div class="paragraph">
-<p>Let&#8217;s create a periodic window of 60 seconds.
-What we are doing here is creating fixed buckets of 60 seconds, so every 60 seconds a new window is created to process the events that fall into that window.</p>
+<p>Let&#8217;s create a tumbling window of 60 seconds. What we are doing here is creating fixed buckets of 60 seconds each, so that every 60 seconds, a new window is created to process the events that fall into one such tumbling window.</p>
 </div>
 <div class="paragraph">
-<p>For example, let&#8217;s count the number of played songs by the user in a bucket of 60 seconds.</p>
+<p>For example, let&#8217;s count the number of played songs per user in a 60 seconds tumbling window.</p>
 </div>
 <div class="paragraph">
-<p>With Kafka cluster started, prepare <strong>but do not execute</strong> the next command in terminal 2:</p>
+<p>With the Kafka cluster started, prepare <strong>but do not yet execute</strong> the next command in terminal 2:</p>
 </div>
 <div class="listingblock console-input">
 <div class="content">
@@ -699,37 +713,7 @@ What we are doing here is creating fixed buckets of 60 seconds, so every 60 seco
 </div>
 </div>
 <div class="paragraph">
-<p>In terminal 1, run the next command, and then immediatelly run the commandd you&#8217;ve prepared in terminal 2:</p>
-</div>
-<div class="listingblock console-input">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">kcat -b localhost:29092 -t played -P -l -K: apps/windowing/first-batch.json</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>And run the command that you&#8217;ve prepared in the terminal 2:</p>
-</div>
-<div class="listingblock console-input">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">java -jar kstreamscat.jar --topic=played --id=songs -b=localhost:29092 --time-window=60</code></pre>
-</div>
-</div>
-<div class="listingblock console-output">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
-SLF4J: Defaulting to no-operation (NOP) logger implementation
-SLF4J: See <a href="http://www.slf4j.org/codes.html#StaticLoggerBinder" class="bare">http://www.slf4j.org/codes.html#StaticLoggerBinder</a> for further details.
-Starting Kafka Streams...
-Kafka Stream Threads started
-Key: alex : 4
-Key: burr : 3
-Key: kamesh : 2
-Key: edson : 1
-Key: sebi : 1</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Then in the terminal 1, run again the <code>kafkacat</code> command to insert again the played songs:</p>
+<p>In terminal 1, run the next command, and then immediately run the command you&#8217;ve prepared in terminal 2:</p>
 </div>
 <div class="tabset is-loading">
 <div class="ulist tabs">
@@ -753,29 +737,36 @@ Key: sebi : 1</code></pre>
 <div class="tab-pane" aria-labelledby="tabset5_kcat-in-docker">
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker run -it --network=host edenhill/kcat:1.7.0 kcat -b localhost:29092 -t played -P -l -K: apps/windowing/first-batch.json</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker run --rm -it --network=kafka-tutorial -v $(pwd)/apps/windowing/first-batch.json:/home/first-batch edenhill/kcat:1.7.1 kcat -b kafka:9092 -t played -P -l -K: /home/first-batch</code></pre>
 </div>
 </div>
 </div>
 </div>
 </div>
 <div class="paragraph">
-<p>And if you inspect the <code>kstreamscat</code> output you&#8217;ll see:</p>
+<p>And run the command that you&#8217;ve prepared in terminal 2:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">java -jar kstreamscat.jar --topic=played --id=songs -b=localhost:29092 --time-window=60</code></pre>
+</div>
 </div>
 <div class="listingblock console-output">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">Key: alex : 8
-Key: burr : 6
-Key: kamesh : 4
-Key: edson : 2
-Key: sebi : 2</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
+SLF4J: Defaulting to no-operation (NOP) logger implementation
+SLF4J: See <a href="http://www.slf4j.org/codes.html#StaticLoggerBinder" class="bare">http://www.slf4j.org/codes.html#StaticLoggerBinder</a> for further details.
+Starting Kafka Streams...
+Kafka Stream Threads started
+Window: 1673267640000 -&gt; Key: alex = 4
+Window: 1673267640000 -&gt; Key: burr = 3
+Window: 1673267640000 -&gt; Key: kamesh = 2
+Window: 1673267640000 -&gt; Key: edson = 1
+Window: 1673267640000 -&gt; Key: sebi = 1</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Notice that the played songs have been increased by 2.</p>
-</div>
-<div class="paragraph">
-<p>Now wait for one minute and then run the <code>kafkacat</code> command again to insert again the played songs:</p>
+<p>Then in the terminal 1, run again the <code>kcat</code> command to insert again the same played song events:</p>
 </div>
 <div class="tabset is-loading">
 <div class="ulist tabs">
@@ -799,7 +790,7 @@ Key: sebi : 2</code></pre>
 <div class="tab-pane" aria-labelledby="tabset6_kcat-in-docker">
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker run -it --network=host edenhill/kcat:1.7.0 kcat -b localhost:29092 -t played -P -l -K: apps/windowing/first-batch.json</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker run --rm -it --network=kafka-tutorial -v $(pwd)/apps/windowing/first-batch.json:/home/first-batch edenhill/kcat:1.7.1 kcat -b kafka:9092 -t played -P -l -K: /home/first-batch</code></pre>
 </div>
 </div>
 </div>
@@ -810,15 +801,63 @@ Key: sebi : 2</code></pre>
 </div>
 <div class="listingblock console-output">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">Key: alex : 4
-Key: burr : 3
-Key: kamesh : 2
-Key: edson : 1
-Key: sebi : 1</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">...
+Window: 1673267640000 -&gt; Key: alex = 8
+Window: 1673267640000 -&gt; Key: burr = 6
+Window: 1673267640000 -&gt; Key: kamesh = 4
+Window: 1673267640000 -&gt; Key: edson = 2
+Window: 1673267640000 -&gt; Key: sebi = 2</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>After 1 minute, the window has shifted into a new one so these new played songs have fallen into this new window, so the count for this window is starting from 0.</p>
+<p>Notice that the played song counts have been doubled. This is because the same events were produced and the same time window received the same batch of played songs again.</p>
+</div>
+<div class="paragraph">
+<p>Now wait for at least one minute and then run the <code>kcat</code> command again to insert again the played songs:</p>
+</div>
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset7_kcat"></a>kcat</p>
+</li>
+<li>
+<p><a id="tabset7_kcat-in-docker"></a>kcat in Docker</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset7_kcat">
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">kcat -b localhost:29092 -t played -P -l -K: apps/windowing/first-batch.json</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset7_kcat-in-docker">
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker run --rm -it --network=kafka-tutorial -v $(pwd)/apps/windowing/first-batch.json:/home/first-batch edenhill/kcat:1.7.1 kcat -b kafka:9092 -t played -P -l -K: /home/first-batch</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>And if you inspect the <code>kstreamscat</code> output you&#8217;ll now see:</p>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">...
+Window: 1673267820000 -&gt; Key: alex = 4
+Window: 1673267820000 -&gt; Key: burr = 3
+Window: 1673267820000 -&gt; Key: kamesh = 2
+Window: 1673267820000 -&gt; Key: edson = 1
+Window: 1673267820000 -&gt; Key: sebi = 1</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>After 1 minute, the window has shifted into a new one and the played song events have fallen into this new window for  which all counters are starting from 0 again.</p>
 </div>
 <div class="sect4">
 <h5 id="_clean_up_2"><a class="anchor" href="#_clean_up_2"></a>Clean Up</h5>
@@ -858,10 +897,10 @@ kafka      | [2022-12-15 08:59:25,751] INFO [BrokerToControllerChannelManager br
 <div class="sect3">
 <h4 id="kstreamscat-sessiontimewindow"><a class="anchor" href="#kstreamscat-sessiontimewindow"></a>Session time window</h4>
 <div class="paragraph">
-<p>Let&#8217;s see how it behaves when instead of a <a href="#kstreamscat-timewindow">Tumbling time window</a>, we use a Session time window:</p>
+<p>Let&#8217;s explore the windowing semantics when instead of a <a href="#kstreamscat-timewindow">Tumbling time window</a>, we use a session time window of 60 seconds duration.</p>
 </div>
 <div class="paragraph">
-<p>With Kafka cluster started, prepare <strong>but do not execute</strong> the next command in terminal 2:</p>
+<p>With the Kafka cluster started, prepare <strong>but do not yet execute</strong> the next command in terminal 2:</p>
 </div>
 <div class="listingblock console-input">
 <div class="content">
@@ -869,31 +908,31 @@ kafka      | [2022-12-15 08:59:25,751] INFO [BrokerToControllerChannelManager br
 </div>
 </div>
 <div class="paragraph">
-<p>In terminal 1, run the next command, and then immediatelly run the commandd you&#8217;ve prepared in terminal 2:</p>
+<p>In terminal 1, run the next command, and then immediately run the command you&#8217;ve prepared in terminal 2:</p>
 </div>
 <div class="tabset is-loading">
 <div class="ulist tabs">
 <ul>
 <li>
-<p><a id="tabset7_kcat"></a>kcat</p>
+<p><a id="tabset8_kcat"></a>kcat</p>
 </li>
 <li>
-<p><a id="tabset7_kcat-in-docker"></a>kcat in Docker</p>
+<p><a id="tabset8_kcat-in-docker"></a>kcat in Docker</p>
 </li>
 </ul>
 </div>
 <div class="content">
-<div class="tab-pane" aria-labelledby="tabset7_kcat">
+<div class="tab-pane" aria-labelledby="tabset8_kcat">
 <div class="listingblock console-input">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">kcat -b localhost:29092 -t played -P -l -K: apps/windowing/first-batch.json</code></pre>
 </div>
 </div>
 </div>
-<div class="tab-pane" aria-labelledby="tabset7_kcat-in-docker">
+<div class="tab-pane" aria-labelledby="tabset8_kcat-in-docker">
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker run -it --network=host edenhill/kcat:1.7.0 kcat -b localhost:29092 -t played -P -l -K: apps/windowing/first-batch.json</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker run --rm -it --network=kafka-tutorial -v $(pwd)/apps/windowing/first-batch.json:/home/first-batch edenhill/kcat:1.7.1 kcat -b kafka:9092 -t played -P -l -K: /home/first-batch</code></pre>
 </div>
 </div>
 </div>
@@ -914,11 +953,11 @@ SLF4J: Defaulting to no-operation (NOP) logger implementation
 SLF4J: See <a href="http://www.slf4j.org/codes.html#StaticLoggerBinder" class="bare">http://www.slf4j.org/codes.html#StaticLoggerBinder</a> for further details.
 Starting Kafka Streams...
 Kafka Stream Threads started
-Key: alex : 4
-Key: burr : 3
-Key: kamesh : 2
-Key: edson : 1
-Key: sebi : 1</code></pre>
+Window: 1673268538354 -&gt; Key: alex = 4
+Window: 1673268538355 -&gt; Key: burr = 3
+Window: 1673268538355 -&gt; Key: kamesh = 2
+Window: 1673268538355 -&gt; Key: edson = 1
+Window: 1673268538356 -&gt; Key: sebi = 1</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -942,40 +981,41 @@ Now new session window</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Monitor the output of the terminal 2, you should see something like:</p>
+<p>Monitor the output of the terminal 2 where you should something similar to the following:</p>
 </div>
 <div class="listingblock console-output">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">Key: alex : 4
-Key: burr : 3
-Key: kamesh : 2
-Key: edson : 1
-Key: sebi : 1
-Key: alex : 8
-Key: burr : 6
-Key: kamesh : 4
-Key: edson : 2
-Key: sebi : 2
-Key: alex : 12
-Key: burr : 9
-Key: kamesh : 6
-Key: edson : 3
-Key: sebi : 3
-Key: alex : 16
-Key: burr : 12
-Key: kamesh : 8
-Key: edson : 4
-Key: sebi : 4
-Key: alex : 4
-Key: burr : 3
-Key: kamesh : 2
-Key: edson : 1
-Key: sebi : 1</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">...
+Window: 1673268538355 -&gt; Key: alex = 4
+Window: 1673268538355 -&gt; Key: burr = 3
+Window: 1673268538355 -&gt; Key: kamesh = 2
+Window: 1673268538355 -&gt; Key: edson = 1
+Window: 1673268538355 -&gt; Key: sebi = 1
+Window: 1673268538355 -&gt; Key: alex = 8
+Window: 1673268538355 -&gt; Key: burr = 6
+Window: 1673268538355 -&gt; Key: kamesh = 4
+Window: 1673268538355 -&gt; Key: edson = 2
+Window: 1673268538355 -&gt; Key: sebi = 2
+Window: 1673268538355 -&gt; Key: alex = 12
+Window: 1673268538355 -&gt; Key: burr = 9
+Window: 1673268538355 -&gt; Key: kamesh = 6
+Window: 1673268538355 -&gt; Key: edson = 3
+Window: 1673268538355 -&gt; Key: sebi = 3
+Window: 1673268538355 -&gt; Key: alex = 16
+Window: 1673268538355 -&gt; Key: burr = 12
+Window: 1673268538355 -&gt; Key: kamesh = 8
+Window: 1673268538355 -&gt; Key: edson = 4
+Window: 1673268538355 -&gt; Key: sebi = 4
+Window: 1673268716848 -&gt; Key: alex = 4
+Window: 1673268716848 -&gt; Key: burr = 3
+Window: 1673268716848 -&gt; Key: kamesh = 2
+Window: 1673268716848 -&gt; Key: edson = 1
+Window: 1673268716848 -&gt; Key: sebi = 1</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Notice that we configured the session window to 60 seconds <code>--session-window=60</code> but since until the last sleep (<code>Sleeping 65</code>) we were producing content continuously without stopping for one minute, all of these events where processed in the same window.
-The new window is created in the last batch because the last batch is inserted after a timelapse of 60 seconds without producing any event.</p>
+<p>Notice that we configured the session window to 60 seconds <code>--session-window=60</code>. Since until the last sleep (<code>Sleeping 65</code>) we were producing content without ever pausing for one minute or longer, all of these events have been processed in the same session window.
+The new session window is only created before producing the last batch of song play events because of an inactivity period greater than 60 seconds.</p>
 </div>
 <div class="sect4">
 <h5 id="_clean_up_3"><a class="anchor" href="#_clean_up_3"></a>Clean Up</h5>

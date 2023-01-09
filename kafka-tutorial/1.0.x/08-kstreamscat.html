@@ -233,9 +233,6 @@
     <a class="nav-link" href="07-kubernetes.html#kubernetes-song-indexer-app">Deploy Song Indexer Service</a>
   </li>
   <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="07-kubernetes.html#kubernetes-song-app">Deploy Song Service</a>
-  </li>
-  <li class="nav-item" data-depth="3">
     <a class="nav-link" href="07-kubernetes.html#kubernetes-testing">Test It</a>
   </li>
 </ul>
@@ -285,17 +282,17 @@
 <p><a href="https://github.com/lordofthejars/kstreamscat">KStreamscat</a> is a tool that allows you to explore some Kafka Streams concept like Kafka Tables or Windowing.</p>
 </div>
 <div class="paragraph">
-<p>Currently, it is a Java CLI application (to be compiled to native executable sooner), that can be downloaded from <a href="https://github.com/lordofthejars/kstreamscat/releases" class="bare">https://github.com/lordofthejars/kstreamscat/releases</a>.</p>
+<p>Currently, it is a Java CLI application (to be compiled to native executable at one point), that can be downloaded from <a href="https://github.com/lordofthejars/kstreamscat/releases" class="bare">https://github.com/lordofthejars/kstreamscat/releases</a>.</p>
 </div>
 <div class="paragraph">
-<p>To run it, you need to use the <code>java -jar &lt;location-jar&gt;/kstreamscat.jar</code> and the valid options are found at: <a href="https://github.com/lordofthejars/kstreamscat/blob/master/src/main/java/com/lordofthejars/kstreamscat/KStreamsCatOptions.java" class="bare">https://github.com/lordofthejars/kstreamscat/blob/master/src/main/java/com/lordofthejars/kstreamscat/KStreamsCatOptions.java</a>.</p>
+<p>To run it, you simply run <code>java -jar &lt;location-jar&gt;/kstreamscat.jar</code> and use the valid options which can be found at: <a href="https://github.com/lordofthejars/kstreamscat/blob/master/src/main/java/com/lordofthejars/kstreamscat/KStreamsCatOptions.java" class="bare">https://github.com/lordofthejars/kstreamscat/blob/master/src/main/java/com/lordofthejars/kstreamscat/KStreamsCatOptions.java</a>.</p>
 </div>
 <div class="paragraph">
-<p>If you are curious on where is the logic for configuring the Kafka Stream, you can take a look at <a href="https://github.com/lordofthejars/kstreamscat/blob/master/src/main/java/com/lordofthejars/kstreamscat/TopologyProducer.java" class="bare">https://github.com/lordofthejars/kstreamscat/blob/master/src/main/java/com/lordofthejars/kstreamscat/TopologyProducer.java</a>.</p>
+<p>If you are curious about the inner workings and logic for configuring the Kafka Streams application, you can take a look at <a href="https://github.com/lordofthejars/kstreamscat/blob/master/src/main/java/com/lordofthejars/kstreamscat/TopologyProducer.java" class="bare">https://github.com/lordofthejars/kstreamscat/blob/master/src/main/java/com/lordofthejars/kstreamscat/TopologyProducer.java</a>.</p>
 </div>
 <div class="paragraph">
-<p>If you want you can build yourself the tool by running <code>./mvnw package</code>.
-The <code>target`directory will contain a JAR file named `kstreamscat-&lt;version&gt;-jar-with-dependencies.jar</code> with everything bundled.</p>
+<p>If you want you can build the tool by running <code>./mvnw package</code>.
+The <code>target</code> directory will contain a JAR file named <code>kstreamscat-&lt;version&gt;-jar-with-dependencies.jar</code> with everything bundled.</p>
 </div>
 <nav class="pagination">
   <span class="prev"><a href="08-kafka-listeners.html">Kafka Listeners</a></span>
