@@ -51,7 +51,6 @@
 ** xref:07-kubernetes.adoc#deploy-service-strimzi[Deploy Services]
 *** xref:07-kubernetes.adoc#kubernetes-song-app[Deploy Song Service]
 *** xref:07-kubernetes.adoc#kubernetes-song-indexer-app[Deploy Song Indexer Service]
-*** xref:07-kubernetes.adoc#kubernetes-song-app[Deploy Song Service]
 *** xref:07-kubernetes.adoc#kubernetes-testing[Test It]
 ** xref:07-kubernetes.adoc#kubernetes-cleanup[Clean Up]
 

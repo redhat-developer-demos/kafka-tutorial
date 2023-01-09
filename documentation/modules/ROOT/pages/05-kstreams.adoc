@@ -1,35 +1,40 @@
 = Kafka Streams
 include::_attributes.adoc[]
 
-So far, you've seen that you can consume and produce data into a Kafka topic, but sometimes you want to do things more advanced like joining different topics, aggregating content, or processing on the fly to send it to redirect the result to another topic.
+So far, you've seen that you can produce to and consume from Kafka topics, but sometimes you want to do more advanced things: joining records from different topics, grouping and aggregating records, or processing data on the fly and produce the result into another topic.
 
 [#whatkstreams]
 == What are Kafka Streams?
 
-Kafka Streams is a Java API that implements all these features, doing in a fault-tolerant, scalable way.
-One of the important things of Kafka Streams application is that it doesn't run inside a broker, but it runs in a separate JVM instance, maybe in the same cluster, or maybe in a different cluster but it is a different process.
+Kafka Streams is a Java API that implements all these more advanced features, while processing records in a fault-tolerant and scalable way.
+One of the important things to understand is that a Kafka Streams application does not(!) run inside a broker, but instead runs in a separate JVM instance - maybe in the same or in a different cluster - but it is a different process.
 
-A Kafka Stream application instances can run in parallel, in different machines and they will automatically collaborate on the data processing.
+A Kafka Stream application can be horizontally scaled such that multiple instances can run in parallel, in different machines and they will automatically collaborate on the data processing.
 This is what makes Kafka Streams applications fault-tolerance and scalable.
 
 [#kstreamsconcepts]
 == Kafka Streams Concepts
 
-Stream Processor:: A Stream processor represents an operation to execute to a stream, some examples of built-in operations can be a filter, map, join, or aggregate. 
-Usually, a Kafka Stream application is created for one or more operations.
+The following is important terminology for Kafka Streams:
 
-Table:: A table is a collection of key-value pairs, that represents the last value for the same record key.
-The big difference is that a stream contains the log of all events (ie an insertion of a song, and update of a song, ...) and a table contains the last value (ie the last update done in a song).
-There is two kinds of tables, a _KTable_ which represents a table from a partition, and a _GlobalKTable_ which aggregates the content from all partitions of a given topic.
-We'll take a look later.
+Processor Topology:: A topology specifies the data processing logic that needs to be executed by the Kafka Streams application.
+
+Stream Processor:: A stream processor is one particular compute step of the topology. It represents a specific operation to be executed based on a stream. Some examples of built-in operations are: filter, map, join, or aggregate. Usually, a Kafka Streams application is created for one or more such operations defined as the topology.
+
+KStream:: A KStream is a logical abstraction of and unbounded stream of records. Each record is interpreted as a separate "insert" event.
+
+KTable:: A KTable is a logical abstraction of a changelog stream of records. Each record is interpreted as an "update" event in case a record with the same key existed before, otherwise it is interpreted as an "insert" event. This results in a table semantic where key-value pairs always represent the latest value for any given key.
+There is two kinds of tables:
+* _KTable_: only represents records from a subset of table partitions in case you run multiple application instances
+* _GlobalKTable_: always represents records from all partitions of a given topic for every application instance you run
 
 Aggregation Operation:: Takes one input stream or table, and yields a new table by combining multiple input records into a single output record. Examples of aggregations are computing counts or sum.
 
 Join Operation:: Merges two input streams and/or tables based on the keys of their data records, and yields a new stream/table.
 
-Windowing:: Group records that have the same key by a window time. For example, you can group which events have occurred between a period of time.
+Windowing:: Allows to control how to group records that have the same key by different types of time windows. For example, you can group records which have occurred during a certain period of time, say 1 hour.
 
-Interactive Queries:: Treat the stream processing layer as a lightweight embedded database, to directly query the latest state of your stream processing application.
+Interactive Queries:: Treat the stream processing layer as a lightweight embedded key-value store, to directly query the latest state of your stream processing application e.g. based on record keys / key ranges.
 
 image::kstreams.png[]
 
@@ -74,11 +79,12 @@ kcat in Docker::
 [.console-input]
 [source, bash-shell]
 ----
-docker run -it --network=host edenhill/kcat:1.7.0 kcat -b localhost:29092 -t songs -P -l -K: update_songs
+docker run --rm -it --network=kafka-tutorial -v $(pwd)/documentation/modules/ROOT/examples/update_songs.json:/home/update_songs edenhill/kcat:1.7.1 kcat -b kafka:9092 -t songs -P -l -K: /home/update_songs
 ----
+--
 ====
 
-Then inspect the inserted songs using `kafkacat`:
+Then inspect the inserted songs using `kcat`:
 
 [tabs]
 ====
@@ -97,8 +103,9 @@ kcat in Docker::
 [.console-input]
 [source, bash-shell]
 ----
-docker run -it --network=host edenhill/kcat:1.7.0 kcat -b localhost:29092 -t songs -C -K:
+docker run --rm -it --network=kafka-tutorial edenhill/kcat:1.7.1 kcat -b kafka:9092 -t songs -C -K:
 ----
+--
 ====
 
 [.console-output]
@@ -111,7 +118,7 @@ docker run -it --network=host edenhill/kcat:1.7.0 kcat -b localhost:29092 -t son
 
 Stop the process by typing kbd:[Ctrl + C].
 
-Create a Global Table from `songs` topic:
+Create a _GlobalKTable_ from `songs` topic:
 
 [.console-input]
 [source, bash-shell,subs="+macros,+attributes"]
@@ -131,7 +138,7 @@ Kafka Stream Threads started
 
 Stop the process by typing kbd:[Ctrl + C].
 
-Notice that the output of the `kafkacat` and `kstreamcat` is fairly the same.
+Notice that the output of `kcat` and `kstreamscat` is fairly the same.
 Probably most of you have noticed that `The Imperial March` was not written by Alain Silvestri but by John Williams.
 So let's fix this.
 
@@ -144,7 +151,7 @@ Create a file that creates a new event to fix the problem.
 include::example$update2_songs.json[]
 ----
 
-And add it to `songs` topic:
+And add it to the `songs` topic:
 
 [tabs]
 ====
@@ -154,7 +161,7 @@ kcat::
 [.console-input]
 [source, bash-shell]
 ----
-kcat -b localhost:29092 -t songs -P -l -K: update_songs2
+kcat -b localhost:29092 -t songs -P -l -K: update2_songs
 ----
 --
 kcat in Docker::
@@ -163,11 +170,12 @@ kcat in Docker::
 [.console-input]
 [source, bash-shell]
 ----
-docker run -it --network=host edenhill/kcat:1.7.0 kcat -b localhost:29092 -t songs -P -l -K: update2_songs
+docker run --rm -it --network=kafka-tutorial -v $(pwd)/documentation/modules/ROOT/examples/update2_songs.json:/home/update2_songs edenhill/kcat:1.7.1 kcat -b kafka:9092 -t songs -P -l -K: /home/update2_songs
 ----
+--
 ====
 
-Then inspect the inserted songs using `kafkacat`:
+Then inspect the inserted songs using `kcat`:
 
 [tabs]
 ====
@@ -186,8 +194,9 @@ kcat in Docker::
 [.console-input]
 [source, bash-shell]
 ----
-docker run -it --network=host edenhill/kcat:1.7.0 kcat -b localhost:29092 -t songs -C -K:
+docker run --rm -it --network=kafka-tutorial edenhill/kcat:1.7.1 kcat -b kafka:29092 -t songs -C -K:
 ----
+--
 ====
 
 [.console-output]
@@ -201,7 +210,7 @@ docker run -it --network=host edenhill/kcat:1.7.0 kcat -b localhost:29092 -t son
 
 Stop the process by typing kbd:[Ctrl + C].
 
-Create a Global Table from the `songs` topic:
+Create a _GlobalKTable_ from `songs` topic:
 
 [.console-input]
 [source, bash-shell,subs="+macros,+attributes"]
@@ -221,10 +230,10 @@ Kafka Stream Threads started
 
 Stop the process by typing kbd:[Ctrl + C].
 
-Notice that `kafkacat` shows the content of all the events that have been added into the `songs` topic, so both events of _The Imperial March_ songs are visible.
+Notice that `kcat` shows the content of all the events that have been added into the `songs` topic, so both events referring to the song _The Imperial March_ (key=5/"id":5) are shown.
 
-On the other side, Global Table just shows the latest values of the topic.
-For this reason, only the update event of _The Imperial March_ is shown, and not the initial insertion.
+However, the _GlobalKTable_ just shows the latest values for each key in the topic.
+For this reason, only the update event of _The Imperial March_ (key=5/"id":5) is shown, and not the initial insertion.
 
 ==== Clean Up
 
@@ -234,7 +243,7 @@ include::partial$kafka-restart.adoc[]
 === Windowing
 
 Windowing allows you to control how to group records that have the same key based on a time window.
-For example, you can answer questions like _how many songs each user has played the last 30 minutes_ or _how many songs each user has played every day_.
+For example, you can answer questions like _how many songs has each user played within the last 30 minutes_ or _how many songs has each user played per day_.
 
 There are 4 types of windows:
 
@@ -269,12 +278,11 @@ Let's see how affect different window strategies in a topic that contains the hi
 [#kstreamscat-timewindow]
 ==== Tumbling time window
 
-Let's create a periodic window of 60 seconds.
-What we are doing here is creating fixed buckets of 60 seconds, so every 60 seconds a new window is created to process the events that fall into that window.
+Let's create a tumbling window of 60 seconds. What we are doing here is creating fixed buckets of 60 seconds each, so that every 60 seconds, a new window is created to process the events that fall into one such tumbling window.
 
-For example, let's count the number of played songs by the user in a bucket of 60 seconds.
+For example, let's count the number of played songs per user in a 60 seconds tumbling window.
 
-With Kafka cluster started, prepare *but do not execute* the next command in terminal 2:
+With the Kafka cluster started, prepare *but do not yet execute* the next command in terminal 2:
 
 [.console-input]
 [source, bash-shell,subs="+macros,+attributes"]
@@ -282,15 +290,31 @@ With Kafka cluster started, prepare *but do not execute* the next command in ter
 {kstreamscat} --topic=played --id=songs -b=localhost:29092 --time-window=60
 ----
 
-In terminal 1, run the next command, and then immediatelly run the commandd you've prepared in terminal 2:
+In terminal 1, run the next command, and then immediately run the command you've prepared in terminal 2:
 
+[tabs]
+====
+kcat::
++
+--
 [.console-input]
-[source, bash-shell,subs="+macros,+attributes"]
+[source, bash-shell]
 ----
 kcat -b localhost:29092 -t played -P -l -K: apps/windowing/first-batch.json
 ----
+--
+kcat in Docker::
++
+--
+[.console-input]
+[source, bash-shell]
+----
+docker run --rm -it --network=kafka-tutorial -v $(pwd)/apps/windowing/first-batch.json:/home/first-batch edenhill/kcat:1.7.1 kcat -b kafka:9092 -t played -P -l -K: /home/first-batch
+----
+--
+====
 
-And run the command that you've prepared in the terminal 2:
+And run the command that you've prepared in terminal 2:
 
 [.console-input]
 [source, bash-shell,subs="+macros,+attributes"]
@@ -306,50 +330,14 @@ SLF4J: Defaulting to no-operation (NOP) logger implementation
 SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
 Starting Kafka Streams...
 Kafka Stream Threads started
-Key: alex : 4
-Key: burr : 3
-Key: kamesh : 2
-Key: edson : 1
-Key: sebi : 1
+Window: 1673267640000 -> Key: alex = 4
+Window: 1673267640000 -> Key: burr = 3
+Window: 1673267640000 -> Key: kamesh = 2
+Window: 1673267640000 -> Key: edson = 1
+Window: 1673267640000 -> Key: sebi = 1
 ----
 
-Then in the terminal 1, run again the `kafkacat` command to insert again the played songs:
-
-[tabs]
-====
-kcat::
-+
---
-[.console-input]
-[source, bash-shell]
-----
-kcat -b localhost:29092 -t played -P -l -K: apps/windowing/first-batch.json
-----
---
-kcat in Docker::
-+
---
-[.console-input]
-[source, bash-shell]
-----
-docker run -it --network=host edenhill/kcat:1.7.0 kcat -b localhost:29092 -t played -P -l -K: apps/windowing/first-batch.json
-----
-====
-And if you inspect the `kstreamscat` output you'll see:
-
-[.console-output]
-[source, bash-shell,subs="+macros,+attributes"]
-----
-Key: alex : 8
-Key: burr : 6
-Key: kamesh : 4
-Key: edson : 2
-Key: sebi : 2
-----
-
-Notice that the played songs have been increased by 2.
-
-Now wait for one minute and then run the `kafkacat` command again to insert again the played songs:
+Then in the terminal 1, run again the `kcat` command to insert again the same played song events:
 
 [tabs]
 ====
@@ -368,8 +356,9 @@ kcat in Docker::
 [.console-input]
 [source, bash-shell]
 ----
-docker run -it --network=host edenhill/kcat:1.7.0 kcat -b localhost:29092 -t played -P -l -K: apps/windowing/first-batch.json
+docker run --rm -it --network=kafka-tutorial -v $(pwd)/apps/windowing/first-batch.json:/home/first-batch edenhill/kcat:1.7.1 kcat -b kafka:9092 -t played -P -l -K: /home/first-batch
 ----
+--
 ====
 
 And if you inspect the `kstreamscat` output you'll see:
@@ -377,14 +366,54 @@ And if you inspect the `kstreamscat` output you'll see:
 [.console-output]
 [source, bash-shell,subs="+macros,+attributes"]
 ----
-Key: alex : 4
-Key: burr : 3
-Key: kamesh : 2
-Key: edson : 1
-Key: sebi : 1
+...
+Window: 1673267640000 -> Key: alex = 8
+Window: 1673267640000 -> Key: burr = 6
+Window: 1673267640000 -> Key: kamesh = 4
+Window: 1673267640000 -> Key: edson = 2
+Window: 1673267640000 -> Key: sebi = 2
 ----
 
-After 1 minute, the window has shifted into a new one so these new played songs have fallen into this new window, so the count for this window is starting from 0.
+Notice that the played song counts have been doubled. This is because the same events were produced and the same time window received the same batch of played songs again.
+
+Now wait for at least one minute and then run the `kcat` command again to insert again the played songs:
+
+[tabs]
+====
+kcat::
++
+--
+[.console-input]
+[source, bash-shell]
+----
+kcat -b localhost:29092 -t played -P -l -K: apps/windowing/first-batch.json
+----
+--
+kcat in Docker::
++
+--
+[.console-input]
+[source, bash-shell]
+----
+docker run --rm -it --network=kafka-tutorial -v $(pwd)/apps/windowing/first-batch.json:/home/first-batch edenhill/kcat:1.7.1 kcat -b kafka:9092 -t played -P -l -K: /home/first-batch
+----
+--
+====
+
+And if you inspect the `kstreamscat` output you'll now see:
+
+[.console-output]
+[source, bash-shell,subs="+macros,+attributes"]
+----
+...
+Window: 1673267820000 -> Key: alex = 4
+Window: 1673267820000 -> Key: burr = 3
+Window: 1673267820000 -> Key: kamesh = 2
+Window: 1673267820000 -> Key: edson = 1
+Window: 1673267820000 -> Key: sebi = 1
+----
+
+After 1 minute, the window has shifted into a new one and the played song events have fallen into this new window for  which all counters are starting from 0 again.
 
 ===== Clean Up
 
@@ -395,9 +424,9 @@ include::partial$kafka-restart.adoc[]
 [#kstreamscat-sessiontimewindow]
 ==== Session time window
 
-Let's see how it behaves when instead of a <<kstreamscat-timewindow>>, we use a Session time window:
+Let's explore the windowing semantics when instead of a <<kstreamscat-timewindow>>, we use a session time window of 60 seconds duration.
 
-With Kafka cluster started, prepare *but do not execute* the next command in terminal 2:
+With the Kafka cluster started, prepare *but do not yet execute* the next command in terminal 2:
 
 [.console-input]
 [source, bash-shell,subs="+macros,+attributes"]
@@ -405,7 +434,7 @@ With Kafka cluster started, prepare *but do not execute* the next command in ter
 {kstreamscat} --topic=played --id=songs -b=localhost:29092 --session-window=60
 ----
 
-In terminal 1, run the next command, and then immediatelly run the commandd you've prepared in terminal 2:
+In terminal 1, run the next command, and then immediately run the command you've prepared in terminal 2:
 
 [tabs]
 ====
@@ -424,9 +453,11 @@ kcat in Docker::
 [.console-input]
 [source, bash-shell]
 ----
-docker run -it --network=host edenhill/kcat:1.7.0 kcat -b localhost:29092 -t played -P -l -K: apps/windowing/first-batch.json
+docker run --rm -it --network=kafka-tutorial -v $(pwd)/apps/windowing/first-batch.json:/home/first-batch edenhill/kcat:1.7.1 kcat -b kafka:9092 -t played -P -l -K: /home/first-batch
 ----
+--
 ====
+
 And run the command that you've prepared in the terminal 2:
 
 [.console-input]
@@ -443,11 +474,11 @@ SLF4J: Defaulting to no-operation (NOP) logger implementation
 SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
 Starting Kafka Streams...
 Kafka Stream Threads started
-Key: alex : 4
-Key: burr : 3
-Key: kamesh : 2
-Key: edson : 1
-Key: sebi : 1
+Window: 1673268538354 -> Key: alex = 4
+Window: 1673268538355 -> Key: burr = 3
+Window: 1673268538355 -> Key: kamesh = 2
+Window: 1673268538355 -> Key: edson = 1
+Window: 1673268538356 -> Key: sebi = 1
 ----
 
 Then in terminal 1 run the following command:
@@ -471,40 +502,41 @@ Insert new batch
 Now new session window
 ----
 
-Monitor the output of the terminal 2, you should see something like:
+Monitor the output of the terminal 2 where you should something similar to the following:
 
 [.console-output]
 [source, bash-shell,subs="+macros,+attributes"]
 ----
-Key: alex : 4
-Key: burr : 3
-Key: kamesh : 2
-Key: edson : 1
-Key: sebi : 1
-Key: alex : 8
-Key: burr : 6
-Key: kamesh : 4
-Key: edson : 2
-Key: sebi : 2
-Key: alex : 12
-Key: burr : 9
-Key: kamesh : 6
-Key: edson : 3
-Key: sebi : 3
-Key: alex : 16
-Key: burr : 12
-Key: kamesh : 8
-Key: edson : 4
-Key: sebi : 4
-Key: alex : 4
-Key: burr : 3
-Key: kamesh : 2
-Key: edson : 1
-Key: sebi : 1
+...
+Window: 1673268538355 -> Key: alex = 4
+Window: 1673268538355 -> Key: burr = 3
+Window: 1673268538355 -> Key: kamesh = 2
+Window: 1673268538355 -> Key: edson = 1
+Window: 1673268538355 -> Key: sebi = 1
+Window: 1673268538355 -> Key: alex = 8
+Window: 1673268538355 -> Key: burr = 6
+Window: 1673268538355 -> Key: kamesh = 4
+Window: 1673268538355 -> Key: edson = 2
+Window: 1673268538355 -> Key: sebi = 2
+Window: 1673268538355 -> Key: alex = 12
+Window: 1673268538355 -> Key: burr = 9
+Window: 1673268538355 -> Key: kamesh = 6
+Window: 1673268538355 -> Key: edson = 3
+Window: 1673268538355 -> Key: sebi = 3
+Window: 1673268538355 -> Key: alex = 16
+Window: 1673268538355 -> Key: burr = 12
+Window: 1673268538355 -> Key: kamesh = 8
+Window: 1673268538355 -> Key: edson = 4
+Window: 1673268538355 -> Key: sebi = 4
+Window: 1673268716848 -> Key: alex = 4
+Window: 1673268716848 -> Key: burr = 3
+Window: 1673268716848 -> Key: kamesh = 2
+Window: 1673268716848 -> Key: edson = 1
+Window: 1673268716848 -> Key: sebi = 1
 ----
 
-Notice that we configured the session window to 60 seconds `--session-window=60` but since until the last sleep (`Sleeping 65`) we were producing content continuously without stopping for one minute, all of these events where processed in the same window.
-The new window is created in the last batch because the last batch is inserted after a timelapse of 60 seconds without producing any event.
+Notice that we configured the session window to 60 seconds `--session-window=60`. Since until the last sleep (`Sleeping 65`) we were producing content without ever pausing for one minute or longer, all of these events have been processed in the same session window.
+The new session window is only created before producing the last batch of song play events because of an inactivity period greater than 60 seconds.
 
 ===== Clean Up
 
