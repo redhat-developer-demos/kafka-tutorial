@@ -4,9 +4,9 @@ include::_attributes.adoc[]
 In this example, we are going to develop an example to build a music chart to see the number of times that a song has been played.
 
 There is one service (`player-app`) that it is periodically producing played songs to the `played-songs` topic.
-This service is not using Kafka Streams.
+This service is not using Kafka Streams but instead just uses the Kafka producer API under the covers of Smallrye Reactive Messaging for Kafka.
 
-The second service is a Kafka Stream service that joins `songs` and `played-songs` topics, to get the song name, and finally, it updates the number of times that the song has been played.
+The second service is a Kafka Stream application that joins the `songs` and `played-songs` topics, to get the song name. Also it computes the number of times that each particular song has been played by aggregating the joined records based on the song's id.
 
 include::partial$kafka-up-dc.adoc[]
 
@@ -21,7 +21,7 @@ The producer code is at {github-repo}/{apps-folder}/player-app[Player Service, w
 === Deploying Player Service
 
 In this case, the Quarkus service is deployed to produce played songs.
-You've got two options, using Docker or building yourself the service.
+You've got two options, using the existing Docker image or building the service and image yourself. Note, that due to the configured Quarkus extension `quarkus-container-image-jib` the container image will be build automatically when you trigger the local build.
 In terminal 1, run one of these two options:
 
 [tabs]
@@ -39,30 +39,47 @@ cd $TUTORIAL_HOME/apps/player-app/quarkus/player-app
 [.console-input]
 [source, bash-shell,subs="+macros,+attributes"]
 ----
-docker build -f src/main/docker/Dockerfile.jvm -t quay.io/rhdevelopers/kafka-tutorial-player-app:quarkus .
-docker run --rm -ti -p 8080:8080 --link=kafka:kafka quay.io/rhdevelopers/kafka-tutorial-player-app:quarkus
+docker run --rm --network=kafka-tutorial quay.io/rhdevelopers/kafka-tutorial-player-app-quarkus:v23.01
 ----
 
 [.console-output]
 [source, bash-shell,subs="+macros,+attributes"]
 ----
-exec java -Dquarkus.http.host=0.0.0.0 -Djava.util.logging.manager=org.jboss.logmanager.LogManager -XX:+UseParallelGC -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90 -XX:MinHeapFreeRatio=20 -XX:MaxHeapFreeRatio=40 -XX:+ExitOnOutOfMemoryError -cp . -jar /deployments/app.jar
-__  ____  __  _____   ___  __ ____  ______
- --/ __ \/ / / / _ | / _ \/ //_/ / / / __/
- -/ /_/ / /_/ / __ |/ , _/ ,< / /_/ /\ \
---\___\_\____/_/ |_/_/|_/_/|_|\____/___/
-2020-05-06 10:36:57,049 INFO  [io.sma.rea.mes.ext.MediatorManager] (main) Deployment done... start processing
-2020-05-06 10:36:57,092 INFO  [io.sma.rea.mes.imp.ConfiguredChannelFactory] (main) Found incoming connectors: [smallrye-kafka]
-2020-05-06 10:36:57,093 INFO  [io.sma.rea.mes.imp.ConfiguredChannelFactory] (main) Found outgoing connectors: [smallrye-kafka]
-2020-05-06 10:36:57,093 INFO  [io.sma.rea.mes.imp.ConfiguredChannelFactory] (main) Channel manager initializing...
+__  ____  __  _____   ___  __ ____  ______ 
+ --/ __ \/ / / / _ | / _ \/ //_/ / / / __/ 
+ -/ /_/ / /_/ / __ |/ , _/ ,< / /_/ /\ \   
+--\___\_\____/_/ |_/_/|_/_/|_|\____/___/   
+2023-01-09 08:45:18,099 INFO  [io.sma.rea.mes.kafka] (smallrye-kafka-producer-thread-0) SRMSG18258: Kafka producer kafka-producer-songs, connected to Kafka brokers 'kafka:9092', is configured to write records to 'songs'
+2023-01-09 08:45:18,471 INFO  [io.sma.rea.mes.kafka] (smallrye-kafka-producer-thread-1) SRMSG18258: Kafka producer kafka-producer-played-songs, connected to Kafka brokers 'kafka:9092', is configured to write records to 'played-songs'
+2023-01-09 08:45:18,573 INFO  [org.acm.PlaySongsGenerator] (main) creating song reference data
+2023-01-09 08:45:18,691 INFO  [org.acm.PlaySongsGenerator] (main) starting to play random songs every 2500 ms
+2023-01-09 08:45:18,739 INFO  [org.acm.PlaySongsGenerator] (main) producing -> Song[id=1, name=The Good The Bad And The Ugly, author=Ennio Morricone]
+2023-01-09 08:45:19,675 INFO  [org.acm.PlaySongsGenerator] (main) producing -> Song[id=2, name=Believe, author=Cher]
+2023-01-09 08:45:19,686 INFO  [org.acm.PlaySongsGenerator] (main) producing -> Song[id=3, name=Still Loving You, author=Scorpions]
+2023-01-09 08:45:19,689 INFO  [org.acm.PlaySongsGenerator] (main) producing -> Song[id=4, name=Bohemian Rhapsody, author=Queen]
+2023-01-09 08:45:19,691 INFO  [org.acm.PlaySongsGenerator] (main) producing -> Song[id=5, name=Sometimes, author=James]
+2023-01-09 08:45:19,692 INFO  [org.acm.PlaySongsGenerator] (main) producing -> Song[id=6, name=Into The Unknown, author=Frozen II]
+2023-01-09 08:45:19,694 INFO  [org.acm.PlaySongsGenerator] (main) producing -> Song[id=7, name=Fox On The Run, author=Sweet]
+2023-01-09 08:45:19,696 INFO  [org.acm.PlaySongsGenerator] (main) producing -> Song[id=8, name=Perfect, author=Ed Sheeran]
+2023-01-09 08:45:19,761 INFO  [org.acm.PlaySongsGenerator] (executor-thread-0) Played song id 8 (Perfect) for user Edson
+2023-01-09 08:45:19,785 INFO  [io.quarkus] (main) player-app 1.0.0-SNAPSHOT on JVM (powered by Quarkus 2.15.2.Final) started in 7.027s. 
+2023-01-09 08:45:19,787 INFO  [io.quarkus] (main) Profile prod activated. 
+2023-01-09 08:45:19,788 INFO  [io.quarkus] (main) Installed features: [cdi, kafka-client, smallrye-context-propagation, smallrye-reactive-messaging, smallrye-reactive-messaging-kafka, vertx]
+2023-01-09 08:45:20,102 WARN  [org.apa.kaf.cli.NetworkClient] (kafka-producer-network-thread | kafka-producer-played-songs) [Producer clientId=kafka-producer-played-songs] Error while fetching metadata with correlation id 1 : {played-songs=LEADER_NOT_AVAILABLE}
+2023-01-09 08:45:20,106 WARN  [org.apa.kaf.cli.NetworkClient] (kafka-producer-network-thread | kafka-producer-songs) [Producer clientId=kafka-producer-songs] Error while fetching metadata with correlation id 1 : {songs=LEADER_NOT_AVAILABLE}
+2023-01-09 08:45:20,213 WARN  [org.apa.kaf.cli.NetworkClient] (kafka-producer-network-thread | kafka-producer-songs) [Producer clientId=kafka-producer-songs] Error while fetching metadata with correlation id 3 : {songs=LEADER_NOT_AVAILABLE}
+2023-01-09 08:45:20,220 WARN  [org.apa.kaf.cli.NetworkClient] (kafka-producer-network-thread | kafka-producer-played-songs) [Producer clientId=kafka-producer-played-songs] Error while fetching metadata with correlation id 3 : {played-songs=LEADER_NOT_AVAILABLE}
+2023-01-09 08:45:22,231 INFO  [org.acm.PlaySongsGenerator] (executor-thread-0) Played song id 5 (Sometimes) for user Edson
+2023-01-09 08:45:24,729 INFO  [org.acm.PlaySongsGenerator] (executor-thread-0) Played song id 7 (Fox On The Run) for user Burr
+2023-01-09 08:45:27,230 INFO  [org.acm.PlaySongsGenerator] (executor-thread-0) Played song id 3 (Still Loving You) for user Edson
+2023-01-09 08:45:29,735 INFO  [org.acm.PlaySongsGenerator] (executor-thread-0) Played song id 2 (Believe) for user Edson
+2023-01-09 08:45:32,238 INFO  [org.acm.PlaySongsGenerator] (executor-thread-0) Played song id 8 (Perfect) for user Alex
+2023-01-09 08:45:34,743 INFO  [org.acm.PlaySongsGenerator] (executor-thread-0) Played song id 7 (Fox On The Run) for user Kamesh
+2023-01-09 08:45:37,230 INFO  [org.acm.PlaySongsGenerator] (executor-thread-0) Played song id 3 (Still Loving You) for user Kamesh
+2023-01-09 08:45:39,728 INFO  [org.acm.PlaySongsGenerator] (executor-thread-0) Played song id 3 (Still Loving You) for user Sebi
+2023-01-09 08:45:42,229 INFO  [org.acm.PlaySongsGenerator] (executor-thread-0) Played song id 4 (Bohemian Rhapsody) for user Edson
+2023-01-09 08:45:44,726 INFO  [org.acm.PlaySongsGenerator] (executor-thread-0) Played song id 2 (Believe) for user Burr
 ...
-
-2020-05-06 10:36:57,460 INFO  [org.acm.PlaySongsGenerator] (main) Registered: {"author":"Ennio Morricone","id":1,"name":"The Good The Bad And The Ugly"}
-2020-05-06 10:36:57,465 INFO  [org.acm.PlaySongsGenerator] (main) Registered: {"author":"Cher","id":2,"name":"Believe"}
-2020-05-06 10:36:57,473 INFO  [org.acm.PlaySongsGenerator] (main) Registered: {"author":"Scorpions","id":3,"name":"Still Loving You"}
-2020-05-06 10:36:57,485 INFO  [org.acm.PlaySongsGenerator] (main) Registered: {"author":"Queen","id":4,"name":"Bohemian Rhapsody"}
-...
-2020-05-06 10:37:02,657 INFO  [org.acm.PlaySongsGenerator] (RxComputationThreadPool-1) song 8: Perfect played.
 ----
 --
 Docker::
@@ -71,29 +88,47 @@ Docker::
 [.console-input]
 [source, bash-shell,subs="+macros,+attributes"]
 ----
-docker run --rm -ti -p 8080:8080 --link=kafka:kafka quay.io/rhdevelopers/kafka-tutorial-player-app:quarkus
+docker run --rm --network=kafka-tutorial quay.io/rhdevelopers/kafka-tutorial-player-app-quarkus:v23.01
 ----
 
 [.console-output]
 [source, bash-shell,subs="+macros,+attributes"]
 ----
-exec java -Dquarkus.http.host=0.0.0.0 -Djava.util.logging.manager=org.jboss.logmanager.LogManager -XX:+UseParallelGC -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90 -XX:MinHeapFreeRatio=20 -XX:MaxHeapFreeRatio=40 -XX:+ExitOnOutOfMemoryError -cp . -jar /deployments/app.jar
-__  ____  __  _____   ___  __ ____  ______
- --/ __ \/ / / / _ | / _ \/ //_/ / / / __/
- -/ /_/ / /_/ / __ |/ , _/ ,< / /_/ /\ \
---\___\_\____/_/ |_/_/|_/_/|_|\____/___/
-2020-05-06 10:36:57,049 INFO  [io.sma.rea.mes.ext.MediatorManager] (main) Deployment done... start processing
-2020-05-06 10:36:57,092 INFO  [io.sma.rea.mes.imp.ConfiguredChannelFactory] (main) Found incoming connectors: [smallrye-kafka]
-2020-05-06 10:36:57,093 INFO  [io.sma.rea.mes.imp.ConfiguredChannelFactory] (main) Found outgoing connectors: [smallrye-kafka]
-2020-05-06 10:36:57,093 INFO  [io.sma.rea.mes.imp.ConfiguredChannelFactory] (main) Channel manager initializing...
+__  ____  __  _____   ___  __ ____  ______ 
+ --/ __ \/ / / / _ | / _ \/ //_/ / / / __/ 
+ -/ /_/ / /_/ / __ |/ , _/ ,< / /_/ /\ \   
+--\___\_\____/_/ |_/_/|_/_/|_|\____/___/   
+2023-01-09 08:45:18,099 INFO  [io.sma.rea.mes.kafka] (smallrye-kafka-producer-thread-0) SRMSG18258: Kafka producer kafka-producer-songs, connected to Kafka brokers 'kafka:9092', is configured to write records to 'songs'
+2023-01-09 08:45:18,471 INFO  [io.sma.rea.mes.kafka] (smallrye-kafka-producer-thread-1) SRMSG18258: Kafka producer kafka-producer-played-songs, connected to Kafka brokers 'kafka:9092', is configured to write records to 'played-songs'
+2023-01-09 08:45:18,573 INFO  [org.acm.PlaySongsGenerator] (main) creating song reference data
+2023-01-09 08:45:18,691 INFO  [org.acm.PlaySongsGenerator] (main) starting to play random songs every 2500 ms
+2023-01-09 08:45:18,739 INFO  [org.acm.PlaySongsGenerator] (main) producing -> Song[id=1, name=The Good The Bad And The Ugly, author=Ennio Morricone]
+2023-01-09 08:45:19,675 INFO  [org.acm.PlaySongsGenerator] (main) producing -> Song[id=2, name=Believe, author=Cher]
+2023-01-09 08:45:19,686 INFO  [org.acm.PlaySongsGenerator] (main) producing -> Song[id=3, name=Still Loving You, author=Scorpions]
+2023-01-09 08:45:19,689 INFO  [org.acm.PlaySongsGenerator] (main) producing -> Song[id=4, name=Bohemian Rhapsody, author=Queen]
+2023-01-09 08:45:19,691 INFO  [org.acm.PlaySongsGenerator] (main) producing -> Song[id=5, name=Sometimes, author=James]
+2023-01-09 08:45:19,692 INFO  [org.acm.PlaySongsGenerator] (main) producing -> Song[id=6, name=Into The Unknown, author=Frozen II]
+2023-01-09 08:45:19,694 INFO  [org.acm.PlaySongsGenerator] (main) producing -> Song[id=7, name=Fox On The Run, author=Sweet]
+2023-01-09 08:45:19,696 INFO  [org.acm.PlaySongsGenerator] (main) producing -> Song[id=8, name=Perfect, author=Ed Sheeran]
+2023-01-09 08:45:19,761 INFO  [org.acm.PlaySongsGenerator] (executor-thread-0) Played song id 8 (Perfect) for user Edson
+2023-01-09 08:45:19,785 INFO  [io.quarkus] (main) player-app 1.0.0-SNAPSHOT on JVM (powered by Quarkus 2.15.2.Final) started in 7.027s. 
+2023-01-09 08:45:19,787 INFO  [io.quarkus] (main) Profile prod activated. 
+2023-01-09 08:45:19,788 INFO  [io.quarkus] (main) Installed features: [cdi, kafka-client, smallrye-context-propagation, smallrye-reactive-messaging, smallrye-reactive-messaging-kafka, vertx]
+2023-01-09 08:45:20,102 WARN  [org.apa.kaf.cli.NetworkClient] (kafka-producer-network-thread | kafka-producer-played-songs) [Producer clientId=kafka-producer-played-songs] Error while fetching metadata with correlation id 1 : {played-songs=LEADER_NOT_AVAILABLE}
+2023-01-09 08:45:20,106 WARN  [org.apa.kaf.cli.NetworkClient] (kafka-producer-network-thread | kafka-producer-songs) [Producer clientId=kafka-producer-songs] Error while fetching metadata with correlation id 1 : {songs=LEADER_NOT_AVAILABLE}
+2023-01-09 08:45:20,213 WARN  [org.apa.kaf.cli.NetworkClient] (kafka-producer-network-thread | kafka-producer-songs) [Producer clientId=kafka-producer-songs] Error while fetching metadata with correlation id 3 : {songs=LEADER_NOT_AVAILABLE}
+2023-01-09 08:45:20,220 WARN  [org.apa.kaf.cli.NetworkClient] (kafka-producer-network-thread | kafka-producer-played-songs) [Producer clientId=kafka-producer-played-songs] Error while fetching metadata with correlation id 3 : {played-songs=LEADER_NOT_AVAILABLE}
+2023-01-09 08:45:22,231 INFO  [org.acm.PlaySongsGenerator] (executor-thread-0) Played song id 5 (Sometimes) for user Edson
+2023-01-09 08:45:24,729 INFO  [org.acm.PlaySongsGenerator] (executor-thread-0) Played song id 7 (Fox On The Run) for user Burr
+2023-01-09 08:45:27,230 INFO  [org.acm.PlaySongsGenerator] (executor-thread-0) Played song id 3 (Still Loving You) for user Edson
+2023-01-09 08:45:29,735 INFO  [org.acm.PlaySongsGenerator] (executor-thread-0) Played song id 2 (Believe) for user Edson
+2023-01-09 08:45:32,238 INFO  [org.acm.PlaySongsGenerator] (executor-thread-0) Played song id 8 (Perfect) for user Alex
+2023-01-09 08:45:34,743 INFO  [org.acm.PlaySongsGenerator] (executor-thread-0) Played song id 7 (Fox On The Run) for user Kamesh
+2023-01-09 08:45:37,230 INFO  [org.acm.PlaySongsGenerator] (executor-thread-0) Played song id 3 (Still Loving You) for user Kamesh
+2023-01-09 08:45:39,728 INFO  [org.acm.PlaySongsGenerator] (executor-thread-0) Played song id 3 (Still Loving You) for user Sebi
+2023-01-09 08:45:42,229 INFO  [org.acm.PlaySongsGenerator] (executor-thread-0) Played song id 4 (Bohemian Rhapsody) for user Edson
+2023-01-09 08:45:44,726 INFO  [org.acm.PlaySongsGenerator] (executor-thread-0) Played song id 2 (Believe) for user Burr
 ...
-
-2020-05-06 10:36:57,460 INFO  [org.acm.PlaySongsGenerator] (main) Registered: {"author":"Ennio Morricone","id":1,"name":"The Good The Bad And The Ugly"}
-2020-05-06 10:36:57,465 INFO  [org.acm.PlaySongsGenerator] (main) Registered: {"author":"Cher","id":2,"name":"Believe"}
-2020-05-06 10:36:57,473 INFO  [org.acm.PlaySongsGenerator] (main) Registered: {"author":"Scorpions","id":3,"name":"Still Loving You"}
-2020-05-06 10:36:57,485 INFO  [org.acm.PlaySongsGenerator] (main) Registered: {"author":"Queen","id":4,"name":"Bohemian Rhapsody"}
-...
-2020-05-06 10:37:02,657 INFO  [org.acm.PlaySongsGenerator] (RxComputationThreadPool-1) song 8: Perfect played.
 ----
 --
 ====
@@ -107,7 +142,7 @@ The KStreams code is at {github-repo}/{apps-folder}/music-chart-app[Music Chart 
 === Deploying Music Chart Service
 
 In this case, the Quarkus service is deployed to use Kafka Streams.
-You've got two options, using Docker or building yourself the service.
+You've got two options, using the existing Docker image or building the service and image yourself. Note, that due to the configured Quarkus extension `quarkus-container-image-jib` the container image will be created automatically when you trigger the local build.
 In terminal 2, run one of these two options:
 
 [tabs]
@@ -125,30 +160,31 @@ cd $TUTORIAL_HOME/apps/music-chart-app/quarkus/music-chart-app
 [.console-input]
 [source, bash-shell,subs="+macros,+attributes"]
 ----
-docker build -f src/main/docker/Dockerfile.jvm -t quay.io/rhdevelopers/kafka-tutorial-music-chart-app:quarkus .
-docker run --rm -ti -p 9090:8080 --link=kafka:kafka quay.io/rhdevelopers/kafka-tutorial-music-chart-app:quarkus
+docker run --rm --network=kafka-tutorial quay.io/rhdevelopers/kafka-tutorial-music-chart-app-quarkus:v23.01
 ----
 
 [.console-output]
 [source, bash-shell,subs="+macros,+attributes"]
 ----
-exec java -Dquarkus.http.host=0.0.0.0 -Djava.util.logging.manager=org.jboss.logmanager.LogManager -XX:+UseParallelGC -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90 -XX:MinHeapFreeRatio=20 -XX:MaxHeapFreeRatio=40 -XX:+ExitOnOutOfMemoryError -cp . -jar /deployments/app.jar
-__  ____  __  _____   ___  __ ____  ______
- --/ __ \/ / / / _ | / _ \/ //_/ / / / __/
- -/ /_/ / /_/ / __ |/ , _/ ,< / /_/ /\ \
---\___\_\____/_/ |_/_/|_/_/|_|\____/___/
-2020-05-06 11:12:25,856 INFO  [org.apa.kaf.str.StreamsConfig] (main) StreamsConfig values:
-	application.id = music-chart
-	application.server = localhost:9090
+__  ____  __  _____   ___  __ ____  ______ 
+ --/ __ \/ / / / _ | / _ \/ //_/ / / / __/ 
+ -/ /_/ / /_/ / __ |/ , _/ ,< / /_/ /\ \   
+--\___\_\____/_/ |_/_/|_/_/|_|\____/___/   
+2023-01-09 08:45:54,755 WARN  [org.apa.kaf.cli.adm.AdminClientConfig] (main) These configurations '[ssl.endpoint.identification.algorithm]' were supplied but are not used yet.
+2023-01-09 08:45:55,340 INFO  [org.apa.kaf.str.StreamsConfig] (main) StreamsConfig values: 
+        acceptable.recovery.lag = 10000
+        application.id = music-chart
+        application.server = localhost:9090
+        bootstrap.servers = [kafka:9092]
 ...
-2020-05-06 11:12:27,705 INFO  [org.apa.kaf.str.pro.int.StreamThread] (music-chart-97e40fb8-ef19-4bd5-8a1f-e7bd4b391e1a-StreamThread-1) stream-thread [music-chart-97e40fb8-ef19-4bd5-8a1f-e7bd4b391e1a-StreamThread-1] State transition from PARTITIONS_ASSIGNED to RUNNING
-2020-05-06 11:12:27,707 INFO  [org.apa.kaf.str.KafkaStreams] (music-chart-97e40fb8-ef19-4bd5-8a1f-e7bd4b391e1a-StreamThread-1) stream-client [music-chart-97e40fb8-ef19-4bd5-8a1f-e7bd4b391e1a] State transition from REBALANCING to RUNNING
-[KTABLE-TOSTREAM-0000000006]: 2, PlayedSong [count=1, songName=Believe]
-[KTABLE-TOSTREAM-0000000006]: 1, PlayedSong [count=1, songName=The Good The Bad And The Ugly]
-[KTABLE-TOSTREAM-0000000006]: 5, PlayedSong [count=1, songName=Sometimes]
-[KTABLE-TOSTREAM-0000000006]: 2, PlayedSong [count=2, songName=Believe]
-[KTABLE-TOSTREAM-0000000006]: 1, PlayedSong [count=2, songName=The Good The Bad And The Ugly]
-[KTABLE-TOSTREAM-0000000006]: 2, PlayedSong [count=3, songName=Believe]
+2023-01-09 08:46:00,952 INFO  [org.apa.kaf.str.pro.int.StreamThread] (music-chart-08427007-2905-4d91-b260-44bcb8ac5c6a-StreamThread-1) stream-thread [music-chart-08427007-2905-4d91-b260-44bcb8ac5c6a-StreamThread-1] State transition from PARTITIONS_ASSIGNED to RUNNING
+2023-01-09 08:46:00,958 INFO  [org.apa.kaf.str.KafkaStreams] (music-chart-08427007-2905-4d91-b260-44bcb8ac5c6a-StreamThread-1) stream-client [music-chart-08427007-2905-4d91-b260-44bcb8ac5c6a] State transition from REBALANCING to RUNNING
+2023-01-09 08:46:02,098 INFO  [org.acm.MusicChartTopologyProducer] (music-chart-08427007-2905-4d91-b260-44bcb8ac5c6a-StreamThread-1) music chart updated for song id 5 -> PlayedSong [count=1, songName=Sometimes]
+2023-01-09 08:46:02,128 INFO  [org.acm.MusicChartTopologyProducer] (music-chart-08427007-2905-4d91-b260-44bcb8ac5c6a-StreamThread-1) music chart updated for song id 8 -> PlayedSong [count=2, songName=Perfect]
+2023-01-09 08:46:02,133 INFO  [org.acm.MusicChartTopologyProducer] (music-chart-08427007-2905-4d91-b260-44bcb8ac5c6a-StreamThread-1) music chart updated for song id 7 -> PlayedSong [count=2, songName=Fox On The Run]
+2023-01-09 08:46:02,135 INFO  [org.acm.MusicChartTopologyProducer] (music-chart-08427007-2905-4d91-b260-44bcb8ac5c6a-StreamThread-1) music chart updated for song id 3 -> PlayedSong [count=3, songName=Still Loving You]
+2023-01-09 08:46:02,137 INFO  [org.acm.MusicChartTopologyProducer] (music-chart-08427007-2905-4d91-b260-44bcb8ac5c6a-StreamThread-1) music chart updated for song id 4 -> PlayedSong [count=1, songName=Bohemian Rhapsody]
+2023-01-09 08:46:02,140 INFO  [org.acm.MusicChartTopologyProducer] (music-chart-08427007-2905-4d91-b260-44bcb8ac5c6a-StreamThread-1) music chart updated for song id 2 -> PlayedSong [count=2, songName=Believe]
 ----
 --
 Docker::
@@ -157,29 +193,31 @@ Docker::
 [.console-input]
 [source, bash-shell,subs="+macros,+attributes"]
 ----
-docker run --rm -ti -p 9090:8080 --link=kafka:kafka quay.io/rhdevelopers/kafka-tutorial-music-chart-app:quarkus
+docker run --rm --network=kafka-tutorial quay.io/rhdevelopers/kafka-tutorial-music-chart-app-quarkus:v23.01
 ----
 
 [.console-output]
 [source, bash-shell,subs="+macros,+attributes"]
 ----
-exec java -Dquarkus.http.host=0.0.0.0 -Djava.util.logging.manager=org.jboss.logmanager.LogManager -XX:+UseParallelGC -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90 -XX:MinHeapFreeRatio=20 -XX:MaxHeapFreeRatio=40 -XX:+ExitOnOutOfMemoryError -cp . -jar /deployments/app.jar
-__  ____  __  _____   ___  __ ____  ______
- --/ __ \/ / / / _ | / _ \/ //_/ / / / __/
- -/ /_/ / /_/ / __ |/ , _/ ,< / /_/ /\ \
---\___\_\____/_/ |_/_/|_/_/|_|\____/___/
-2020-05-06 11:12:25,856 INFO  [org.apa.kaf.str.StreamsConfig] (main) StreamsConfig values:
-	application.id = music-chart
-	application.server = localhost:9090
+__  ____  __  _____   ___  __ ____  ______ 
+ --/ __ \/ / / / _ | / _ \/ //_/ / / / __/ 
+ -/ /_/ / /_/ / __ |/ , _/ ,< / /_/ /\ \   
+--\___\_\____/_/ |_/_/|_/_/|_|\____/___/   
+2023-01-09 08:45:54,755 WARN  [org.apa.kaf.cli.adm.AdminClientConfig] (main) These configurations '[ssl.endpoint.identification.algorithm]' were supplied but are not used yet.
+2023-01-09 08:45:55,340 INFO  [org.apa.kaf.str.StreamsConfig] (main) StreamsConfig values: 
+        acceptable.recovery.lag = 10000
+        application.id = music-chart
+        application.server = localhost:9090
+        bootstrap.servers = [kafka:9092]
 ...
-2020-05-06 11:12:27,705 INFO  [org.apa.kaf.str.pro.int.StreamThread] (music-chart-97e40fb8-ef19-4bd5-8a1f-e7bd4b391e1a-StreamThread-1) stream-thread [music-chart-97e40fb8-ef19-4bd5-8a1f-e7bd4b391e1a-StreamThread-1] State transition from PARTITIONS_ASSIGNED to RUNNING
-2020-05-06 11:12:27,707 INFO  [org.apa.kaf.str.KafkaStreams] (music-chart-97e40fb8-ef19-4bd5-8a1f-e7bd4b391e1a-StreamThread-1) stream-client [music-chart-97e40fb8-ef19-4bd5-8a1f-e7bd4b391e1a] State transition from REBALANCING to RUNNING
-[KTABLE-TOSTREAM-0000000006]: 2, PlayedSong [count=1, songName=Believe]
-[KTABLE-TOSTREAM-0000000006]: 1, PlayedSong [count=1, songName=The Good The Bad And The Ugly]
-[KTABLE-TOSTREAM-0000000006]: 5, PlayedSong [count=1, songName=Sometimes]
-[KTABLE-TOSTREAM-0000000006]: 2, PlayedSong [count=2, songName=Believe]
-[KTABLE-TOSTREAM-0000000006]: 1, PlayedSong [count=2, songName=The Good The Bad And The Ugly]
-[KTABLE-TOSTREAM-0000000006]: 2, PlayedSong [count=3, songName=Believe]
+2023-01-09 08:46:00,952 INFO  [org.apa.kaf.str.pro.int.StreamThread] (music-chart-08427007-2905-4d91-b260-44bcb8ac5c6a-StreamThread-1) stream-thread [music-chart-08427007-2905-4d91-b260-44bcb8ac5c6a-StreamThread-1] State transition from PARTITIONS_ASSIGNED to RUNNING
+2023-01-09 08:46:00,958 INFO  [org.apa.kaf.str.KafkaStreams] (music-chart-08427007-2905-4d91-b260-44bcb8ac5c6a-StreamThread-1) stream-client [music-chart-08427007-2905-4d91-b260-44bcb8ac5c6a] State transition from REBALANCING to RUNNING
+2023-01-09 08:46:02,098 INFO  [org.acm.MusicChartTopologyProducer] (music-chart-08427007-2905-4d91-b260-44bcb8ac5c6a-StreamThread-1) music chart updated for song id 5 -> PlayedSong [count=1, songName=Sometimes]
+2023-01-09 08:46:02,128 INFO  [org.acm.MusicChartTopologyProducer] (music-chart-08427007-2905-4d91-b260-44bcb8ac5c6a-StreamThread-1) music chart updated for song id 8 -> PlayedSong [count=2, songName=Perfect]
+2023-01-09 08:46:02,133 INFO  [org.acm.MusicChartTopologyProducer] (music-chart-08427007-2905-4d91-b260-44bcb8ac5c6a-StreamThread-1) music chart updated for song id 7 -> PlayedSong [count=2, songName=Fox On The Run]
+2023-01-09 08:46:02,135 INFO  [org.acm.MusicChartTopologyProducer] (music-chart-08427007-2905-4d91-b260-44bcb8ac5c6a-StreamThread-1) music chart updated for song id 3 -> PlayedSong [count=3, songName=Still Loving You]
+2023-01-09 08:46:02,137 INFO  [org.acm.MusicChartTopologyProducer] (music-chart-08427007-2905-4d91-b260-44bcb8ac5c6a-StreamThread-1) music chart updated for song id 4 -> PlayedSong [count=1, songName=Bohemian Rhapsody]
+2023-01-09 08:46:02,140 INFO  [org.acm.MusicChartTopologyProducer] (music-chart-08427007-2905-4d91-b260-44bcb8ac5c6a-StreamThread-1) music chart updated for song id 2 -> PlayedSong [count=2, songName=Believe]
 ----
 --
 ====
