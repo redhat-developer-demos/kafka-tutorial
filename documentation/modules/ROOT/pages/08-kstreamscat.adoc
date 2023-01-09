@@ -2,11 +2,11 @@
 
 https://github.com/lordofthejars/kstreamscat[KStreamscat] is a tool that allows you to explore some Kafka Streams concept like Kafka Tables or Windowing.
 
-Currently, it is a Java CLI application (to be compiled to native executable sooner), that can be downloaded from https://github.com/lordofthejars/kstreamscat/releases.
+Currently, it is a Java CLI application (to be compiled to native executable at one point), that can be downloaded from https://github.com/lordofthejars/kstreamscat/releases.
 
-To run it, you need to use the `java -jar <location-jar>/kstreamscat.jar` and the valid options are found at: https://github.com/lordofthejars/kstreamscat/blob/master/src/main/java/com/lordofthejars/kstreamscat/KStreamsCatOptions.java.
+To run it, you simply run `java -jar <location-jar>/kstreamscat.jar` and use the valid options which can be found at: https://github.com/lordofthejars/kstreamscat/blob/master/src/main/java/com/lordofthejars/kstreamscat/KStreamsCatOptions.java.
 
-If you are curious on where is the logic for configuring the Kafka Stream, you can take a look at https://github.com/lordofthejars/kstreamscat/blob/master/src/main/java/com/lordofthejars/kstreamscat/TopologyProducer.java.
+If you are curious about the inner workings and logic for configuring the Kafka Streams application, you can take a look at https://github.com/lordofthejars/kstreamscat/blob/master/src/main/java/com/lordofthejars/kstreamscat/TopologyProducer.java.
 
-If you want you can build yourself the tool by running `./mvnw package`.
-The `target`directory will contain a JAR file named `kstreamscat-<version>-jar-with-dependencies.jar` with everything bundled.
+If you want you can build the tool by running `./mvnw package`.
+The `target` directory will contain a JAR file named `kstreamscat-<version>-jar-with-dependencies.jar` with everything bundled.
