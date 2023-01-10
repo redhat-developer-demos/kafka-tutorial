@@ -1,6 +1,6 @@
 name: kafka-tutorial
 title: Kafka Tutorial
-version: '1.0.x'
+version: master
 nav:
 - modules/ROOT/nav.adoc
 

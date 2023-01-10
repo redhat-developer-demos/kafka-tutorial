@@ -1,0 +1,27 @@
+runtime:
+  cache_dir: ./.cache/antora
+
+site:
+  title: Kafka Tutorial [! Dev Mode !]
+  url: http://localhost:3000/kafka-tutorial/index.html
+  start_page: kafka-tutorial::index.adoc
+
+content:
+  sources:
+    - url: .
+      branches: HEAD
+      start_path: documentation
+asciidoc:
+  attributes:
+    page-pagination: true
+    tutorial-url: https://github.com/redhat-developer-demos/kafka-tutorial.git
+  extensions:
+    - ./lib/remote-include-processor.js
+    - ./lib/tab-block.js
+ui:
+  bundle:
+    url: https://github.com/redhat-developer-demos/rhd-tutorial-ui/releases/download/v0.1.9/ui-bundle.zip
+    snapshot: true
+  supplemental_files: ./supplemental-ui
+output:
+  dir: ./gh-pages

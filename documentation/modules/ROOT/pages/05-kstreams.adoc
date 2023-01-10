@@ -1,4 +1,4 @@
-= Kafka Streams
+= Kafka Streams Intro
 include::_attributes.adoc[]
 
 So far, you've seen that you can produce to and consume from Kafka topics, but sometimes you want to do more advanced things: joining records from different topics, grouping and aggregating records, or processing data on the fly and produce the result into another topic.
@@ -9,8 +9,8 @@ So far, you've seen that you can produce to and consume from Kafka topics, but s
 Kafka Streams is a Java API that implements all these more advanced features, while processing records in a fault-tolerant and scalable way.
 One of the important things to understand is that a Kafka Streams application does not(!) run inside a broker, but instead runs in a separate JVM instance - maybe in the same or in a different cluster - but it is a different process.
 
-A Kafka Stream application can be horizontally scaled such that multiple instances can run in parallel, in different machines and they will automatically collaborate on the data processing.
-This is what makes Kafka Streams applications fault-tolerance and scalable.
+A Kafka Streams application can be horizontally scaled such that multiple instances can run in parallel, in different machines and they will automatically collaborate on the data processing.
+This is what makes Kafka Streams applications fault-tolerant and scalable.
 
 [#kstreamsconcepts]
 == Kafka Streams Concepts
@@ -38,16 +38,24 @@ Interactive Queries:: Treat the stream processing layer as a lightweight embedde
 
 image::kstreams.png[]
 
-== Kafka Streams Operations
+[#kstreamsexamples]
+== Kafka Streams Examples
 include::_attributes.adoc[]
 :kstreamscat: java -jar kstreamscat.jar
 
-Let's see some of the Kafka-Streams concepts in action.
+Let's see some of the Kafka Streams concepts in action.
+
+[#kstreamscat]
+=== KStreamscat
+
+Note that for the following examples, you are going to use a custom tool called `kstreamscat`. It's a simple custom Java CLI application to explore things like KTables and experiment with different types of windowing.
+
+Pre-built releases can be downloaded from the GitHub repository's https://github.com/lordofthejars/kstreamscat/releases[release page]. In case you want to work with the latest version simply clone the repo and and build the tool by running `./mvnw package`. The `target` directory will contain a runnable JAR file named `kstreamscat-<version>-jar-with-dependencies.jar`.
 
 include::partial$kafka-up-dc.adoc[]
 
 [#kstreamscat-tables]
-=== Tables
+=== (Global)KTables
 
 You need only one terminal window to run this section.
 
@@ -325,9 +333,6 @@ And run the command that you've prepared in terminal 2:
 [.console-output]
 [source, bash-shell,subs="+macros,+attributes"]
 ----
-SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
-SLF4J: Defaulting to no-operation (NOP) logger implementation
-SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
 Starting Kafka Streams...
 Kafka Stream Threads started
 Window: 1673267640000 -> Key: alex = 4
@@ -469,9 +474,6 @@ And run the command that you've prepared in the terminal 2:
 [.console-output]
 [source, bash-shell,subs="+macros,+attributes"]
 ----
-SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
-SLF4J: Defaulting to no-operation (NOP) logger implementation
-SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
 Starting Kafka Streams...
 Kafka Stream Threads started
 Window: 1673268538354 -> Key: alex = 4

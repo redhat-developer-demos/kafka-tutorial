@@ -30,7 +30,7 @@ include::https://raw.githubusercontent.com/redhat-developer-demos/rhd-tutorial-c
 include::https://raw.githubusercontent.com/redhat-developer-demos/rhd-tutorial-common/master/download-sources.adoc[]
 
 [#kafka]
-== Setup Kafka
+== Run Kafka
 
 Assuming you've got https://docs.docker.com/get-docker/[Docker & Docker Compose installed].
 
@@ -117,4 +117,5 @@ Metadata for all topics (from broker 0: kafka:9092/0):
   broker 0 at kafka:9092 (controller)
  0 topics:
 ----
+--
 ====

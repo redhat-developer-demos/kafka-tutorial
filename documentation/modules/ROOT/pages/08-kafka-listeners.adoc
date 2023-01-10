@@ -46,8 +46,9 @@ kcat in Docker::
 [.console-input]
 [source, bash-shell]
 ----
-docker run -it --network=host edenhill/kcat:1.7.0 kcat -b localhost:29092 -L
+docker run --rm -it --network=kafka-tutorial edenhill/kcat:1.7.1 -b localhost:29092 -L
 ----
+--
 ====
 
 [.console-output]
@@ -77,8 +78,9 @@ kcat in Docker::
 [.console-input]
 [source, bash-shell]
 ----
-docker run -it --network=host edenhill/kcat:1.7.0 kcat -b localhost:29092 -L
+docker run --rm -it --network=kafka-tutorial edenhill/kcat:1.7.1 -b localhost:9092 -L
 ----
+--
 ====
 [.console-output]
 [source, bash-shell]

@@ -1,31 +1,76 @@
-= Welcome to the Kafka Tutorial
+= Kafka Tutorial
 :page-layout: home
 :!sectids:
 
 [.text-center.strong]
-== Kafka
+== Welcome to jour Kafka Journey!
 
-This is a Kafka tutorial to explain and show you:
+This is tutorial is divided into two parts: 
 
-* how to run Kafka locally with Docker Compose
-* the basic concepts and fundamental terminology of Kafka
-* how to develop services that consume and produce from/to Kafka topic(s) in Java
-* how to deploy Kafka into Kubernetes with Strimzi operators
+=== Basics: Core Kafka and the Producer / Consumer APIs
 
-[.tiles.browse]
-== Browse modules
+- 1. Getting Started
+* xref:01-setup.adoc[Setup]
+** xref:01-setup.adoc#prerequisite[Prerequisites]
+** xref:01-setup.adoc#downloadconfiguresources[Download & Configure Tutorial]
+** xref:01-setup.adoc#kafka[Run Kafka]
 
-[.tile]
-.xref:01-setup.adoc[Get Started]
-* xref:01-setup.adoc#kafka[Run Kafka locally]
+- 2. Basics
+* xref:02-topics-partitions.adoc[Topics & Partitions]
+** xref:02-topics-partitions.adoc#topics[Topics]
+** xref:02-topics-partitions.adoc#partitions[Partitions]
+** xref:02-topics-partitions.adoc#messages[Messages]
+** xref:02-topics-partitions.adoc#topic-creation[Topic Creation]
 
-[.tile]
-.xref:02-topic-partitions.adoc[Topics & Partitions]
-* xref:02-topics-partitions.adoc#topics[Topics]
-* xref:02-topics-partitions.adoc#partitions[Partitions]
-* xref:02-topics-partitions.adoc#messages[Messages]
-* xref:02-topics-partitions.adoc#topic-creation[Create a Topic]
-* xref:03-consumers-producers.adoc#producer[Producer]
-* xref:03-consumers-producers.adoc#consumer[Consumer]
-* xref:03-consumers-producers.adoc#consume-kafkacat[Kafkacat Consumer]
-* xref:03-consumers-producers.adoc#produce-kafkacat[Kafkacat Producer]
+* xref:03-consumers-producers.adoc[Consumer & Producers]
+** xref:03-consumers-producers.adoc#producer[Producer]
+** xref:03-consumers-producers.adoc#consumer[Consumer]
+** xref:03-consumers-producers.adoc#consume-kcat[kcat Consumer]
+** xref:03-consumers-producers.adoc#produce-kcat[kcat Producer]
+** xref:03-consumers-producers.adoc#playingwithoffsets[kcat Offsets]
+** xref:03-consumers-producers.adoc#changingretention[Changing Retention]
+** xref:03-consumers-producers.adoc#deletetopiccontent[Delete Topic Content]
+** xref:03-consumers-producers.adoc#cleanup[Clean Up]
+
+* xref:04-java-consumer-producer.adoc[Developing Consumers and Producers in Java]
+** xref:04-java-consumer-producer.adoc#producer-java[Producing messages with Java]
+*** xref:04-java-consumer-producer.adoc#deploying-producer[Deploying Producer]
+** xref:04-java-consumer-producer.adoc#consumer-java[Consuming messages with Java]
+*** xref:04-java-consumer-producer.adoc#deploying-consumer[Deploying Consumer]
+** xref:04-java-consumer-producer.adoc#java-cleanup[Clean Up]
+
+* Tips & Tricks
+** xref:08-kafka-listeners.adoc[Kafka Listeners]
+
+=== Intermediate: Developing Kafka Streams Applications and Running Kafka on Kubernetes
+
+- 3. Intermediate
+* xref:05-kstreams.adoc[Kafka Streams Intro]
+** xref:05-kstreams.adoc#whatkstreams[What are Kafka Streams?]
+** xref:05-kstreams.adoc#kstreamsconcepts[Kafka Streams Concepts]
+** xref:05-kstreams.adoc#kstreamsexamples[Kafka Streams Examples]
+*** xref:05-kstreams.adoc#kstreamscat[KStreamscat]
+*** xref:05-kstreams.adoc#kstreamscat-tables[(Global)KTables]
+*** xref:05-kstreams.adoc#kstreamscat-windowing[Windowing]
+**** xref:05-kstreams.adoc#kstreamscat-timewindow[Tumbling Window]
+**** xref:05-kstreams.adoc#kstreamscat-sessiontimewindow[Session Window]
+
+* xref:06-java-kstreams.adoc[Developing Kafka Streams]
+** xref:06-java-kstreams.adoc#player-songs-java[Player Service]
+*** xref:06-java-kstreams.adoc#deploying-player-app[Deploying Player Service]
+** xref:06-java-kstreams.adoc#music-chart-java[Music Chart Service]
+*** xref:06-java-kstreams.adoc#deploying-music-chart[Deploying Music Chart Service]
+** xref:06-java-kstreams.adoc#kstreams-cleanup[Clean Up]
+
+* xref:07-kubernetes.adoc[Kafka in Kubernetes]
+** xref:07-kubernetes.adoc#kubernetes[Kubernetes]
+*** xref:07-kubernetes.adoc#install-minikube[Install Minikube]
+*** xref:07-kubernetes.adoc#start-kubernetes[Start Kubernetes]
+** xref:07-kubernetes.adoc#strimzi[Strimzi]
+*** xref:07-kubernetes.adoc#installing-crds[Install Strimzi Operator]
+*** xref:07-kubernetes.adoc#deploy-kafka[Deploy Kafka]
+** xref:07-kubernetes.adoc#deploy-service-strimzi[Deploy Services]
+*** xref:07-kubernetes.adoc#kubernetes-song-app[Deploy Song Service]
+*** xref:07-kubernetes.adoc#kubernetes-song-indexer-app[Deploy Song Indexer Service]
+*** xref:07-kubernetes.adoc#kubernetes-testing[Test It]
+** xref:07-kubernetes.adoc#kubernetes-cleanup[Clean Up]
