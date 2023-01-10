@@ -14,12 +14,11 @@ content:
 asciidoc:
   attributes:
     release-version: master
-    tutorial-url: https://github.com/redhat-developer-demos/kafka-tutorial.git
     page-pagination: true
   extensions:
     - ./lib/tab-block.js
     - ./lib/remote-include-processor.js
-    
+
 ui:
   bundle:
     url: https://github.com/redhat-developer-demos/rhd-tutorial-ui/releases/download/v0.1.10/ui-bundle.zip
