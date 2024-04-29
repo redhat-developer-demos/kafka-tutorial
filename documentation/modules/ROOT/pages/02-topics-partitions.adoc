@@ -68,7 +68,7 @@ IMPORTANT: Although you can configure Apache Kafka to work with larger messages,
 image::pkp.png[]
 
 [#topic-creation]
-== Create a Topic
+== Topic Creation
 
 Apache Kafka can be configured to auto-create topics which means it is possible to publish a message to a non-existant topic that will be created on the fly. However, it is not recommended to work with topic auto-creation in production scenarios.
 

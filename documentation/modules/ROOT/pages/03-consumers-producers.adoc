@@ -63,8 +63,8 @@ kcat in Docker::
 ----
 docker run --rm -it --network=kafka-tutorial edenhill/kcat:1.7.1 kcat -b kafka:9092 -t songs -C -K:
 ----
+--
 ====
-
 [.console-output]
 [source, bash-shell]
 ----
@@ -104,7 +104,7 @@ kcat in Docker::
 ----
 docker run --rm -it --network=kafka-tutorial -v $(pwd)/documentation/modules/ROOT/examples/initial_songs.json:/home/initial_songs edenhill/kcat:1.7.1 kcat -b kafka:9092 -t songs -P -l -K: /home/initial_songs
 ----
-
+--
 ====
 
 Switch back to _terminal 1_ where you are running `kcat` as a consumer.
@@ -150,6 +150,7 @@ kcat in Docker::
 ----
 docker run --rm -it --network=kafka-tutorial edenhill/kcat:1.7.1 kcat -b kafka:9092 -t songs -C -K:
 ----
+--
 ====
 
 [.console-output]
@@ -185,8 +186,9 @@ kcat in Docker::
 [source, bash-shell]
 ----
 docker run --rm -it --network=kafka-tutorial edenhill/kcat:1.7.1 kcat -b kafka:9092 -t songs -o 1 -C -K:
-
 ----
+--
+
 ====
 
 [.console-output]
@@ -259,6 +261,7 @@ kcat in Docker::
 ----
 docker run --rm -it --network=kafka-tutorial edenhill/kcat:1.7.1 kcat -b kafka:9092 -t songs -C -K:
 ----
+--
 ====
 [.console-output]
 [source, bash-shell]
