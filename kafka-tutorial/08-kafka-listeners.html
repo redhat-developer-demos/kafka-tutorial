@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Kafka Listeners :: Kafka Tutorial</title>
+    <link rel="canonical" href="https://redhat-developer-demos.github.io/kafka-tutorial/kafka-tutorial/08-kafka-listeners.html">
+    <link rel="prev" href="04-java-consumer-producer.html">
+    <link rel="next" href="05-kstreams.html">
+    <meta name="generator" content="Antora 3.0.0">
+    <link rel="stylesheet" href="../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://developers.redhat.com" target="_blank"><img src="../_/img/RHDLogo.svg" height="40px" alt="Red Hat Developer Program"></a>
+      <a class="navbar-item" style="font-size: 24px; color: white" href="https://redhat-developer-demos.github.io/kafka-tutorial">Kafka Tutorial</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="https://developers.redhat.com/ebooks/" target="_blank">Books</a>
+        <a class="navbar-item" href="https://developers.redhat.com/cheatsheets/" target="_blank">Cheat Sheets</a>
+        <a class="navbar-item" href="https://developers.redhat.com/events/" target="_blank">Upcoming Events</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">More Tutorials</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="https://redhat-developer-demos.github.io/kubernetes-tutorial/" target="_blank">Kubernetes</a>
+            <a class="navbar-item" href="https://redhat-developer-demos.github.io/istio-tutorial/" target="_blank">Istio</a>
+            <a class="navbar-item" href="https://redhat-developer-demos.github.io/quarkus-tutorial/" target="_blank">Quarkus</a>
+            <a class="navbar-item" href="https://redhat-developer-demos.github.io/knative-tutorial/" target="_blank">Knative</a>
+            <a class="navbar-item" href="https://redhat-developer-demos.github.io/tekton-tutorial/" target="_blank">Tekton</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="kafka-tutorial" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="index.html"></a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">1. Getting Started</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="01-setup.html">Setup</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="01-setup.html#prerequisite">Prerequisites</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="01-setup.html#downloadconfiguresources">Download &amp; Configure Tutorial</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="01-setup.html#kafka">Run Kafka</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">2. Basics</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="02-topics-partitions.html">Topics &amp; Partitions</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="02-topics-partitions.html#topics">Topics</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="02-topics-partitions.html#partitions">Partitions</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="02-topics-partitions.html#messages">Messages</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="02-topics-partitions.html#topic-creation">Topic Creation</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="03-consumers-producers.html">Consumer &amp; Producers</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="03-consumers-producers.html#producer">Producer</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="03-consumers-producers.html#consumer">Consumer</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="03-consumers-producers.html#consume-kcat">kcat Consumer</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="03-consumers-producers.html#produce-kcat">kcat Producer</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="03-consumers-producers.html#playingwithoffsets">kcat Offsets</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="03-consumers-producers.html#changingretention">Changing Retention</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="03-consumers-producers.html#deletetopiccontent">Delete Topic Content</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="03-consumers-producers.html#cleanup">Clean Up</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="04-java-consumer-producer.html">Developing Consumers and Producers in Java</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="04-java-consumer-producer.html#producer-java">Producing messages with Java</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="04-java-consumer-producer.html#deploying-producer">Deploying Producer</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="04-java-consumer-producer.html#consumer-java">Consuming messages with Java</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="04-java-consumer-producer.html#deploying-consumer">Deploying Consumer</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="04-java-consumer-producer.html#java-cleanup">Clean Up</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Tips &amp; Tricks</span>
+<ul class="nav-list">
+  <li class="nav-item is-current-page" data-depth="3">
+    <a class="nav-link" href="08-kafka-listeners.html">Kafka Listeners</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">3. Intermediate</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="05-kstreams.html">Kafka Streams Intro</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="05-kstreams.html#whatkstreams">What are Kafka Streams?</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="05-kstreams.html#kstreamsconcepts">Kafka Streams Concepts</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="05-kstreams.html#kstreamsexamples">Kafka Streams Examples</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="05-kstreams.html#kstreamscat">KStreamscat</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="05-kstreams.html#kstreamscat-tables">(Global)KTables</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="05-kstreams.html#kstreamscat-windowing">Windowing</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link" href="05-kstreams.html#kstreamscat-timewindow">Tumbling Window</a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link" href="05-kstreams.html#kstreamscat-sessiontimewindow">Session Window</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="06-java-kstreams.html">Developing Kafka Streams</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="06-java-kstreams.html#player-songs-java">Player Service</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="06-java-kstreams.html#deploying-player-app">Deploying Player Service</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="06-java-kstreams.html#music-chart-java">Music Chart Service</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="06-java-kstreams.html#deploying-music-chart">Deploying Music Chart Service</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="06-java-kstreams.html#kstreams-cleanup">Clean Up</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="07-kubernetes.html">Kafka in Kubernetes</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="07-kubernetes.html#kubernetes">Kubernetes</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="07-kubernetes.html#install-minikube">Install Minikube</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="07-kubernetes.html#start-kubernetes">Start Kubernetes</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="07-kubernetes.html#strimzi">Strimzi</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="07-kubernetes.html#installing-crds">Install Strimzi Operator</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="07-kubernetes.html#deploy-kafka">Deploy Kafka</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="07-kubernetes.html#deploy-service-strimzi">Deploy Services</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="07-kubernetes.html#kubernetes-song-app">Deploy Song Service</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="07-kubernetes.html#kubernetes-song-indexer-app">Deploy Song Indexer Service</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="07-kubernetes.html#kubernetes-testing">Test It</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="07-kubernetes.html#kubernetes-cleanup">Clean Up</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="index.html">Kafka Tutorial</a></li>
+    <li>2. Basics</li>
+    <li>Tips &amp; Tricks</li>
+    <li><a href="08-kafka-listeners.html">Kafka Listeners</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="https://github.com/redhat-developer-demos/kafka-tutorial/edit/master/documentation/modules/ROOT/pages/08-kafka-listeners.adoc">Edit this Page</a></div>
+  </div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Kafka Listeners</h1>
+<div class="paragraph">
+<p>Probably, you&#8217;ve noticed that you are exposing two ports the <code>9092</code> and <code>29092</code>.
+The reason for this is that we want to be able to access Kafka broker not only from outside the Docker Host (for example when <code>kcat</code> tool is used), but also from inside the Docker Host (for example when we were deploying Java services inside Docker).</p>
+</div>
+<div class="paragraph">
+<p>When a client starts, it requests some metadata from the Kafka broker.
+One of these data is the endpoint of the current Kafka leader broker for a partition.
+This endpoint is then used to create a working connection to the cluster.</p>
+</div>
+<div class="paragraph">
+<p>Then what&#8217;s happening when running the Kafka inside Docker?
+The Kafka broker returns the container hostname to the client (that is why in our tutorial the Kafka hostname is <code>kafka</code>).</p>
+</div>
+<div class="paragraph">
+<p>Then what&#8217;s happening with the client?
+Well, it depends on the scenario:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>If the client is running inside the Docker Host, then it will be able to connect to the returned hostname by the broker (ie <code>kafka</code>).</p>
+</li>
+<li>
+<p>If the client is running outside of the Docker Host, then an error is thrown. The reason is that the client will get the hostname to connect from Kafka broker, which is the container hostname (ie <code>kafka</code>), which of course is not valid when client will try to reach the container host from outside the Docker Host.</p>
+</li>
+</ol>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/hdhe.png" alt="hdhe">
+</div>
+</div>
+<div class="paragraph">
+<p>How to fix this problem?</p>
+</div>
+<div class="paragraph">
+<p>To fix this problem, you need to expose two ports, one returning the <em>hostname</em> (ie <code>kafka</code>) and another one returning the <code>localhost</code> as the hostname.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/hdhs.png" alt="hdhs">
+</div>
+</div>
+<div class="paragraph">
+<p>That&#8217;s why two ports are exposed in the current course.</p>
+</div>
+<div class="paragraph">
+<p>You can run the next commands to visualize how broker host differs depending on the port:</p>
+</div>
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset1_kcat"></a>kcat</p>
+</li>
+<li>
+<p><a id="tabset1_kcat-in-docker"></a>kcat in Docker</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset1_kcat">
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">kcat -b localhost:29092 -L</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset1_kcat-in-docker">
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker run --rm -it --network=kafka-tutorial edenhill/kcat:1.7.1 -b localhost:29092 -L</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">Metadata for all topics (from broker 0: localhost:29092/0):
+ 1 brokers:
+  broker 0 at localhost:29092 (controller)
+ 0 topics:</code></pre>
+</div>
+</div>
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset2_kcat"></a>kcat</p>
+</li>
+<li>
+<p><a id="tabset2_kcat-in-docker"></a>kcat in Docker</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset2_kcat">
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">kcat -b localhost:9092 -L</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset2_kcat-in-docker">
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker run --rm -it --network=kafka-tutorial edenhill/kcat:1.7.1 -b localhost:9092 -L</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">Metadata for all topics (from broker -1: localhost:9092/bootstrap):
+ 1 brokers:
+  broker 0 at kafka:9092 (controller) <i class="conum" data-value="1"></i><b>(1)</b>
+ 0 topics:</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Notice that when the leader is queried using port <code>9092</code>, then the hostname returned is <code>kafka:9092</code>.</td>
+</tr>
+</table>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="04-java-consumer-producer.html">Developing Consumers and Producers in Java</a></span>
+  <span class="next"><a href="05-kstreams.html">Kafka Streams Intro</a></span>
+</nav>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <a class="rhd-logo" href="https://developers.redhat.com" target="_blank"></div>
+</footer>
+<script src="../_/js/vendor/clipboard.js"></script>
+<script src="../_/js/site.js"></script>
+<script async src="../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

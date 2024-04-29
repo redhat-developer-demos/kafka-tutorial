@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Kafka Tutorial :: Kafka Tutorial</title>
+    <link rel="canonical" href="https://redhat-developer-demos.github.io/kafka-tutorial/kafka-tutorial/index.html">
+    <link rel="next" href="01-setup.html">
+    <meta name="generator" content="Antora 3.0.0">
+    <link rel="stylesheet" href="../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://developers.redhat.com" target="_blank"><img src="../_/img/RHDLogo.svg" height="40px" alt="Red Hat Developer Program"></a>
+      <a class="navbar-item" style="font-size: 24px; color: white" href="https://redhat-developer-demos.github.io/kafka-tutorial">Kafka Tutorial</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="https://developers.redhat.com/ebooks/" target="_blank">Books</a>
+        <a class="navbar-item" href="https://developers.redhat.com/cheatsheets/" target="_blank">Cheat Sheets</a>
+        <a class="navbar-item" href="https://developers.redhat.com/events/" target="_blank">Upcoming Events</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">More Tutorials</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="https://redhat-developer-demos.github.io/kubernetes-tutorial/" target="_blank">Kubernetes</a>
+            <a class="navbar-item" href="https://redhat-developer-demos.github.io/istio-tutorial/" target="_blank">Istio</a>
+            <a class="navbar-item" href="https://redhat-developer-demos.github.io/quarkus-tutorial/" target="_blank">Quarkus</a>
+            <a class="navbar-item" href="https://redhat-developer-demos.github.io/knative-tutorial/" target="_blank">Knative</a>
+            <a class="navbar-item" href="https://redhat-developer-demos.github.io/tekton-tutorial/" target="_blank">Tekton</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="kafka-tutorial" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="index.html"></a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">1. Getting Started</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="01-setup.html">Setup</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="01-setup.html#prerequisite">Prerequisites</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="01-setup.html#downloadconfiguresources">Download &amp; Configure Tutorial</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="01-setup.html#kafka">Run Kafka</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">2. Basics</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="02-topics-partitions.html">Topics &amp; Partitions</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="02-topics-partitions.html#topics">Topics</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="02-topics-partitions.html#partitions">Partitions</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="02-topics-partitions.html#messages">Messages</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="02-topics-partitions.html#topic-creation">Topic Creation</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="03-consumers-producers.html">Consumer &amp; Producers</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="03-consumers-producers.html#producer">Producer</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="03-consumers-producers.html#consumer">Consumer</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="03-consumers-producers.html#consume-kcat">kcat Consumer</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="03-consumers-producers.html#produce-kcat">kcat Producer</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="03-consumers-producers.html#playingwithoffsets">kcat Offsets</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="03-consumers-producers.html#changingretention">Changing Retention</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="03-consumers-producers.html#deletetopiccontent">Delete Topic Content</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="03-consumers-producers.html#cleanup">Clean Up</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="04-java-consumer-producer.html">Developing Consumers and Producers in Java</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="04-java-consumer-producer.html#producer-java">Producing messages with Java</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="04-java-consumer-producer.html#deploying-producer">Deploying Producer</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="04-java-consumer-producer.html#consumer-java">Consuming messages with Java</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="04-java-consumer-producer.html#deploying-consumer">Deploying Consumer</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="04-java-consumer-producer.html#java-cleanup">Clean Up</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Tips &amp; Tricks</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="08-kafka-listeners.html">Kafka Listeners</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">3. Intermediate</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="05-kstreams.html">Kafka Streams Intro</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="05-kstreams.html#whatkstreams">What are Kafka Streams?</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="05-kstreams.html#kstreamsconcepts">Kafka Streams Concepts</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="05-kstreams.html#kstreamsexamples">Kafka Streams Examples</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="05-kstreams.html#kstreamscat">KStreamscat</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="05-kstreams.html#kstreamscat-tables">(Global)KTables</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="05-kstreams.html#kstreamscat-windowing">Windowing</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link" href="05-kstreams.html#kstreamscat-timewindow">Tumbling Window</a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link" href="05-kstreams.html#kstreamscat-sessiontimewindow">Session Window</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="06-java-kstreams.html">Developing Kafka Streams</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="06-java-kstreams.html#player-songs-java">Player Service</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="06-java-kstreams.html#deploying-player-app">Deploying Player Service</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="06-java-kstreams.html#music-chart-java">Music Chart Service</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="06-java-kstreams.html#deploying-music-chart">Deploying Music Chart Service</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="06-java-kstreams.html#kstreams-cleanup">Clean Up</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="07-kubernetes.html">Kafka in Kubernetes</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="07-kubernetes.html#kubernetes">Kubernetes</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="07-kubernetes.html#install-minikube">Install Minikube</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="07-kubernetes.html#start-kubernetes">Start Kubernetes</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="07-kubernetes.html#strimzi">Strimzi</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="07-kubernetes.html#installing-crds">Install Strimzi Operator</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="07-kubernetes.html#deploy-kafka">Deploy Kafka</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="07-kubernetes.html#deploy-service-strimzi">Deploy Services</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="07-kubernetes.html#kubernetes-song-app">Deploy Song Service</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="07-kubernetes.html#kubernetes-song-indexer-app">Deploy Song Indexer Service</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="07-kubernetes.html#kubernetes-testing">Test It</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="07-kubernetes.html#kubernetes-cleanup">Clean Up</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="index.html" class="home-link is-current"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="index.html">Kafka Tutorial</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="https://github.com/redhat-developer-demos/kafka-tutorial/edit/master/documentation/modules/ROOT/pages/index.adoc">Edit this Page</a></div>
+  </div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Kafka Tutorial</h1>
+<div class="sect1 text-center strong">
+<h2>Welcome to jour Kafka Journey!</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This is tutorial is divided into two parts:</p>
+</div>
+<div class="sect2">
+<h3>Basics: Core Kafka and the Producer / Consumer APIs</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>1. Getting Started</p>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="01-setup.html" class="xref page">Setup</a></p>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="01-setup.html#prerequisite" class="xref page">Prerequisites</a></p>
+</li>
+<li>
+<p><a href="01-setup.html#downloadconfiguresources" class="xref page">Download &amp; Configure Tutorial</a></p>
+</li>
+<li>
+<p><a href="01-setup.html#kafka" class="xref page">Run Kafka</a></p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>2. Basics</p>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="02-topics-partitions.html" class="xref page">Topics &amp; Partitions</a></p>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="02-topics-partitions.html#topics" class="xref page">Topics</a></p>
+</li>
+<li>
+<p><a href="02-topics-partitions.html#partitions" class="xref page">Partitions</a></p>
+</li>
+<li>
+<p><a href="02-topics-partitions.html#messages" class="xref page">Messages</a></p>
+</li>
+<li>
+<p><a href="02-topics-partitions.html#topic-creation" class="xref page">Topic Creation</a></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><a href="03-consumers-producers.html" class="xref page">Consumer &amp; Producers</a></p>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="03-consumers-producers.html#producer" class="xref page">Producer</a></p>
+</li>
+<li>
+<p><a href="03-consumers-producers.html#consumer" class="xref page">Consumer</a></p>
+</li>
+<li>
+<p><a href="03-consumers-producers.html#consume-kcat" class="xref page">kcat Consumer</a></p>
+</li>
+<li>
+<p><a href="03-consumers-producers.html#produce-kcat" class="xref page">kcat Producer</a></p>
+</li>
+<li>
+<p><a href="03-consumers-producers.html#playingwithoffsets" class="xref page">kcat Offsets</a></p>
+</li>
+<li>
+<p><a href="03-consumers-producers.html#changingretention" class="xref page">Changing Retention</a></p>
+</li>
+<li>
+<p><a href="03-consumers-producers.html#deletetopiccontent" class="xref page">Delete Topic Content</a></p>
+</li>
+<li>
+<p><a href="03-consumers-producers.html#cleanup" class="xref page">Clean Up</a></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><a href="04-java-consumer-producer.html" class="xref page">Developing Consumers and Producers in Java</a></p>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="04-java-consumer-producer.html#producer-java" class="xref page">Producing messages with Java</a></p>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="04-java-consumer-producer.html#deploying-producer" class="xref page">Deploying Producer</a></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><a href="04-java-consumer-producer.html#consumer-java" class="xref page">Consuming messages with Java</a></p>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="04-java-consumer-producer.html#deploying-consumer" class="xref page">Deploying Consumer</a></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><a href="04-java-consumer-producer.html#java-cleanup" class="xref page">Clean Up</a></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Tips &amp; Tricks</p>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="08-kafka-listeners.html" class="xref page">Kafka Listeners</a></p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3>Intermediate: Developing Kafka Streams Applications and Running Kafka on Kubernetes</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>3. Intermediate</p>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="05-kstreams.html" class="xref page">Kafka Streams Intro</a></p>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="05-kstreams.html#whatkstreams" class="xref page">What are Kafka Streams?</a></p>
+</li>
+<li>
+<p><a href="05-kstreams.html#kstreamsconcepts" class="xref page">Kafka Streams Concepts</a></p>
+</li>
+<li>
+<p><a href="05-kstreams.html#kstreamsexamples" class="xref page">Kafka Streams Examples</a></p>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="05-kstreams.html#kstreamscat" class="xref page">KStreamscat</a></p>
+</li>
+<li>
+<p><a href="05-kstreams.html#kstreamscat-tables" class="xref page">(Global)KTables</a></p>
+</li>
+<li>
+<p><a href="05-kstreams.html#kstreamscat-windowing" class="xref page">Windowing</a></p>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="05-kstreams.html#kstreamscat-timewindow" class="xref page">Tumbling Window</a></p>
+</li>
+<li>
+<p><a href="05-kstreams.html#kstreamscat-sessiontimewindow" class="xref page">Session Window</a></p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><a href="06-java-kstreams.html" class="xref page">Developing Kafka Streams</a></p>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="06-java-kstreams.html#player-songs-java" class="xref page">Player Service</a></p>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="06-java-kstreams.html#deploying-player-app" class="xref page">Deploying Player Service</a></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><a href="06-java-kstreams.html#music-chart-java" class="xref page">Music Chart Service</a></p>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="06-java-kstreams.html#deploying-music-chart" class="xref page">Deploying Music Chart Service</a></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><a href="06-java-kstreams.html#kstreams-cleanup" class="xref page">Clean Up</a></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><a href="07-kubernetes.html" class="xref page">Kafka in Kubernetes</a></p>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="07-kubernetes.html#kubernetes" class="xref page">Kubernetes</a></p>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="07-kubernetes.html#install-minikube" class="xref page">Install Minikube</a></p>
+</li>
+<li>
+<p><a href="07-kubernetes.html#start-kubernetes" class="xref page">Start Kubernetes</a></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><a href="07-kubernetes.html#strimzi" class="xref page">Strimzi</a></p>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="07-kubernetes.html#installing-crds" class="xref page">Install Strimzi Operator</a></p>
+</li>
+<li>
+<p><a href="07-kubernetes.html#deploy-kafka" class="xref page">Deploy Kafka</a></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><a href="07-kubernetes.html#deploy-service-strimzi" class="xref page">Deploy Services</a></p>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="07-kubernetes.html#kubernetes-song-app" class="xref page">Deploy Song Service</a></p>
+</li>
+<li>
+<p><a href="07-kubernetes.html#kubernetes-song-indexer-app" class="xref page">Deploy Song Indexer Service</a></p>
+</li>
+<li>
+<p><a href="07-kubernetes.html#kubernetes-testing" class="xref page">Test It</a></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><a href="07-kubernetes.html#kubernetes-cleanup" class="xref page">Clean Up</a></p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="next"><a href="01-setup.html">Setup</a></span>
+</nav>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <a class="rhd-logo" href="https://developers.redhat.com" target="_blank"></div>
+</footer>
+<script src="../_/js/vendor/clipboard.js"></script>
+<script src="../_/js/site.js"></script>
+<script async src="../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

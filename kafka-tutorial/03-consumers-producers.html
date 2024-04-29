@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Producers and Consumers :: Kafka Tutorial</title>
+    <link rel="canonical" href="https://redhat-developer-demos.github.io/kafka-tutorial/kafka-tutorial/03-consumers-producers.html">
+    <link rel="prev" href="02-topics-partitions.html">
+    <link rel="next" href="04-java-consumer-producer.html">
+    <meta name="generator" content="Antora 3.0.0">
+    <link rel="stylesheet" href="../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://developers.redhat.com" target="_blank"><img src="../_/img/RHDLogo.svg" height="40px" alt="Red Hat Developer Program"></a>
+      <a class="navbar-item" style="font-size: 24px; color: white" href="https://redhat-developer-demos.github.io/kafka-tutorial">Kafka Tutorial</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="https://developers.redhat.com/ebooks/" target="_blank">Books</a>
+        <a class="navbar-item" href="https://developers.redhat.com/cheatsheets/" target="_blank">Cheat Sheets</a>
+        <a class="navbar-item" href="https://developers.redhat.com/events/" target="_blank">Upcoming Events</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">More Tutorials</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="https://redhat-developer-demos.github.io/kubernetes-tutorial/" target="_blank">Kubernetes</a>
+            <a class="navbar-item" href="https://redhat-developer-demos.github.io/istio-tutorial/" target="_blank">Istio</a>
+            <a class="navbar-item" href="https://redhat-developer-demos.github.io/quarkus-tutorial/" target="_blank">Quarkus</a>
+            <a class="navbar-item" href="https://redhat-developer-demos.github.io/knative-tutorial/" target="_blank">Knative</a>
+            <a class="navbar-item" href="https://redhat-developer-demos.github.io/tekton-tutorial/" target="_blank">Tekton</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="kafka-tutorial" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="index.html"></a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">1. Getting Started</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="01-setup.html">Setup</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="01-setup.html#prerequisite">Prerequisites</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="01-setup.html#downloadconfiguresources">Download &amp; Configure Tutorial</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="01-setup.html#kafka">Run Kafka</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">2. Basics</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="02-topics-partitions.html">Topics &amp; Partitions</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="02-topics-partitions.html#topics">Topics</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="02-topics-partitions.html#partitions">Partitions</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="02-topics-partitions.html#messages">Messages</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="02-topics-partitions.html#topic-creation">Topic Creation</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="03-consumers-producers.html">Consumer &amp; Producers</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="#producer">Producer</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="#consumer">Consumer</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="#consume-kcat">kcat Consumer</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="#produce-kcat">kcat Producer</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="#playingwithoffsets">kcat Offsets</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="#changingretention">Changing Retention</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="#deletetopiccontent">Delete Topic Content</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="#cleanup">Clean Up</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="04-java-consumer-producer.html">Developing Consumers and Producers in Java</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="04-java-consumer-producer.html#producer-java">Producing messages with Java</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="04-java-consumer-producer.html#deploying-producer">Deploying Producer</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="04-java-consumer-producer.html#consumer-java">Consuming messages with Java</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="04-java-consumer-producer.html#deploying-consumer">Deploying Consumer</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="04-java-consumer-producer.html#java-cleanup">Clean Up</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Tips &amp; Tricks</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="08-kafka-listeners.html">Kafka Listeners</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">3. Intermediate</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="05-kstreams.html">Kafka Streams Intro</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="05-kstreams.html#whatkstreams">What are Kafka Streams?</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="05-kstreams.html#kstreamsconcepts">Kafka Streams Concepts</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="05-kstreams.html#kstreamsexamples">Kafka Streams Examples</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="05-kstreams.html#kstreamscat">KStreamscat</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="05-kstreams.html#kstreamscat-tables">(Global)KTables</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="05-kstreams.html#kstreamscat-windowing">Windowing</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link" href="05-kstreams.html#kstreamscat-timewindow">Tumbling Window</a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link" href="05-kstreams.html#kstreamscat-sessiontimewindow">Session Window</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="06-java-kstreams.html">Developing Kafka Streams</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="06-java-kstreams.html#player-songs-java">Player Service</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="06-java-kstreams.html#deploying-player-app">Deploying Player Service</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="06-java-kstreams.html#music-chart-java">Music Chart Service</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="06-java-kstreams.html#deploying-music-chart">Deploying Music Chart Service</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="06-java-kstreams.html#kstreams-cleanup">Clean Up</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="07-kubernetes.html">Kafka in Kubernetes</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="07-kubernetes.html#kubernetes">Kubernetes</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="07-kubernetes.html#install-minikube">Install Minikube</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="07-kubernetes.html#start-kubernetes">Start Kubernetes</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="07-kubernetes.html#strimzi">Strimzi</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="07-kubernetes.html#installing-crds">Install Strimzi Operator</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="07-kubernetes.html#deploy-kafka">Deploy Kafka</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="07-kubernetes.html#deploy-service-strimzi">Deploy Services</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="07-kubernetes.html#kubernetes-song-app">Deploy Song Service</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="07-kubernetes.html#kubernetes-song-indexer-app">Deploy Song Indexer Service</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="07-kubernetes.html#kubernetes-testing">Test It</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="07-kubernetes.html#kubernetes-cleanup">Clean Up</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="index.html">Kafka Tutorial</a></li>
+    <li>2. Basics</li>
+    <li><a href="03-consumers-producers.html">Consumer &amp; Producers</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="https://github.com/redhat-developer-demos/kafka-tutorial/edit/master/documentation/modules/ROOT/pages/03-consumers-producers.adoc">Edit this Page</a></div>
+  </div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Producers and Consumers</h1>
+<div class="sect1">
+<h2 id="producer"><a class="anchor" href="#producer"></a>What are Producers?</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Producers publish messages by appending to the end of a topic partition.
+By default, if a message contains a key (i.e. the key is NOT <code>null</code>), the hashed value of the key is used to decide in which partition the message is stored. If there is a specific key set for the message, then the producer&#8217;s default hash partitioning guarantees that long as no new partitions are added, all messages with the same key will be stored in the same topic partition. This behaviour is essential whenever you want to ensure that message for one and the same key are consumed and processed in order from the same topic partition.</p>
+</div>
+<div class="paragraph">
+<p>If the key is <code>null</code>, the producer behaves differently according to the Kafka version:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>up to Kafka 2.3:</strong> a round-robin partitioner is used to balance the messages across all partitions</p>
+</li>
+<li>
+<p><strong>Kafka 2.4 or newer:</strong> a sticky partitioner is used which leads to larger batches and reduced latency and is particularly beneficial for very high throughput scenarios</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>You can also implement your own custom partitioning strategy to store messages in a specific partition following any kind of business rule.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/p.png" alt="p">
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="consumer"><a class="anchor" href="#consumer"></a>What are Consumers?</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Each message published to a topic is delivered to a consumer that is subscribed to that topic.</p>
+</div>
+<div class="paragraph">
+<p>A consumer can read data from any position of the partition, and internally the position is stored as a pointer called <code>offset</code>. In most of the cases, a consumer advances its <code>offset</code> linearly, but it could be in any order, or starting from any given position.</p>
+</div>
+<div class="paragraph">
+<p>Each consumer belongs to a consumer group. A consumer group may consist of multiple consumer instances. This is the reason why a consumer group can be both, fault tolerant and scalable. If one of several consumer instances in a group dies, the topic partitions are reassigned to other consumer instances such that the remaining ones continue to process messages form all partitions. If a consumer group contains more than one consumer instance, each consumer will only receive messages from a subset of the partitions. When a consumer group only contains one consumer instance, this consumer is responsible for processing all messages of all topic partitions.</p>
+</div>
+<div class="paragraph">
+<p>Message consumption can be parallelized in a consumer group by adding more consumer instances to the group, up to the number of a topic&#8217;s partitions. Concretely, if a topic e.g. has 8 partitions, a consumer group can support up to 8 consumer instances which all consume in parallel, each from 1 topic partition.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/c.png" alt="c">
+</div>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+If you add more consumers in a consumer group than the number of partitions for a topic, then they will stay in an idle state, without getting any message.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>As you can see what is registered to a topic is the <em>consumer group</em> and not the consumer instance. The consumer instance is "subscribed" to (a subset of) topic partitions.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_consume_and_produce_messages"><a class="anchor" href="#_consume_and_produce_messages"></a>Consume and Produce Messages</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Before digging into how to produce and consume data from Java, let&#8217;s see how to use <code>kcat</code> to do it.</p>
+</div>
+<div class="paragraph">
+<p><code>kcat</code> is a great tool for these use cases, and it is one of the most popular CLI tools to work with data in Kafka topics.</p>
+</div>
+<div class="sect2">
+<h3 id="consume-kcat"><a class="anchor" href="#consume-kcat"></a>Consuming messages with kcat</h3>
+<div class="paragraph">
+<p>Open a new terminal, <em>terminal 1</em>, and run the following command:</p>
+</div>
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset1_kcat"></a>kcat</p>
+</li>
+<li>
+<p><a id="tabset1_kcat-in-docker"></a>kcat in Docker</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset1_kcat">
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">kcat -b localhost:29092 -t songs -C -K:</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset1_kcat-in-docker">
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker run --rm -it --network=kafka-tutorial edenhill/kcat:1.7.1 kcat -b kafka:9092 -t songs -C -K:</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">% Reached end of topic songs [0] at offset 0</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="produce-kcat"><a class="anchor" href="#produce-kcat"></a>Producing messages with kcat</h3>
+<div class="paragraph">
+<p>Open a new terminal, <em>terminal 2</em>, and create a new file named <code>initial_songs</code> with the content shown below:</p>
+</div>
+<div class="listingblock console-input">
+<div class="title">initial_songs</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">1: {"id": 1, "name": "The Ecstasy of Gold", "author":"Ennio Morricone", "op":"ADD"}
+2: {"id": 2, "name": "Still Loving you", "author":"Scorpions", "op":"ADD"}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Then use <code>kcat</code> to produce a new message to the <code>songs</code> topic for each line in the <code>initial_songs</code> file. Note that the number before the colon <code>:</code> is taken as the message key.</p>
+</div>
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset2_kcat"></a>kcat</p>
+</li>
+<li>
+<p><a id="tabset2_kcat-in-docker"></a>kcat in Docker</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset2_kcat">
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">kcat -b localhost:29092 -t songs -P -l -K: initial_songs</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset2_kcat-in-docker">
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker run --rm -it --network=kafka-tutorial -v $(pwd)/documentation/modules/ROOT/examples/initial_songs.json:/home/initial_songs edenhill/kcat:1.7.1 kcat -b kafka:9092 -t songs -P -l -K: /home/initial_songs</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>Switch back to <em>terminal 1</em> where you are running <code>kcat</code> as a consumer.
+You&#8217;ve defined this at <a href="#consume-kcat">Consuming messages with kcat</a> section.</p>
+</div>
+<div class="paragraph">
+<p>Now the output of the terminal has been updated showing the consumed messages:</p>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">1t {"id": 1, "name": "The Ecstasy of Gold", "author":"Ennio Morricone", "op":"ADD"}
+2t {"id": 2, "name": "Still Loving you", "author":"Scorpions", "op":"ADD"}
+% Reached end of topic songs [0] at offset 2</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Notice that the <code>offset</code> of this consumer has been updated to 2, as the two first records have been consumed from the topic.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="playingwithoffsets"><a class="anchor" href="#playingwithoffsets"></a>Playing with Offsets</h3>
+<div class="paragraph">
+<p>A producer always produces content at the end of a topic, meanwhile, a consumer can consume from any offset.
+Still on <em>terminal 1</em>, stop the <code>kcat</code> process by typing <span class="keyseq"><kbd>Ctrl</kbd>+<kbd>C</kbd></span>.</p>
+</div>
+<div class="paragraph">
+<p>Start <code>kcat</code> once more with the same command as further above for consuming from the <code>songs</code> topic again:</p>
+</div>
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset3_kcat"></a>kcat</p>
+</li>
+<li>
+<p><a id="tabset3_kcat-in-docker"></a>kcat in Docker</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset3_kcat">
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">kcat -b localhost:29092 -t songs -C -K:</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset3_kcat-in-docker">
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker run --rm -it --network=kafka-tutorial edenhill/kcat:1.7.1 kcat -b kafka:9092 -t songs -C -K:</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">1: {"id": 1, "name": "The Ecstasy of Gold", "author":"Ennio Morricone", "op":"ADD"}
+2: {"id": 2, "name": "Still Loving you", "author":"Scorpions", "op":"ADD"}
+% Reached end of topic songs [0] at offset 2</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Notice that the whole topic with all messages is consumed again. This is happening because by default <code>kcat</code> is reading from the beginning of the topic (i.e. the oldest message that is still stored). But you can change that anytime.</p>
+</div>
+<div class="paragraph">
+<p>Stop again <code>kcat</code> process by typing <span class="keyseq"><kbd>Ctrl</kbd>+<kbd>C</kbd></span>.</p>
+</div>
+<div class="paragraph">
+<p>Now start <code>kcat</code> again with the <code>-o</code> flag and the offset number <code>1</code>.</p>
+</div>
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset4_kcat"></a>kcat</p>
+</li>
+<li>
+<p><a id="tabset4_kcat-in-docker"></a>kcat in Docker</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset4_kcat">
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">kcat -b localhost:29092 -t songs -o 1 -C -K:</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset4_kcat-in-docker">
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker run --rm -it --network=kafka-tutorial edenhill/kcat:1.7.1 kcat -b kafka:9092 -t songs -o 1 -C -K:</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">2: {"id": 2, "name": "Still Loving you", "author":"Scorpions", "op":"ADD"}
+% Reached end of topic songs [0] at offset 2</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This time, the initial offset was explicitly set to <code>1</code> i.e. the consumption was beginning at the 2nd message.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="changingretention"><a class="anchor" href="#changingretention"></a>Changing Retention</h3>
+<div class="paragraph">
+<p>By default, Kafka retains messages in a topic for 168 hours (7 days). But retention time can be changed, so let&#8217;s modify it to e.g. 1 minute.</p>
+</div>
+<div class="paragraph">
+<p>You can use <code>kafka-topic.sh</code> tool to change the retention time of a topic.</p>
+</div>
+<div class="paragraph">
+<p>Open a third terminal:</p>
+</div>
+<div class="paragraph">
+<p>This tool is bundled with the Kafka container image, so let&#8217;s <code>exec</code> a <code>bash</code> terminal inside the running Kafka container.</p>
+</div>
+<div class="listingblock lines_1 console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker exec -it $(docker ps -q --filter "label=com.docker.compose.service=kafka") /bin/bash</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Inside the container&#8217;s bash run:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">./bin/kafka-configs.sh --bootstrap-server kafka:9092 --entity-type topics --entity-name songs --alter --add-config retention.ms=60000</code></pre>
+</div>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">Completed updating config for topic songs.</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>And check that it has been configured correctly:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">./bin/kafka-topics.sh --describe --bootstrap-server kafka:9092 --topic songs</code></pre>
+</div>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">Topic: songs	TopicId: h2aw0peOTHuWYleUpZxj-Q	PartitionCount: 1	ReplicationFactor: 1	Configs: retention.ms=60000
+	Topic: songs	Partition: 0	Leader: 0	Replicas: 0	Isr: 0</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In your other terminal, stop the <code>kcat</code> process by typing <span class="keyseq"><kbd>Ctrl</kbd>+<kbd>C</kbd></span> and wait for ~60 seconds (ie <code>sleep 60</code>). After the time has passed run the <code>kcat</code> in consumer mode again:</p>
+</div>
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset5_kcat"></a>kcat</p>
+</li>
+<li>
+<p><a id="tabset5_kcat-in-docker"></a>kcat in Docker</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset5_kcat">
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">kcat -b localhost:29092 -t songs -C -K:</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset5_kcat-in-docker">
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker run --rm -it --network=kafka-tutorial edenhill/kcat:1.7.1 kcat -b kafka:9092 -t songs -C -K:</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">% Reached end of topic songs [0] at offset 2</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The important part is the last line, notice that it returns no messages, but the offset is <code>2</code>. The reason is that the messages are expired and deleted from the topic, but the offset has its retention period. By default, this retention period is 1 week, so although there is no data, the current offset for a consumer is '2'.</p>
+</div>
+<div class="paragraph">
+<p>Also note, that Kafka brokers have a configuration for <code>log.retention.check.interval.ms</code> and this setting must be lower than/equal to a topic&#8217;s <code>retention.ms</code>, otherwise cleaning out offsets will not be effective "immeadiately" but only after the log cleaner ran to do its job. In other words, it may take longer (up to <code>log.retention.check.interval.ms</code>) before you can actually observe the data retention happening in the corresponding Kafka topic.</p>
+</div>
+<div class="paragraph">
+<p>Change retention time to the default one by running in the third terminal (the one you did <code>docker exec</code>), the following command:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">./bin/kafka-configs.sh --bootstrap-server kafka:9092 --entity-type topics --entity-name songs --alter --delete-config retention.ms</code></pre>
+</div>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">Completed updating config for topic songs.</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="deletetopiccontent"><a class="anchor" href="#deletetopiccontent"></a>Deleting Topic Content</h3>
+<div class="paragraph">
+<p>You can also use <code>kafka-topic.sh</code> tool to delete the content of a topic manually.</p>
+</div>
+<div class="paragraph">
+<p>This tool is bundled with the Kafka container image, so let&#8217;s <code>exec</code> a <code>bash</code> terminal inside the running Kafka container.</p>
+</div>
+<div class="listingblock lines_1 console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker exec -it $(docker ps -q --filter "label=com.docker.compose.service=kafka") /bin/bash</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Inside the container run:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">./bin/kafka-topics.sh --delete --bootstrap-server kafka:9092 --topic songs</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Now that the topic is deleted, you can run the <code>exit</code> command:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">exit</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="cleanup"><a class="anchor" href="#cleanup"></a>Clean Up</h3>
+<div class="paragraph">
+<p>Also make sure to stop still running <code>kcat</code> processes in any of your tutorial related terminal windows by typing <span class="keyseq"><kbd>Ctrl</kbd>+<kbd>C</kbd></span>.</p>
+</div>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="02-topics-partitions.html">Topics &amp; Partitions</a></span>
+  <span class="next"><a href="04-java-consumer-producer.html">Developing Consumers and Producers in Java</a></span>
+</nav>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <a class="rhd-logo" href="https://developers.redhat.com" target="_blank"></div>
+</footer>
+<script src="../_/js/vendor/clipboard.js"></script>
+<script src="../_/js/site.js"></script>
+<script async src="../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

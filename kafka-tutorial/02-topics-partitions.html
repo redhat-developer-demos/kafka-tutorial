@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Topics and Partitions :: Kafka Tutorial</title>
+    <link rel="canonical" href="https://redhat-developer-demos.github.io/kafka-tutorial/kafka-tutorial/02-topics-partitions.html">
+    <link rel="prev" href="01-setup.html">
+    <link rel="next" href="03-consumers-producers.html">
+    <meta name="generator" content="Antora 3.0.0">
+    <link rel="stylesheet" href="../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://developers.redhat.com" target="_blank"><img src="../_/img/RHDLogo.svg" height="40px" alt="Red Hat Developer Program"></a>
+      <a class="navbar-item" style="font-size: 24px; color: white" href="https://redhat-developer-demos.github.io/kafka-tutorial">Kafka Tutorial</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="https://developers.redhat.com/ebooks/" target="_blank">Books</a>
+        <a class="navbar-item" href="https://developers.redhat.com/cheatsheets/" target="_blank">Cheat Sheets</a>
+        <a class="navbar-item" href="https://developers.redhat.com/events/" target="_blank">Upcoming Events</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">More Tutorials</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="https://redhat-developer-demos.github.io/kubernetes-tutorial/" target="_blank">Kubernetes</a>
+            <a class="navbar-item" href="https://redhat-developer-demos.github.io/istio-tutorial/" target="_blank">Istio</a>
+            <a class="navbar-item" href="https://redhat-developer-demos.github.io/quarkus-tutorial/" target="_blank">Quarkus</a>
+            <a class="navbar-item" href="https://redhat-developer-demos.github.io/knative-tutorial/" target="_blank">Knative</a>
+            <a class="navbar-item" href="https://redhat-developer-demos.github.io/tekton-tutorial/" target="_blank">Tekton</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="kafka-tutorial" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="index.html"></a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">1. Getting Started</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="01-setup.html">Setup</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="01-setup.html#prerequisite">Prerequisites</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="01-setup.html#downloadconfiguresources">Download &amp; Configure Tutorial</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="01-setup.html#kafka">Run Kafka</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">2. Basics</span>
+<ul class="nav-list">
+  <li class="nav-item is-current-page" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="02-topics-partitions.html">Topics &amp; Partitions</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="#topics">Topics</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="#partitions">Partitions</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="#messages">Messages</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="#topic-creation">Topic Creation</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="03-consumers-producers.html">Consumer &amp; Producers</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="03-consumers-producers.html#producer">Producer</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="03-consumers-producers.html#consumer">Consumer</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="03-consumers-producers.html#consume-kcat">kcat Consumer</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="03-consumers-producers.html#produce-kcat">kcat Producer</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="03-consumers-producers.html#playingwithoffsets">kcat Offsets</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="03-consumers-producers.html#changingretention">Changing Retention</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="03-consumers-producers.html#deletetopiccontent">Delete Topic Content</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="03-consumers-producers.html#cleanup">Clean Up</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="04-java-consumer-producer.html">Developing Consumers and Producers in Java</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="04-java-consumer-producer.html#producer-java">Producing messages with Java</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="04-java-consumer-producer.html#deploying-producer">Deploying Producer</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="04-java-consumer-producer.html#consumer-java">Consuming messages with Java</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="04-java-consumer-producer.html#deploying-consumer">Deploying Consumer</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="04-java-consumer-producer.html#java-cleanup">Clean Up</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Tips &amp; Tricks</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="08-kafka-listeners.html">Kafka Listeners</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">3. Intermediate</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="05-kstreams.html">Kafka Streams Intro</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="05-kstreams.html#whatkstreams">What are Kafka Streams?</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="05-kstreams.html#kstreamsconcepts">Kafka Streams Concepts</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="05-kstreams.html#kstreamsexamples">Kafka Streams Examples</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="05-kstreams.html#kstreamscat">KStreamscat</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="05-kstreams.html#kstreamscat-tables">(Global)KTables</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="05-kstreams.html#kstreamscat-windowing">Windowing</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link" href="05-kstreams.html#kstreamscat-timewindow">Tumbling Window</a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link" href="05-kstreams.html#kstreamscat-sessiontimewindow">Session Window</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="06-java-kstreams.html">Developing Kafka Streams</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="06-java-kstreams.html#player-songs-java">Player Service</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="06-java-kstreams.html#deploying-player-app">Deploying Player Service</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="06-java-kstreams.html#music-chart-java">Music Chart Service</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="06-java-kstreams.html#deploying-music-chart">Deploying Music Chart Service</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="06-java-kstreams.html#kstreams-cleanup">Clean Up</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="07-kubernetes.html">Kafka in Kubernetes</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="07-kubernetes.html#kubernetes">Kubernetes</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="07-kubernetes.html#install-minikube">Install Minikube</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="07-kubernetes.html#start-kubernetes">Start Kubernetes</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="07-kubernetes.html#strimzi">Strimzi</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="07-kubernetes.html#installing-crds">Install Strimzi Operator</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="07-kubernetes.html#deploy-kafka">Deploy Kafka</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="07-kubernetes.html#deploy-service-strimzi">Deploy Services</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="07-kubernetes.html#kubernetes-song-app">Deploy Song Service</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="07-kubernetes.html#kubernetes-song-indexer-app">Deploy Song Indexer Service</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="07-kubernetes.html#kubernetes-testing">Test It</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="07-kubernetes.html#kubernetes-cleanup">Clean Up</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="index.html">Kafka Tutorial</a></li>
+    <li>2. Basics</li>
+    <li><a href="02-topics-partitions.html">Topics &amp; Partitions</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="https://github.com/redhat-developer-demos/kafka-tutorial/edit/master/documentation/modules/ROOT/pages/02-topics-partitions.adoc">Edit this Page</a></div>
+  </div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Topics and Partitions</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Apache Kafka is a distributed robust publish/subscribe system.
+It can act as a message queue but it offers two major advantages over traditional pub/sub systems.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Storing records with Fault Tolerance.</p>
+</li>
+<li>
+<p>Processing data streams as they occur in near real-time instead of in large batches.</p>
+</li>
+</ol>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/cbp.png" alt="cbp">
+</div>
+</div>
+<div class="paragraph">
+<p>Notice in the next figure, the difference in how the entities are stored in a Kafka topic VS how they are stored in an RDBMS.
+Events are always stored as they are appended in the log and they are never overridden, whereas in an RDBMS, you are storing a snapshot of an entity and when you update an entity you are modifying the original record "in place".</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/dbvsevent.png" alt="dbvsevent">
+</div>
+</div>
+<div class="paragraph">
+<p>Other differences are:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Real Time vs batch processing</p>
+</li>
+<li>
+<p>Distributed / Fault Tolerant vs none-distributed / single point of failure</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="topics"><a class="anchor" href="#topics"></a>What are Topics?</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>A topic is a collection of events that are persisted to disk. Topics support the concept of data retention such that events can be appended and kept for longer periods (e.g. days/weeks/months) or only be stored short-lived (e.g. minutes/hours)</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/cbtp.png" alt="cbtp">
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="partitions"><a class="anchor" href="#partitions"></a>What are Partitions?</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>A topic is further divided into multipe partitions - at least one, but can be 10s or 100s - to improve the performance in cases of heavy load. The number of topic partitions defines the maximum parallelism a single consuming application consisting of multiple instances can achive for processing the stored events.</p>
+</div>
+<div class="paragraph">
+<p>The partitions of a topic are distributed (i.e. replicated) across all the Kafka brokers to achieve fault-tolerance and to increase the parallelism when working with topics.</p>
+</div>
+<div class="paragraph">
+<p>The sum of all events in all the topic&#8217;s partitions is what conforms a topic as a whole.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/pbtpc.png" alt="pbtpc">
+</div>
+</div>
+<div class="paragraph">
+<p>Topic partitions can be configured to be replicated across different Kafka brokers.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/bp.png" alt="bp">
+</div>
+</div>
+<div class="paragraph">
+<p>For each replicated topic partition one of the partitions is the designated leader.
+Usually all events are produced to and consumed from the leader, and the other replicas stay in sync with the leader. If the leader becomes unavailable, one of the synced replicas becomes the new leader.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Starting with Apache Kafka 2.4.0 a consumer also can be configured to process messages from other replicas even though they aren&#8217;t leaders.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/After-KIP-392.png" alt="After KIP 392">
+</div>
+<div class="title">Figure 1. Red Partitions are the leaders</div>
+</div>
+<div class="paragraph">
+<p>Also a <code>ReplicaSelector</code> interface is provided so you can implement a custom selector of the replica from where messages are consumed.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="messages"><a class="anchor" href="#messages"></a>What are Messages?</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>A message (also known as a Kafka record) is a key/value pair that is stored inside a topic partition. Message are persisted and durable in accordance with the configured retention settings for a topic.</p>
+</div>
+<div class="paragraph">
+<p>A message is typically a "smallish" chunk of data consisting of its key (optional) to identify the message. If the key is present it is used by default to decide in which topic partition a message should get stored. The value represents the payload of the message. Both, keys and values, can support different serialization formats such as Avro, Json or Protobuf. Kafka brokers themselves don&#8217;t care about the data format at all and only store sequences of bytes.</p>
+</div>
+<div class="paragraph">
+<p>Additionally, each message contains metadata such as a timestamp attribute that is either set by the producer at creation time or by the broker on insertion time.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+Although you can configure Apache Kafka to work with larger messages, the default maximum size is <code>1 MB</code>. Note that the Kafka record size is ideally within that limit and is often around a few 100 KBs.
+</td>
+</tr>
+</table>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/pkp.png" alt="pkp">
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="topic-creation"><a class="anchor" href="#topic-creation"></a>Topic Creation</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Apache Kafka can be configured to auto-create topics which means it is possible to publish a message to a non-existant topic that will be created on the fly. However, it is not recommended to work with topic auto-creation in production scenarios.</p>
+</div>
+<div class="paragraph">
+<p>You can also use tools such as <code>kafka-topic.sh</code> to pre-create your topic(s) manually.</p>
+</div>
+<div class="paragraph">
+<p>This tool is bundled with the Kafka container image, so let&#8217;s <code>exec</code> a <code>bash</code> terminal inside the running Kafka container.</p>
+</div>
+<div class="listingblock lines_1 console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker exec -it $(docker ps -q --filter "label=com.docker.compose.service=kafka") /bin/bash</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Inside the container, create a topic with the name <code>songs</code> having a single partition and only one replica:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">./bin/kafka-topics.sh --create --bootstrap-server kafka:9092 --replication-factor 1 --partitions 1 --topic songs
+./bin/kafka-topics.sh --list --bootstrap-server kafka:9092</code></pre>
+</div>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">songs</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Now that you have valdiated the topic exists you can run the <code>exit</code> to leave the container</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">exit</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="topic-info"><a class="anchor" href="#topic-info"></a>Get Topic information</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You can also get the topic information by using <code>kcat</code> from your host OS:</p>
+</div>
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset1_kcat"></a>kcat</p>
+</li>
+<li>
+<p><a id="tabset1_kcat-in-docker"></a>kcat in Docker</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset1_kcat">
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">kcat -b localhost:29092 -L</code></pre>
+</div>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">Metadata for all topics (from broker 0: localhost:29092/0):
+ 1 brokers:
+  broker 0 at localhost:29092 (controller)
+ 1 topics:
+  topic "songs" with 1 partitions:
+    partition 0, leader 0, replicas: 0, isrs: 0</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset1_kcat-in-docker">
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker run --rm -it --network=kafka-tutorial edenhill/kcat:1.7.1 kcat -b kafka:9092 -L</code></pre>
+</div>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">Metadata for all topics (from broker 0: kafka:9092/0):
+ 1 brokers:
+  broker 0 at kafka:9092 (controller)
+ 1 topics:
+  topic "songs" with 1 partitions:
+    partition 0, leader 0, replicas: 0, isrs: 0</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="01-setup.html">Setup</a></span>
+  <span class="next"><a href="03-consumers-producers.html">Consumer &amp; Producers</a></span>
+</nav>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <a class="rhd-logo" href="https://developers.redhat.com" target="_blank"></div>
+</footer>
+<script src="../_/js/vendor/clipboard.js"></script>
+<script src="../_/js/site.js"></script>
+<script async src="../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

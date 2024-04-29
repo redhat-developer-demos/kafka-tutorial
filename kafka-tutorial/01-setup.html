@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Setup :: Kafka Tutorial</title>
+    <link rel="canonical" href="https://redhat-developer-demos.github.io/kafka-tutorial/kafka-tutorial/01-setup.html">
+    <link rel="prev" href="index.html">
+    <link rel="next" href="02-topics-partitions.html">
+    <meta name="generator" content="Antora 3.0.0">
+    <link rel="stylesheet" href="../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://developers.redhat.com" target="_blank"><img src="../_/img/RHDLogo.svg" height="40px" alt="Red Hat Developer Program"></a>
+      <a class="navbar-item" style="font-size: 24px; color: white" href="https://redhat-developer-demos.github.io/kafka-tutorial">Kafka Tutorial</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="https://developers.redhat.com/ebooks/" target="_blank">Books</a>
+        <a class="navbar-item" href="https://developers.redhat.com/cheatsheets/" target="_blank">Cheat Sheets</a>
+        <a class="navbar-item" href="https://developers.redhat.com/events/" target="_blank">Upcoming Events</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">More Tutorials</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="https://redhat-developer-demos.github.io/kubernetes-tutorial/" target="_blank">Kubernetes</a>
+            <a class="navbar-item" href="https://redhat-developer-demos.github.io/istio-tutorial/" target="_blank">Istio</a>
+            <a class="navbar-item" href="https://redhat-developer-demos.github.io/quarkus-tutorial/" target="_blank">Quarkus</a>
+            <a class="navbar-item" href="https://redhat-developer-demos.github.io/knative-tutorial/" target="_blank">Knative</a>
+            <a class="navbar-item" href="https://redhat-developer-demos.github.io/tekton-tutorial/" target="_blank">Tekton</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="kafka-tutorial" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="index.html"></a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">1. Getting Started</span>
+<ul class="nav-list">
+  <li class="nav-item is-current-page" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="01-setup.html">Setup</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="#prerequisite">Prerequisites</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="#downloadconfiguresources">Download &amp; Configure Tutorial</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="#kafka">Run Kafka</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">2. Basics</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="02-topics-partitions.html">Topics &amp; Partitions</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="02-topics-partitions.html#topics">Topics</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="02-topics-partitions.html#partitions">Partitions</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="02-topics-partitions.html#messages">Messages</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="02-topics-partitions.html#topic-creation">Topic Creation</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="03-consumers-producers.html">Consumer &amp; Producers</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="03-consumers-producers.html#producer">Producer</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="03-consumers-producers.html#consumer">Consumer</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="03-consumers-producers.html#consume-kcat">kcat Consumer</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="03-consumers-producers.html#produce-kcat">kcat Producer</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="03-consumers-producers.html#playingwithoffsets">kcat Offsets</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="03-consumers-producers.html#changingretention">Changing Retention</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="03-consumers-producers.html#deletetopiccontent">Delete Topic Content</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="03-consumers-producers.html#cleanup">Clean Up</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="04-java-consumer-producer.html">Developing Consumers and Producers in Java</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="04-java-consumer-producer.html#producer-java">Producing messages with Java</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="04-java-consumer-producer.html#deploying-producer">Deploying Producer</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="04-java-consumer-producer.html#consumer-java">Consuming messages with Java</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="04-java-consumer-producer.html#deploying-consumer">Deploying Consumer</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="04-java-consumer-producer.html#java-cleanup">Clean Up</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Tips &amp; Tricks</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="08-kafka-listeners.html">Kafka Listeners</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">3. Intermediate</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="05-kstreams.html">Kafka Streams Intro</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="05-kstreams.html#whatkstreams">What are Kafka Streams?</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="05-kstreams.html#kstreamsconcepts">Kafka Streams Concepts</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="05-kstreams.html#kstreamsexamples">Kafka Streams Examples</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="05-kstreams.html#kstreamscat">KStreamscat</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="05-kstreams.html#kstreamscat-tables">(Global)KTables</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="05-kstreams.html#kstreamscat-windowing">Windowing</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link" href="05-kstreams.html#kstreamscat-timewindow">Tumbling Window</a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link" href="05-kstreams.html#kstreamscat-sessiontimewindow">Session Window</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="06-java-kstreams.html">Developing Kafka Streams</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="06-java-kstreams.html#player-songs-java">Player Service</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="06-java-kstreams.html#deploying-player-app">Deploying Player Service</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="06-java-kstreams.html#music-chart-java">Music Chart Service</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="06-java-kstreams.html#deploying-music-chart">Deploying Music Chart Service</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="06-java-kstreams.html#kstreams-cleanup">Clean Up</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="07-kubernetes.html">Kafka in Kubernetes</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="07-kubernetes.html#kubernetes">Kubernetes</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="07-kubernetes.html#install-minikube">Install Minikube</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="07-kubernetes.html#start-kubernetes">Start Kubernetes</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="07-kubernetes.html#strimzi">Strimzi</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="07-kubernetes.html#installing-crds">Install Strimzi Operator</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="07-kubernetes.html#deploy-kafka">Deploy Kafka</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="07-kubernetes.html#deploy-service-strimzi">Deploy Services</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="07-kubernetes.html#kubernetes-song-app">Deploy Song Service</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="07-kubernetes.html#kubernetes-song-indexer-app">Deploy Song Indexer Service</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="07-kubernetes.html#kubernetes-testing">Test It</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="07-kubernetes.html#kubernetes-cleanup">Clean Up</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="index.html">Kafka Tutorial</a></li>
+    <li>1. Getting Started</li>
+    <li><a href="01-setup.html">Setup</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="https://github.com/redhat-developer-demos/kafka-tutorial/edit/master/documentation/modules/ROOT/pages/01-setup.adoc">Edit this Page</a></div>
+  </div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Setup</h1>
+<div class="sect1">
+<h2 id="prerequisite"><a class="anchor" href="#prerequisite"></a>Prerequisite CLI tools</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The following CLI tools are required for running the exercises in this tutorial.
+Please have them installed and configured before you get started with any of the tutorial chapters.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-center valign-top"><strong>Tool</strong></th>
+<th class="tableblock halign-center valign-top"><strong>macOS</strong></th>
+<th class="tableblock halign-center valign-top"><strong>Fedora</strong></th>
+<th class="tableblock halign-center valign-top"><strong>windows</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><code>Git</code></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://git-scm.com/download/mac">Download</a></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://git-scm.com/download/linux">Download</a></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://git-scm.com/download/win">Download</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><code>Docker</code></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://docs.docker.com/docker-for-mac/install">Docker for Mac</a></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><code>dnf install docker</code></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://docs.docker.com/docker-for-windows/install">Docker for Windows</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><code>VirtualBox</code></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://download.virtualbox.org/virtualbox/6.1.6/VirtualBox-6.1.6-137129-OSX.dmg">Download</a></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://www.virtualbox.org/wiki/Linux_Downloads">Download</a></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://download.virtualbox.org/virtualbox/6.1.6/VirtualBox-6.1.6-137129-Win.exe">Download</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://kubernetes.io/docs/tasks/tools/install-minikube">Minikube</a> v1.29.0</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://github.com/kubernetes/minikube/releases/download/v1.29.0/minikube-darwin-amd64">Download</a></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://github.com/kubernetes/minikube/releases/download/v1.29.0/minikube-linux-amd64">Download</a></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://github.com/kubernetes/minikube/releases/download/v1.29.0/minikube-windows-amd64.exe">Download</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><code>kubectl v1.26.1</code></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://storage.googleapis.com/kubernetes-release/release/v1.26.1/bin/darwin/amd64/kubectl">Download</a></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://storage.googleapis.com/kubernetes-release/release/v1.26.1/bin/linux/amd64/kubectl">Download</a></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://storage.googleapis.com/kubernetes-release/release/v1.26.1/bin/windows/amd64/kubectl.exe">Download</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://github.com/wercker/stern">stern</a></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><code>brew install stern</code></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://github.com/stern/stern/releases/download/v1.22.0/stern_1.22.0_linux_amd64.tar.gz">Download</a></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://github.com/stern/stern/releases/download/v1.22.0/stern_1.22.0_windows_amd64.tar.gz">Download</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><code>Apache Maven 3.9.0</code></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://archive.apache.org/dist/maven/maven-3/3.9.0/binaries/apache-maven-3.9.0-bin.tar.gz">Download</a></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://archive.apache.org/dist/maven/maven-3/3.9.0/binaries/apache-maven-3.9.0-bin.tar.gz">Download</a></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://archive.apache.org/dist/maven/maven-3/3.9.0/binaries/apache-maven-3.9.0-bin.tar.gz">Download</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><code>kcat</code></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://github.com/edenhill/kcat">Download</a> or <code>brew install kcat</code></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://github.com/edenhill/kcat">Download</a></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://github.com/edenhill/kcat">Download</a></p>
+<p class="tableblock">IMPORTANT: An alternative for running <code>kcat</code> is to use the following Docker container image <a href="https://hub.docker.com/r/edenhill/kcat" class="bare">https://hub.docker.com/r/edenhill/kcat</a> (documentation see <a href="https://github.com/edenhill/kcat#try-it-out-with-docker" class="bare">https://github.com/edenhill/kcat#try-it-out-with-docker</a>)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><code>Java 11</code></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://adoptium.net/en-GB/temurin/releases/?version=11">Download</a></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://adoptium.net/en-GB/temurin/releases/?version=11">Download</a></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://adoptium.net/en-GB/temurin/releases/?version=11">Download</a></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>The following CLI tools are optional for running the exercises in this tutorial.
+Although they are used in the tutorial, you could use others without any problem.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-center valign-top"><strong>Tool</strong></th>
+<th class="tableblock halign-center valign-top"><strong>macOS</strong></th>
+<th class="tableblock halign-center valign-top"><strong>Fedora</strong></th>
+<th class="tableblock halign-center valign-top"><strong>windows</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://github.com/mikefarah/yq">yq v2.4.1</a></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://github.com/mikefarah/yq/releases/download/2.4.1/yq_darwin_amd64">Download</a></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://github.com/mikefarah/yq/releases/download/2.4.1/yq_linux_amd64">Download</a></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://github.com/mikefarah/yq/releases/download/2.4.1/yq_windows_amd64.exe">Download</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://github.com/stedolan/jq">jq v1.6.0</a></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://github.com/stedolan/jq/releases/download/jq-1.6/jq-osx-amd64">Download</a></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64">Download</a></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://github.com/stedolan/jq/releases/download/jq-1.6/jq-win64.exe">Download</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://httpie.org/">httpie</a></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><code>brew install httpie</code></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><code>dnf install httpie</code></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://httpie.org/doc#windows-etc" class="bare">https://httpie.org/doc#windows-etc</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock">watch</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><code>brew install watch</code></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><code>dnf install procps-ng</code></p></td>
+<td class="tableblock halign-center valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock">kubectx and kubens</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><code>brew install kubectx</code></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://github.com/ahmetb/kubectx" class="bare">https://github.com/ahmetb/kubectx</a></p></td>
+<td class="tableblock halign-center valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://github.com/rakyll/hey">hey</a></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><code>brew install hey</code></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://storage.googleapis.com/jblabs/dist/hey_linux_v0.1.2">Download</a></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://hey-release.s3.us-east-2.amazonaws.com/hey_windows_amd64">Download</a></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="downloadconfiguresources"><a class="anchor" href="#downloadconfiguresources"></a>Download &amp; Configure Tutorial Sources</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Before we start setting up the environment, let’s clone the tutorial sources and set the <code>TUTORIAL_HOME</code> environment variable to point to the root directory of the tutorial:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git clone {tutorial-url} kafka-tutorial</code></pre>
+</div>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">export TUTORIAL_HOME="$(pwd)/kafka-tutorial"</code></pre>
+</div>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cd $TUTORIAL_HOME</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="kafka"><a class="anchor" href="#kafka"></a>Run Kafka</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Assuming you&#8217;ve got <a href="https://docs.docker.com/get-docker/">Docker &amp; Docker Compose installed</a>.</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">cd $TUTORIAL_HOME/apps/it
+docker compose up --remove-orphans</code></pre>
+</div>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">...
+
+kafka      | [2022-12-09 08:29:01,867] INFO [Transaction Marker Channel Manager 0]: Starting (kafka.coordinator.transaction.TransactionMarkerChannelManager)
+kafka      | [2022-12-09 08:29:01,878] INFO [MetadataCache brokerId=0] Updated cache from existing &lt;empty&gt; to latest FinalizedFeaturesAndEpoch(features=Map(), epoch=0). (kafka.server.metadata.ZkMetadataCache)
+kafka      | [2022-12-09 08:29:01,893] INFO [ExpirationReaper-0-AlterAcls]: Starting (kafka.server.DelayedOperationPurgatory$ExpiredOperationReaper)
+kafka      | [2022-12-09 08:29:01,929] INFO [/config/changes-event-process-thread]: Starting (kafka.common.ZkNodeChangeNotificationListener$ChangeEventProcessThread)
+kafka      | [2022-12-09 08:29:01,946] INFO [SocketServer listenerType=ZK_BROKER, nodeId=0] Enabling request processing. (kafka.network.SocketServer)
+kafka      | [2022-12-09 08:29:01,974] INFO Kafka version: 3.3.1 (org.apache.kafka.common.utils.AppInfoParser)
+kafka      | [2022-12-09 08:29:01,974] INFO Kafka commitId: e23c59d00e687ff5 (org.apache.kafka.common.utils.AppInfoParser)
+kafka      | [2022-12-09 08:29:01,974] INFO Kafka startTimeMs: 1670574541958 (org.apache.kafka.common.utils.AppInfoParser)
+kafka      | [2022-12-09 08:29:01,975] INFO [KafkaServer id=0] started (kafka.server.KafkaServer)
+kafka      | [2022-12-09 08:29:02,093] INFO [BrokerToControllerChannelManager broker=0 name=forwarding]: Recorded new controller, from now on will use broker kafka:9092 (id: 0 rack: null) (kafka.server.BrokerToControllerRequestThread)
+kafka      | [2022-12-09 08:29:02,113] INFO [BrokerToControllerChannelManager broker=0 name=alterPartition]: Recorded new controller, from now on will use broker kafka:9092 (id: 0 rack: null) (kafka.server.BrokerToControllerRequestThread)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Open a new terminal to run Kafka commands:</p>
+</div>
+<div class="paragraph">
+<p>Verify that Zookeeper and Apache Kafka containers are up and running:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker ps</code></pre>
+</div>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">CONTAINER ID   IMAGE                                      COMMAND                  CREATED         STATUS         PORTS                                              NAMES
+0d4bc6ec2ddf   quay.io/strimzi/kafka:0.32.0-kafka-3.3.1   "sh -c 'bin/kafka-se…"   2 minutes ago   Up 2 minutes   0.0.0.0:9092-&gt;9092/tcp, 0.0.0.0:29092-&gt;29092/tcp   kafka
+d8fdbab971c6   quay.io/strimzi/kafka:0.32.0-kafka-3.3.1   "sh -c 'bin/zookeepe…"   2 minutes ago   Up 2 minutes   0.0.0.0:2181-&gt;2181/tcp                             zookeeper</code></pre>
+</div>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+Notice that the Kafka container is exposing two ports to outside. The reason is that Kafka requires one port for being accessed from your host machine, and another one for being accessed from the Docker host machine. You can find a full explanation of this at <a href="08-kafka-listeners.html" class="xref page">Kafka Listeners</a>.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Verify that the Kafka cluster is correctly started and configured by running the following command:</p>
+</div>
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset1_kcat"></a>kcat</p>
+</li>
+<li>
+<p><a id="tabset1_kcat-in-docker"></a>kcat in Docker</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset1_kcat">
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">kcat -b localhost:29092 -L</code></pre>
+</div>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">Metadata for all topics (from broker 0: localhost:29092/0):
+ 1 brokers:
+  broker 0 at localhost:29092 (controller)
+ 0 topics:</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset1_kcat-in-docker">
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker run --rm -it --network=kafka-tutorial edenhill/kcat:1.7.1 -b kafka:9092 -L</code></pre>
+</div>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">Metadata for all topics (from broker 0: kafka:9092/0):
+ 1 brokers:
+  broker 0 at kafka:9092 (controller)
+ 0 topics:</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="index.html">Kafka Tutorial</a></span>
+  <span class="next"><a href="02-topics-partitions.html">Topics &amp; Partitions</a></span>
+</nav>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <a class="rhd-logo" href="https://developers.redhat.com" target="_blank"></div>
+</footer>
+<script src="../_/js/vendor/clipboard.js"></script>
+<script src="../_/js/site.js"></script>
+<script async src="../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

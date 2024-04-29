@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Developing Kafka Streams in Java :: Kafka Tutorial</title>
+    <link rel="canonical" href="https://redhat-developer-demos.github.io/kafka-tutorial/kafka-tutorial/06-java-kstreams.html">
+    <link rel="prev" href="05-kstreams.html">
+    <link rel="next" href="07-kubernetes.html">
+    <meta name="generator" content="Antora 3.0.0">
+    <link rel="stylesheet" href="../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://developers.redhat.com" target="_blank"><img src="../_/img/RHDLogo.svg" height="40px" alt="Red Hat Developer Program"></a>
+      <a class="navbar-item" style="font-size: 24px; color: white" href="https://redhat-developer-demos.github.io/kafka-tutorial">Kafka Tutorial</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="https://developers.redhat.com/ebooks/" target="_blank">Books</a>
+        <a class="navbar-item" href="https://developers.redhat.com/cheatsheets/" target="_blank">Cheat Sheets</a>
+        <a class="navbar-item" href="https://developers.redhat.com/events/" target="_blank">Upcoming Events</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">More Tutorials</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="https://redhat-developer-demos.github.io/kubernetes-tutorial/" target="_blank">Kubernetes</a>
+            <a class="navbar-item" href="https://redhat-developer-demos.github.io/istio-tutorial/" target="_blank">Istio</a>
+            <a class="navbar-item" href="https://redhat-developer-demos.github.io/quarkus-tutorial/" target="_blank">Quarkus</a>
+            <a class="navbar-item" href="https://redhat-developer-demos.github.io/knative-tutorial/" target="_blank">Knative</a>
+            <a class="navbar-item" href="https://redhat-developer-demos.github.io/tekton-tutorial/" target="_blank">Tekton</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="kafka-tutorial" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="index.html"></a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">1. Getting Started</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="01-setup.html">Setup</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="01-setup.html#prerequisite">Prerequisites</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="01-setup.html#downloadconfiguresources">Download &amp; Configure Tutorial</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="01-setup.html#kafka">Run Kafka</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">2. Basics</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="02-topics-partitions.html">Topics &amp; Partitions</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="02-topics-partitions.html#topics">Topics</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="02-topics-partitions.html#partitions">Partitions</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="02-topics-partitions.html#messages">Messages</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="02-topics-partitions.html#topic-creation">Topic Creation</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="03-consumers-producers.html">Consumer &amp; Producers</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="03-consumers-producers.html#producer">Producer</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="03-consumers-producers.html#consumer">Consumer</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="03-consumers-producers.html#consume-kcat">kcat Consumer</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="03-consumers-producers.html#produce-kcat">kcat Producer</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="03-consumers-producers.html#playingwithoffsets">kcat Offsets</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="03-consumers-producers.html#changingretention">Changing Retention</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="03-consumers-producers.html#deletetopiccontent">Delete Topic Content</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="03-consumers-producers.html#cleanup">Clean Up</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="04-java-consumer-producer.html">Developing Consumers and Producers in Java</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="04-java-consumer-producer.html#producer-java">Producing messages with Java</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="04-java-consumer-producer.html#deploying-producer">Deploying Producer</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="04-java-consumer-producer.html#consumer-java">Consuming messages with Java</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="04-java-consumer-producer.html#deploying-consumer">Deploying Consumer</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="04-java-consumer-producer.html#java-cleanup">Clean Up</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Tips &amp; Tricks</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="08-kafka-listeners.html">Kafka Listeners</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">3. Intermediate</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="05-kstreams.html">Kafka Streams Intro</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="05-kstreams.html#whatkstreams">What are Kafka Streams?</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="05-kstreams.html#kstreamsconcepts">Kafka Streams Concepts</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="05-kstreams.html#kstreamsexamples">Kafka Streams Examples</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="05-kstreams.html#kstreamscat">KStreamscat</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="05-kstreams.html#kstreamscat-tables">(Global)KTables</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="05-kstreams.html#kstreamscat-windowing">Windowing</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link" href="05-kstreams.html#kstreamscat-timewindow">Tumbling Window</a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link" href="05-kstreams.html#kstreamscat-sessiontimewindow">Session Window</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="06-java-kstreams.html">Developing Kafka Streams</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="#player-songs-java">Player Service</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="#deploying-player-app">Deploying Player Service</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="#music-chart-java">Music Chart Service</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="#deploying-music-chart">Deploying Music Chart Service</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="#kstreams-cleanup">Clean Up</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="07-kubernetes.html">Kafka in Kubernetes</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="07-kubernetes.html#kubernetes">Kubernetes</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="07-kubernetes.html#install-minikube">Install Minikube</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="07-kubernetes.html#start-kubernetes">Start Kubernetes</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="07-kubernetes.html#strimzi">Strimzi</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="07-kubernetes.html#installing-crds">Install Strimzi Operator</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="07-kubernetes.html#deploy-kafka">Deploy Kafka</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="07-kubernetes.html#deploy-service-strimzi">Deploy Services</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="07-kubernetes.html#kubernetes-song-app">Deploy Song Service</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="07-kubernetes.html#kubernetes-song-indexer-app">Deploy Song Indexer Service</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="07-kubernetes.html#kubernetes-testing">Test It</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="07-kubernetes.html#kubernetes-cleanup">Clean Up</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="index.html">Kafka Tutorial</a></li>
+    <li>3. Intermediate</li>
+    <li><a href="06-java-kstreams.html">Developing Kafka Streams</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="https://github.com/redhat-developer-demos/kafka-tutorial/edit/master/documentation/modules/ROOT/pages/06-java-kstreams.adoc">Edit this Page</a></div>
+  </div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Developing Kafka Streams in Java</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>In this example, we are going to develop an example to build a music chart to see the number of times that a song has been played.</p>
+</div>
+<div class="paragraph">
+<p>There is one service (<code>player-app</code>) that it is periodically producing played songs to the <code>played-songs</code> topic.
+This service is not using Kafka Streams but instead just uses the Kafka producer API under the covers of Smallrye Reactive Messaging for Kafka.</p>
+</div>
+<div class="paragraph">
+<p>The second service is a Kafka Stream application that joins the <code>songs</code> and <code>played-songs</code> topics, to get the song name. Also it computes the number of times that each particular song has been played by aggregating the joined records based on the song&#8217;s id.</p>
+</div>
+<div class="paragraph">
+<p>Remember you need to have both, ZooKeeper and Apache Kafka correctly configured as well as up and running. If not, you can follow the <a href="#Setup Kafka">[Setup Kafka]</a> section to learn how to do it using <em>docker compose</em>.</p>
+</div>
+<div class="paragraph">
+<p>You need to open 2 terminal windows to run this example, one for each service.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="player-songs-java"><a class="anchor" href="#player-songs-java"></a>Player Service</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The producer code is at <a href="https://github.com/redhat-developer-demos/kafka-tutorial//blob/master/apps/player-app" target="_blank" rel="noopener">Player Service</a>.</p>
+</div>
+<div class="sect2">
+<h3 id="deploying-player-app"><a class="anchor" href="#deploying-player-app"></a>Deploying Player Service</h3>
+<div class="paragraph">
+<p>In this case, the Quarkus service is deployed to produce played songs.
+You&#8217;ve got two options, using the existing Docker image or building the service and image yourself. Note, that due to the configured Quarkus extension <code>quarkus-container-image-jib</code> the container image will be build automatically when you trigger the local build.
+In terminal 1, run one of these two options:</p>
+</div>
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset1_building-amp-run"></a>Building &amp; Run</p>
+</li>
+<li>
+<p><a id="tabset1_docker"></a>Docker</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset1_building-amp-run">
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">cd $TUTORIAL_HOME/apps/player-app/quarkus/player-app
+./mvnw clean package</code></pre>
+</div>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker run --rm --network=kafka-tutorial quay.io/rhdevelopers/kafka-tutorial-player-app-quarkus:v23.01</code></pre>
+</div>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">__  ____  __  _____   ___  __ ____  ______
+ --/ __ \/ / / / _ | / _ \/ //_/ / / / __/
+ -/ /_/ / /_/ / __ |/ , _/ ,&lt; / /_/ /\ \
+--\___\_\____/_/ |_/_/|_/_/|_|\____/___/
+2023-01-09 08:45:18,099 INFO  [io.sma.rea.mes.kafka] (smallrye-kafka-producer-thread-0) SRMSG18258: Kafka producer kafka-producer-songs, connected to Kafka brokers 'kafka:9092', is configured to write records to 'songs'
+2023-01-09 08:45:18,471 INFO  [io.sma.rea.mes.kafka] (smallrye-kafka-producer-thread-1) SRMSG18258: Kafka producer kafka-producer-played-songs, connected to Kafka brokers 'kafka:9092', is configured to write records to 'played-songs'
+2023-01-09 08:45:18,573 INFO  [org.acm.PlaySongsGenerator] (main) creating song reference data
+2023-01-09 08:45:18,691 INFO  [org.acm.PlaySongsGenerator] (main) starting to play random songs every 2500 ms
+2023-01-09 08:45:18,739 INFO  [org.acm.PlaySongsGenerator] (main) producing -&gt; Song[id=1, name=The Good The Bad And The Ugly, author=Ennio Morricone]
+2023-01-09 08:45:19,675 INFO  [org.acm.PlaySongsGenerator] (main) producing -&gt; Song[id=2, name=Believe, author=Cher]
+2023-01-09 08:45:19,686 INFO  [org.acm.PlaySongsGenerator] (main) producing -&gt; Song[id=3, name=Still Loving You, author=Scorpions]
+2023-01-09 08:45:19,689 INFO  [org.acm.PlaySongsGenerator] (main) producing -&gt; Song[id=4, name=Bohemian Rhapsody, author=Queen]
+2023-01-09 08:45:19,691 INFO  [org.acm.PlaySongsGenerator] (main) producing -&gt; Song[id=5, name=Sometimes, author=James]
+2023-01-09 08:45:19,692 INFO  [org.acm.PlaySongsGenerator] (main) producing -&gt; Song[id=6, name=Into The Unknown, author=Frozen II]
+2023-01-09 08:45:19,694 INFO  [org.acm.PlaySongsGenerator] (main) producing -&gt; Song[id=7, name=Fox On The Run, author=Sweet]
+2023-01-09 08:45:19,696 INFO  [org.acm.PlaySongsGenerator] (main) producing -&gt; Song[id=8, name=Perfect, author=Ed Sheeran]
+2023-01-09 08:45:19,761 INFO  [org.acm.PlaySongsGenerator] (executor-thread-0) Played song id 8 (Perfect) for user Edson
+2023-01-09 08:45:19,785 INFO  [io.quarkus] (main) player-app 1.0.0-SNAPSHOT on JVM (powered by Quarkus 2.15.2.Final) started in 7.027s.
+2023-01-09 08:45:19,787 INFO  [io.quarkus] (main) Profile prod activated.
+2023-01-09 08:45:19,788 INFO  [io.quarkus] (main) Installed features: [cdi, kafka-client, smallrye-context-propagation, smallrye-reactive-messaging, smallrye-reactive-messaging-kafka, vertx]
+2023-01-09 08:45:20,102 WARN  [org.apa.kaf.cli.NetworkClient] (kafka-producer-network-thread | kafka-producer-played-songs) [Producer clientId=kafka-producer-played-songs] Error while fetching metadata with correlation id 1 : {played-songs=LEADER_NOT_AVAILABLE}
+2023-01-09 08:45:20,106 WARN  [org.apa.kaf.cli.NetworkClient] (kafka-producer-network-thread | kafka-producer-songs) [Producer clientId=kafka-producer-songs] Error while fetching metadata with correlation id 1 : {songs=LEADER_NOT_AVAILABLE}
+2023-01-09 08:45:20,213 WARN  [org.apa.kaf.cli.NetworkClient] (kafka-producer-network-thread | kafka-producer-songs) [Producer clientId=kafka-producer-songs] Error while fetching metadata with correlation id 3 : {songs=LEADER_NOT_AVAILABLE}
+2023-01-09 08:45:20,220 WARN  [org.apa.kaf.cli.NetworkClient] (kafka-producer-network-thread | kafka-producer-played-songs) [Producer clientId=kafka-producer-played-songs] Error while fetching metadata with correlation id 3 : {played-songs=LEADER_NOT_AVAILABLE}
+2023-01-09 08:45:22,231 INFO  [org.acm.PlaySongsGenerator] (executor-thread-0) Played song id 5 (Sometimes) for user Edson
+2023-01-09 08:45:24,729 INFO  [org.acm.PlaySongsGenerator] (executor-thread-0) Played song id 7 (Fox On The Run) for user Burr
+2023-01-09 08:45:27,230 INFO  [org.acm.PlaySongsGenerator] (executor-thread-0) Played song id 3 (Still Loving You) for user Edson
+2023-01-09 08:45:29,735 INFO  [org.acm.PlaySongsGenerator] (executor-thread-0) Played song id 2 (Believe) for user Edson
+2023-01-09 08:45:32,238 INFO  [org.acm.PlaySongsGenerator] (executor-thread-0) Played song id 8 (Perfect) for user Alex
+2023-01-09 08:45:34,743 INFO  [org.acm.PlaySongsGenerator] (executor-thread-0) Played song id 7 (Fox On The Run) for user Kamesh
+2023-01-09 08:45:37,230 INFO  [org.acm.PlaySongsGenerator] (executor-thread-0) Played song id 3 (Still Loving You) for user Kamesh
+2023-01-09 08:45:39,728 INFO  [org.acm.PlaySongsGenerator] (executor-thread-0) Played song id 3 (Still Loving You) for user Sebi
+2023-01-09 08:45:42,229 INFO  [org.acm.PlaySongsGenerator] (executor-thread-0) Played song id 4 (Bohemian Rhapsody) for user Edson
+2023-01-09 08:45:44,726 INFO  [org.acm.PlaySongsGenerator] (executor-thread-0) Played song id 2 (Believe) for user Burr
+...</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset1_docker">
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker run --rm --network=kafka-tutorial quay.io/rhdevelopers/kafka-tutorial-player-app-quarkus:v23.01</code></pre>
+</div>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">__  ____  __  _____   ___  __ ____  ______
+ --/ __ \/ / / / _ | / _ \/ //_/ / / / __/
+ -/ /_/ / /_/ / __ |/ , _/ ,&lt; / /_/ /\ \
+--\___\_\____/_/ |_/_/|_/_/|_|\____/___/
+2023-01-09 08:45:18,099 INFO  [io.sma.rea.mes.kafka] (smallrye-kafka-producer-thread-0) SRMSG18258: Kafka producer kafka-producer-songs, connected to Kafka brokers 'kafka:9092', is configured to write records to 'songs'
+2023-01-09 08:45:18,471 INFO  [io.sma.rea.mes.kafka] (smallrye-kafka-producer-thread-1) SRMSG18258: Kafka producer kafka-producer-played-songs, connected to Kafka brokers 'kafka:9092', is configured to write records to 'played-songs'
+2023-01-09 08:45:18,573 INFO  [org.acm.PlaySongsGenerator] (main) creating song reference data
+2023-01-09 08:45:18,691 INFO  [org.acm.PlaySongsGenerator] (main) starting to play random songs every 2500 ms
+2023-01-09 08:45:18,739 INFO  [org.acm.PlaySongsGenerator] (main) producing -&gt; Song[id=1, name=The Good The Bad And The Ugly, author=Ennio Morricone]
+2023-01-09 08:45:19,675 INFO  [org.acm.PlaySongsGenerator] (main) producing -&gt; Song[id=2, name=Believe, author=Cher]
+2023-01-09 08:45:19,686 INFO  [org.acm.PlaySongsGenerator] (main) producing -&gt; Song[id=3, name=Still Loving You, author=Scorpions]
+2023-01-09 08:45:19,689 INFO  [org.acm.PlaySongsGenerator] (main) producing -&gt; Song[id=4, name=Bohemian Rhapsody, author=Queen]
+2023-01-09 08:45:19,691 INFO  [org.acm.PlaySongsGenerator] (main) producing -&gt; Song[id=5, name=Sometimes, author=James]
+2023-01-09 08:45:19,692 INFO  [org.acm.PlaySongsGenerator] (main) producing -&gt; Song[id=6, name=Into The Unknown, author=Frozen II]
+2023-01-09 08:45:19,694 INFO  [org.acm.PlaySongsGenerator] (main) producing -&gt; Song[id=7, name=Fox On The Run, author=Sweet]
+2023-01-09 08:45:19,696 INFO  [org.acm.PlaySongsGenerator] (main) producing -&gt; Song[id=8, name=Perfect, author=Ed Sheeran]
+2023-01-09 08:45:19,761 INFO  [org.acm.PlaySongsGenerator] (executor-thread-0) Played song id 8 (Perfect) for user Edson
+2023-01-09 08:45:19,785 INFO  [io.quarkus] (main) player-app 1.0.0-SNAPSHOT on JVM (powered by Quarkus 2.15.2.Final) started in 7.027s.
+2023-01-09 08:45:19,787 INFO  [io.quarkus] (main) Profile prod activated.
+2023-01-09 08:45:19,788 INFO  [io.quarkus] (main) Installed features: [cdi, kafka-client, smallrye-context-propagation, smallrye-reactive-messaging, smallrye-reactive-messaging-kafka, vertx]
+2023-01-09 08:45:20,102 WARN  [org.apa.kaf.cli.NetworkClient] (kafka-producer-network-thread | kafka-producer-played-songs) [Producer clientId=kafka-producer-played-songs] Error while fetching metadata with correlation id 1 : {played-songs=LEADER_NOT_AVAILABLE}
+2023-01-09 08:45:20,106 WARN  [org.apa.kaf.cli.NetworkClient] (kafka-producer-network-thread | kafka-producer-songs) [Producer clientId=kafka-producer-songs] Error while fetching metadata with correlation id 1 : {songs=LEADER_NOT_AVAILABLE}
+2023-01-09 08:45:20,213 WARN  [org.apa.kaf.cli.NetworkClient] (kafka-producer-network-thread | kafka-producer-songs) [Producer clientId=kafka-producer-songs] Error while fetching metadata with correlation id 3 : {songs=LEADER_NOT_AVAILABLE}
+2023-01-09 08:45:20,220 WARN  [org.apa.kaf.cli.NetworkClient] (kafka-producer-network-thread | kafka-producer-played-songs) [Producer clientId=kafka-producer-played-songs] Error while fetching metadata with correlation id 3 : {played-songs=LEADER_NOT_AVAILABLE}
+2023-01-09 08:45:22,231 INFO  [org.acm.PlaySongsGenerator] (executor-thread-0) Played song id 5 (Sometimes) for user Edson
+2023-01-09 08:45:24,729 INFO  [org.acm.PlaySongsGenerator] (executor-thread-0) Played song id 7 (Fox On The Run) for user Burr
+2023-01-09 08:45:27,230 INFO  [org.acm.PlaySongsGenerator] (executor-thread-0) Played song id 3 (Still Loving You) for user Edson
+2023-01-09 08:45:29,735 INFO  [org.acm.PlaySongsGenerator] (executor-thread-0) Played song id 2 (Believe) for user Edson
+2023-01-09 08:45:32,238 INFO  [org.acm.PlaySongsGenerator] (executor-thread-0) Played song id 8 (Perfect) for user Alex
+2023-01-09 08:45:34,743 INFO  [org.acm.PlaySongsGenerator] (executor-thread-0) Played song id 7 (Fox On The Run) for user Kamesh
+2023-01-09 08:45:37,230 INFO  [org.acm.PlaySongsGenerator] (executor-thread-0) Played song id 3 (Still Loving You) for user Kamesh
+2023-01-09 08:45:39,728 INFO  [org.acm.PlaySongsGenerator] (executor-thread-0) Played song id 3 (Still Loving You) for user Sebi
+2023-01-09 08:45:42,229 INFO  [org.acm.PlaySongsGenerator] (executor-thread-0) Played song id 4 (Bohemian Rhapsody) for user Edson
+2023-01-09 08:45:44,726 INFO  [org.acm.PlaySongsGenerator] (executor-thread-0) Played song id 2 (Believe) for user Burr
+...</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="music-chart-java"><a class="anchor" href="#music-chart-java"></a>Kafka Streams with Java</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The KStreams code is at <a href="https://github.com/redhat-developer-demos/kafka-tutorial//blob/master/apps/music-chart-app" target="_blank" rel="noopener">Music Chart Service</a>.</p>
+</div>
+<div class="sect2">
+<h3 id="deploying-music-chart"><a class="anchor" href="#deploying-music-chart"></a>Deploying Music Chart Service</h3>
+<div class="paragraph">
+<p>In this case, the Quarkus service is deployed to use Kafka Streams.
+You&#8217;ve got two options, using the existing Docker image or building the service and image yourself. Note, that due to the configured Quarkus extension <code>quarkus-container-image-jib</code> the container image will be created automatically when you trigger the local build.
+In terminal 2, run one of these two options:</p>
+</div>
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset2_building-amp-run"></a>Building &amp; Run</p>
+</li>
+<li>
+<p><a id="tabset2_docker"></a>Docker</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset2_building-amp-run">
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">cd $TUTORIAL_HOME/apps/music-chart-app/quarkus/music-chart-app
+./mvnw clean package</code></pre>
+</div>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker run --rm --network=kafka-tutorial quay.io/rhdevelopers/kafka-tutorial-music-chart-app-quarkus:v23.01</code></pre>
+</div>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">__  ____  __  _____   ___  __ ____  ______
+ --/ __ \/ / / / _ | / _ \/ //_/ / / / __/
+ -/ /_/ / /_/ / __ |/ , _/ ,&lt; / /_/ /\ \
+--\___\_\____/_/ |_/_/|_/_/|_|\____/___/
+2023-01-09 08:45:54,755 WARN  [org.apa.kaf.cli.adm.AdminClientConfig] (main) These configurations '[ssl.endpoint.identification.algorithm]' were supplied but are not used yet.
+2023-01-09 08:45:55,340 INFO  [org.apa.kaf.str.StreamsConfig] (main) StreamsConfig values:
+        acceptable.recovery.lag = 10000
+        application.id = music-chart
+        application.server = localhost:9090
+        bootstrap.servers = [kafka:9092]
+...
+2023-01-09 08:46:00,952 INFO  [org.apa.kaf.str.pro.int.StreamThread] (music-chart-08427007-2905-4d91-b260-44bcb8ac5c6a-StreamThread-1) stream-thread [music-chart-08427007-2905-4d91-b260-44bcb8ac5c6a-StreamThread-1] State transition from PARTITIONS_ASSIGNED to RUNNING
+2023-01-09 08:46:00,958 INFO  [org.apa.kaf.str.KafkaStreams] (music-chart-08427007-2905-4d91-b260-44bcb8ac5c6a-StreamThread-1) stream-client [music-chart-08427007-2905-4d91-b260-44bcb8ac5c6a] State transition from REBALANCING to RUNNING
+2023-01-09 08:46:02,098 INFO  [org.acm.MusicChartTopologyProducer] (music-chart-08427007-2905-4d91-b260-44bcb8ac5c6a-StreamThread-1) music chart updated for song id 5 -&gt; PlayedSong [count=1, songName=Sometimes]
+2023-01-09 08:46:02,128 INFO  [org.acm.MusicChartTopologyProducer] (music-chart-08427007-2905-4d91-b260-44bcb8ac5c6a-StreamThread-1) music chart updated for song id 8 -&gt; PlayedSong [count=2, songName=Perfect]
+2023-01-09 08:46:02,133 INFO  [org.acm.MusicChartTopologyProducer] (music-chart-08427007-2905-4d91-b260-44bcb8ac5c6a-StreamThread-1) music chart updated for song id 7 -&gt; PlayedSong [count=2, songName=Fox On The Run]
+2023-01-09 08:46:02,135 INFO  [org.acm.MusicChartTopologyProducer] (music-chart-08427007-2905-4d91-b260-44bcb8ac5c6a-StreamThread-1) music chart updated for song id 3 -&gt; PlayedSong [count=3, songName=Still Loving You]
+2023-01-09 08:46:02,137 INFO  [org.acm.MusicChartTopologyProducer] (music-chart-08427007-2905-4d91-b260-44bcb8ac5c6a-StreamThread-1) music chart updated for song id 4 -&gt; PlayedSong [count=1, songName=Bohemian Rhapsody]
+2023-01-09 08:46:02,140 INFO  [org.acm.MusicChartTopologyProducer] (music-chart-08427007-2905-4d91-b260-44bcb8ac5c6a-StreamThread-1) music chart updated for song id 2 -&gt; PlayedSong [count=2, songName=Believe]</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset2_docker">
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker run --rm --network=kafka-tutorial quay.io/rhdevelopers/kafka-tutorial-music-chart-app-quarkus:v23.01</code></pre>
+</div>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">__  ____  __  _____   ___  __ ____  ______
+ --/ __ \/ / / / _ | / _ \/ //_/ / / / __/
+ -/ /_/ / /_/ / __ |/ , _/ ,&lt; / /_/ /\ \
+--\___\_\____/_/ |_/_/|_/_/|_|\____/___/
+2023-01-09 08:45:54,755 WARN  [org.apa.kaf.cli.adm.AdminClientConfig] (main) These configurations '[ssl.endpoint.identification.algorithm]' were supplied but are not used yet.
+2023-01-09 08:45:55,340 INFO  [org.apa.kaf.str.StreamsConfig] (main) StreamsConfig values:
+        acceptable.recovery.lag = 10000
+        application.id = music-chart
+        application.server = localhost:9090
+        bootstrap.servers = [kafka:9092]
+...
+2023-01-09 08:46:00,952 INFO  [org.apa.kaf.str.pro.int.StreamThread] (music-chart-08427007-2905-4d91-b260-44bcb8ac5c6a-StreamThread-1) stream-thread [music-chart-08427007-2905-4d91-b260-44bcb8ac5c6a-StreamThread-1] State transition from PARTITIONS_ASSIGNED to RUNNING
+2023-01-09 08:46:00,958 INFO  [org.apa.kaf.str.KafkaStreams] (music-chart-08427007-2905-4d91-b260-44bcb8ac5c6a-StreamThread-1) stream-client [music-chart-08427007-2905-4d91-b260-44bcb8ac5c6a] State transition from REBALANCING to RUNNING
+2023-01-09 08:46:02,098 INFO  [org.acm.MusicChartTopologyProducer] (music-chart-08427007-2905-4d91-b260-44bcb8ac5c6a-StreamThread-1) music chart updated for song id 5 -&gt; PlayedSong [count=1, songName=Sometimes]
+2023-01-09 08:46:02,128 INFO  [org.acm.MusicChartTopologyProducer] (music-chart-08427007-2905-4d91-b260-44bcb8ac5c6a-StreamThread-1) music chart updated for song id 8 -&gt; PlayedSong [count=2, songName=Perfect]
+2023-01-09 08:46:02,133 INFO  [org.acm.MusicChartTopologyProducer] (music-chart-08427007-2905-4d91-b260-44bcb8ac5c6a-StreamThread-1) music chart updated for song id 7 -&gt; PlayedSong [count=2, songName=Fox On The Run]
+2023-01-09 08:46:02,135 INFO  [org.acm.MusicChartTopologyProducer] (music-chart-08427007-2905-4d91-b260-44bcb8ac5c6a-StreamThread-1) music chart updated for song id 3 -&gt; PlayedSong [count=3, songName=Still Loving You]
+2023-01-09 08:46:02,137 INFO  [org.acm.MusicChartTopologyProducer] (music-chart-08427007-2905-4d91-b260-44bcb8ac5c6a-StreamThread-1) music chart updated for song id 4 -&gt; PlayedSong [count=1, songName=Bohemian Rhapsody]
+2023-01-09 08:46:02,140 INFO  [org.acm.MusicChartTopologyProducer] (music-chart-08427007-2905-4d91-b260-44bcb8ac5c6a-StreamThread-1) music chart updated for song id 2 -&gt; PlayedSong [count=2, songName=Believe]</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="music-chart-result"><a class="anchor" href="#music-chart-result"></a>Music Chart Result</h3>
+<div class="paragraph">
+<p>If you inspect the output of Music Chart service, you see how many times a concrete song has been played, and every time a new song is played, the counter is updated.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="kstreams-cleanup"><a class="anchor" href="#kstreams-cleanup"></a>Clean Up</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Stop both services by typing <span class="keyseq"><kbd>Ctrl</kbd>+<kbd>C</kbd></span> in both terminals 1 and 2.</p>
+</div>
+<div class="paragraph">
+<p>To restart Kafka (and ZooKeeper) go to the <code>docker compose</code> terminal and stop the process by typing <span class="keyseq"><kbd>Ctrl</kbd>+<kbd>C</kbd></span>.</p>
+</div>
+<div class="paragraph">
+<p>Then run:</p>
+</div>
+<div class="listingblock lines_1">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-session hljs" data-lang="bash-session">docker compose rm
+
+? Going to remove kafka, zookeeper (y/N) -&gt; y
+[+] Running 2/0
+ ⠿ Container zookeeper  Removed
+ ⠿ Container kafka      Removed</code></pre>
+</div>
+</div>
+<div class="listingblock lines_1">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-session hljs" data-lang="bash-session">docker compose up --remove-orphans
+
+kafka      | [2022-12-15 08:59:25,688] INFO Kafka version: 3.3.1 (org.apache.kafka.common.utils.AppInfoParser)
+kafka      | [2022-12-15 08:59:25,688] INFO Kafka commitId: e23c59d00e687ff5 (org.apache.kafka.common.utils.AppInfoParser)
+kafka      | [2022-12-15 08:59:25,688] INFO Kafka startTimeMs: 1671094765681 (org.apache.kafka.common.utils.AppInfoParser)
+kafka      | [2022-12-15 08:59:25,689] INFO [KafkaServer id=0] started (kafka.server.KafkaServer)
+kafka      | [2022-12-15 08:59:25,750] INFO [BrokerToControllerChannelManager broker=0 name=forwarding]: Recorded new controller, from now on will use broker kafka:9092 (id: 0 rack: null) (kafka.server.BrokerToControllerRequestThread)
+kafka      | [2022-12-15 08:59:25,751] INFO [BrokerToControllerChannelManager broker=0 name=alterPartition]: Recorded new controller, from now on will use broker kafka:9092 (id: 0 rack: null) (kafka.server.BrokerToControllerRequestThread)</code></pre>
+</div>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="05-kstreams.html">Kafka Streams Intro</a></span>
+  <span class="next"><a href="07-kubernetes.html">Kafka in Kubernetes</a></span>
+</nav>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <a class="rhd-logo" href="https://developers.redhat.com" target="_blank"></div>
+</footer>
+<script src="../_/js/vendor/clipboard.js"></script>
+<script src="../_/js/site.js"></script>
+<script async src="../_/js/vendor/highlight.js"></script>
+  </body>
+</html>
