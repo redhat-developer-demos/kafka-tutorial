@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Optional;
 
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.reactive.messaging.Outgoing;
