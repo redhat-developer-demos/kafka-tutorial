@@ -1,8 +1,23 @@
 This tool is bundled with the Kafka container image, so let's `exec` a `bash` terminal inside the running Kafka container.
 
-[.lines_1]
-[source, bash-shell]
+[tabs]
+====
+Podman::
++
+--
 [.console-input]
+[source, bash-shell]
 ----
-docker exec -it $(docker ps -q --filter "label=com.docker.compose.service=kafka") /bin/bash
+podman exec -it kafka /bin/bash
 ----
+--
+Docker::
++
+--
+[.console-input]
+[source, bash-shell]
+----
+docker exec -it kafka /bin/bash
+----
+--
+====
