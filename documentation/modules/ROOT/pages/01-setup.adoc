@@ -32,51 +32,90 @@ include::https://raw.githubusercontent.com/redhat-developer-demos/rhd-tutorial-c
 [#kafka]
 == Run Kafka
 
-Assuming you've got https://docs.docker.com/get-docker/[Docker & Docker Compose installed].
+Assuming you've got either https://docs.docker.com/get-docker/[Docker (Desktop) & Docker Compose installed] or https://podman-desktop.io/[Podman (Desktop) & Podman Compose installed]
 
+
+[tabs]
+====
+Podman::
++
+--
 [.console-input]
 [source, bash-shell]
 ----
 cd $TUTORIAL_HOME/apps/it
-docker compose up --remove-orphans
+podman compose up
 ----
+--
+Docker::
++
+--
+[.console-input]
+[source, bash-shell]
+----
+cd $TUTORIAL_HOME/apps/it
+docker compose up
+----
+--
+====
 
 [.console-output]
 [source,bash,subs="+macros,+attributes"]
 ----
 ...
 
-kafka      | [2022-12-09 08:29:01,867] INFO [Transaction Marker Channel Manager 0]: Starting (kafka.coordinator.transaction.TransactionMarkerChannelManager)
-kafka      | [2022-12-09 08:29:01,878] INFO [MetadataCache brokerId=0] Updated cache from existing <empty> to latest FinalizedFeaturesAndEpoch(features=Map(), epoch=0). (kafka.server.metadata.ZkMetadataCache)
-kafka      | [2022-12-09 08:29:01,893] INFO [ExpirationReaper-0-AlterAcls]: Starting (kafka.server.DelayedOperationPurgatory$ExpiredOperationReaper)
-kafka      | [2022-12-09 08:29:01,929] INFO [/config/changes-event-process-thread]: Starting (kafka.common.ZkNodeChangeNotificationListener$ChangeEventProcessThread)
-kafka      | [2022-12-09 08:29:01,946] INFO [SocketServer listenerType=ZK_BROKER, nodeId=0] Enabling request processing. (kafka.network.SocketServer)
-kafka      | [2022-12-09 08:29:01,974] INFO Kafka version: 3.3.1 (org.apache.kafka.common.utils.AppInfoParser)
-kafka      | [2022-12-09 08:29:01,974] INFO Kafka commitId: e23c59d00e687ff5 (org.apache.kafka.common.utils.AppInfoParser)
-kafka      | [2022-12-09 08:29:01,974] INFO Kafka startTimeMs: 1670574541958 (org.apache.kafka.common.utils.AppInfoParser)
-kafka      | [2022-12-09 08:29:01,975] INFO [KafkaServer id=0] started (kafka.server.KafkaServer)
-kafka      | [2022-12-09 08:29:02,093] INFO [BrokerToControllerChannelManager broker=0 name=forwarding]: Recorded new controller, from now on will use broker kafka:9092 (id: 0 rack: null) (kafka.server.BrokerToControllerRequestThread)
-kafka      | [2022-12-09 08:29:02,113] INFO [BrokerToControllerChannelManager broker=0 name=alterPartition]: Recorded new controller, from now on will use broker kafka:9092 (id: 0 rack: null) (kafka.server.BrokerToControllerRequestThread)
+[2024-05-13 12:46:44,110] INFO [SocketServer listenerType=BROKER, nodeId=1] Enabling request processing. (kafka.network.SocketServer)
+[2024-05-13 12:46:44,110] INFO Awaiting socket connections on kafka:9092. (kafka.network.DataPlaneAcceptor)
+[2024-05-13 12:46:44,111] INFO Awaiting socket connections on 0.0.0.0:29092. (kafka.network.DataPlaneAcceptor)
+[2024-05-13 12:46:44,112] INFO [BrokerServer id=1] Waiting for all of the authorizer futures to be completed (kafka.server.BrokerServer)
+[2024-05-13 12:46:44,112] INFO [BrokerServer id=1] Finished waiting for all of the authorizer futures to be completed (kafka.server.BrokerServer)
+[2024-05-13 12:46:44,112] INFO [BrokerServer id=1] Waiting for all of the SocketServer Acceptors to be started (kafka.server.BrokerServer)
+[2024-05-13 12:46:44,112] INFO [BrokerServer id=1] Finished waiting for all of the SocketServer Acceptors to be started (kafka.server.BrokerServer)
+[2024-05-13 12:46:44,112] INFO [BrokerServer id=1] Transition from STARTING to STARTED (kafka.server.BrokerServer)
+[2024-05-13 12:46:44,112] INFO Kafka version: 3.7.0 (org.apache.kafka.common.utils.AppInfoParser)
+[2024-05-13 12:46:44,112] INFO Kafka commitId: 2ae524ed625438c5 (org.apache.kafka.common.utils.AppInfoParser)
+[2024-05-13 12:46:44,112] INFO Kafka startTimeMs: 1715604404112 (org.apache.kafka.common.utils.AppInfoParser)
+[2024-05-13 12:46:44,113] INFO [KafkaRaftServer nodeId=1] Kafka Server started (kafka.server.KafkaRaftServer)
 
 ----
 
 Open a new terminal to run Kafka commands:
 
-Verify that Zookeeper and Apache Kafka containers are up and running:
+Verify that the Apache Kafka container is up and running:
 
+[tabs]
+====
+Podman::
++
+--
+[.console-input]
+[source, bash-shell]
+----
+podman ps
+----
+[.console-output]
+[source,bash,subs="+macros,+attributes"]
+----
+CONTAINER ID  IMAGE                                     COMMAND               CREATED             STATUS             PORTS                                             NAMES
+8558952ed132  quay.io/strimzi/kafka:0.40.0-kafka-3.7.0  sh -c ./bin/kafka...  About a minute ago  Up About a minute  0.0.0.0:9092->9092/tcp, 0.0.0.0:29092->29092/tcp  kafka
+----
+--
+Docker::
++
+--
 [.console-input]
 [source, bash-shell]
 ----
 docker ps
 ----
-
 [.console-output]
 [source,bash,subs="+macros,+attributes"]
 ----
 CONTAINER ID   IMAGE                                      COMMAND                  CREATED         STATUS         PORTS                                              NAMES
-0d4bc6ec2ddf   quay.io/strimzi/kafka:0.32.0-kafka-3.3.1   "sh -c 'bin/kafka-se…"   2 minutes ago   Up 2 minutes   0.0.0.0:9092->9092/tcp, 0.0.0.0:29092->29092/tcp   kafka
-d8fdbab971c6   quay.io/strimzi/kafka:0.32.0-kafka-3.3.1   "sh -c 'bin/zookeepe…"   2 minutes ago   Up 2 minutes   0.0.0.0:2181->2181/tcp                             zookeeper
+0d4bc6ec2ddf   quay.io/strimzi/kafka:0.40.0-kafka-3.7.0  "sh -c ./bin/kafka..."   2 minutes ago   Up 2 minutes   0.0.0.0:9092->9092/tcp, 0.0.0.0:29092->29092/tcp   kafka
 ----
+--
+====
 
 IMPORTANT: Notice that the Kafka container is exposing two ports to outside. The reason is that Kafka requires one port for being accessed from your host machine, and another one for being accessed from the Docker host machine. You can find a full explanation of this at xref:08-kafka-listeners.adoc[Kafka Listeners].
 
@@ -101,6 +140,23 @@ Metadata for all topics (from broker 0: localhost:29092/0):
  0 topics:
 ----
 --
+kcat in Podman::
++
+--
+[.console-input]
+[source, bash-shell]
+----
+podman run --rm -it --network=kafka-tutorial edenhill/kcat:1.7.1 -b kafka:9092 -L
+----
+[.console-output]
+[source,bash,subs="+macros,+attributes"]
+----
+Metadata for all topics (from broker 1: kafka:9092/1):
+ 1 brokers:
+  broker 1 at kafka:9092 (controller)
+ 0 topics:
+----
+--
 kcat in Docker::
 +
 --
@@ -112,9 +168,9 @@ docker run --rm -it --network=kafka-tutorial edenhill/kcat:1.7.1 -b kafka:9092 -
 [.console-output]
 [source,bash,subs="+macros,+attributes"]
 ----
-Metadata for all topics (from broker 0: kafka:9092/0):
+Metadata for all topics (from broker 1: kafka:9092/1):
  1 brokers:
-  broker 0 at kafka:9092 (controller)
+  broker 1 at kafka:9092 (controller)
  0 topics:
 ----
 --
