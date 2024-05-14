@@ -81,6 +81,15 @@ kcat::
 kcat -b localhost:29092 -t songs -P -l -K: update_songs
 ----
 --
+kcat in Podman::
++
+--
+[.console-input]
+[source, bash-shell]
+----
+podman run --rm -it --network=kafka-tutorial -v $(pwd)/documentation/modules/ROOT/examples/update_songs.json:/home/update_songs edenhill/kcat:1.7.1 kcat -b kafka:9092 -t songs -P -l -K: /home/update_songs
+----
+--
 kcat in Docker::
 +
 --
@@ -103,6 +112,15 @@ kcat::
 [source, bash-shell]
 ----
 kcat -b localhost:29092 -t songs -C -K:
+----
+--
+kcat in Podman::
++
+--
+[.console-input]
+[source, bash-shell]
+----
+podman run --rm -it --network=kafka-tutorial edenhill/kcat:1.7.1 kcat -b kafka:9092 -t songs -C -K:
 ----
 --
 kcat in Docker::
@@ -172,6 +190,15 @@ kcat::
 kcat -b localhost:29092 -t songs -P -l -K: update2_songs
 ----
 --
+kcat in Podman::
++
+--
+[.console-input]
+[source, bash-shell]
+----
+podman run --rm -it --network=kafka-tutorial -v $(pwd)/documentation/modules/ROOT/examples/update2_songs.json:/home/update2_songs edenhill/kcat:1.7.1 kcat -b kafka:9092 -t songs -P -l -K: /home/update2_songs
+----
+--
 kcat in Docker::
 +
 --
@@ -196,13 +223,22 @@ kcat::
 kcat -b localhost:29092 -t songs -C -K:
 ----
 --
+kcat in Podman::
++
+--
+[.console-input]
+[source, bash-shell]
+----
+podman run --rm -it --network=kafka-tutorial edenhill/kcat:1.7.1 kcat -b kafka:9092 -t songs -C -K:
+----
+--
 kcat in Docker::
 +
 --
 [.console-input]
 [source, bash-shell]
 ----
-docker run --rm -it --network=kafka-tutorial edenhill/kcat:1.7.1 kcat -b kafka:29092 -t songs -C -K:
+docker run --rm -it --network=kafka-tutorial edenhill/kcat:1.7.1 kcat -b kafka:9092 -t songs -C -K:
 ----
 --
 ====
@@ -311,6 +347,15 @@ kcat::
 kcat -b localhost:29092 -t played -P -l -K: apps/windowing/first-batch.json
 ----
 --
+kcat in Podman::
++
+--
+[.console-input]
+[source, bash-shell]
+----
+podman run --rm -it --network=kafka-tutorial -v $(pwd)/apps/windowing/first-batch.json:/home/first-batch edenhill/kcat:1.7.1 kcat -b kafka:9092 -t played -P -l -K: /home/first-batch
+----
+--
 kcat in Docker::
 +
 --
@@ -355,6 +400,15 @@ kcat::
 kcat -b localhost:29092 -t played -P -l -K: apps/windowing/first-batch.json
 ----
 --
+kcat in Podman::
++
+--
+[.console-input]
+[source, bash-shell]
+----
+podman run --rm -it --network=kafka-tutorial -v $(pwd)/apps/windowing/first-batch.json:/home/first-batch edenhill/kcat:1.7.1 kcat -b kafka:9092 -t played -P -l -K: /home/first-batch
+----
+--
 kcat in Docker::
 +
 --
@@ -392,6 +446,15 @@ kcat::
 [source, bash-shell]
 ----
 kcat -b localhost:29092 -t played -P -l -K: apps/windowing/first-batch.json
+----
+--
+kcat in Podman::
++
+--
+[.console-input]
+[source, bash-shell]
+----
+podman run --rm -it --network=kafka-tutorial -v $(pwd)/apps/windowing/first-batch.json:/home/first-batch edenhill/kcat:1.7.1 kcat -b kafka:9092 -t played -P -l -K: /home/first-batch
 ----
 --
 kcat in Docker::
@@ -450,6 +513,15 @@ kcat::
 [source, bash-shell]
 ----
 kcat -b localhost:29092 -t played -P -l -K: apps/windowing/first-batch.json
+----
+--
+kcat in Podman::
++
+--
+[.console-input]
+[source, bash-shell]
+----
+podman run --rm -it --network=kafka-tutorial -v $(pwd)/apps/windowing/first-batch.json:/home/first-batch edenhill/kcat:1.7.1 kcat -b kafka:9092 -t played -P -l -K: /home/first-batch
 ----
 --
 kcat in Docker::

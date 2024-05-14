@@ -1,1 +1,1 @@
-Remember you need to have both, ZooKeeper and Apache Kafka correctly configured as well as up and running. If not, you can follow the <<Setup Kafka>> section to learn how to do it using _docker compose_.
+NOTE: Remember you need to have Apache Kafka successfully up and running. If not, you can follow the xref:01-setup.adoc#kafka[Kafka Setup] section to learn how to do it using `podman | docker compose`.

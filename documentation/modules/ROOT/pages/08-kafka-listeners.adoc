@@ -39,37 +39,30 @@ kcat::
 ----
 kcat -b localhost:29092 -L
 ----
---
-kcat in Docker::
-+
---
-[.console-input]
-[source, bash-shell]
-----
-docker run --rm -it --network=kafka-tutorial edenhill/kcat:1.7.1 -b localhost:29092 -L
-----
---
-====
-
 [.console-output]
 [source, bash-shell]
 ----
-Metadata for all topics (from broker 0: localhost:29092/0):
+Metadata for all topics (from broker 1: localhost:29092/1):
  1 brokers:
-  broker 0 at localhost:29092 (controller)
+  broker 1 at localhost:29092 (controller)
  0 topics:
 ----
-
-
-[tabs]
-====
-kcat::
+--
+kcat in Podman::
 +
 --
 [.console-input]
 [source, bash-shell]
 ----
-kcat -b localhost:9092 -L
+podman run --rm -it --network=kafka-tutorial edenhill/kcat:1.7.1 -b kafka:9092 -L
+----
+[.console-output]
+[source, bash-shell]
+----
+Metadata for all topics (from broker 1: kafka:9092/1):
+ 1 brokers:
+  broker 1 at kafka:9092 (controller)
+ 0 topics:
 ----
 --
 kcat in Docker::
@@ -78,16 +71,15 @@ kcat in Docker::
 [.console-input]
 [source, bash-shell]
 ----
-docker run --rm -it --network=kafka-tutorial edenhill/kcat:1.7.1 -b localhost:9092 -L
+docker run --rm -it --network=kafka-tutorial edenhill/kcat:1.7.1 -b kafka:9092 -L
 ----
---
-====
 [.console-output]
 [source, bash-shell]
 ----
-Metadata for all topics (from broker -1: localhost:9092/bootstrap):
+Metadata for all topics (from broker 1: kafka:9092/1):
  1 brokers:
-  broker 0 at kafka:9092 (controller) // <1>
+  broker 1 at kafka:9092 (controller)
  0 topics:
 ----
-<1> Notice that when the leader is queried using port `9092`, then the hostname returned is `kafka:9092`.
+--
+====

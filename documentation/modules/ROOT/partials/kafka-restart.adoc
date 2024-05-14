@@ -1,27 +1,87 @@
-To restart Kafka (and ZooKeeper) go to the `docker compose` terminal and stop the process by typing kbd:[Ctrl + C].
+To restart Kafka go to the `podman | docker compose` terminal and stop the process by typing kbd:[Ctrl + C].
 
 Then run:
 
-[.lines_1]
-[source, bash-session]
-----
-docker compose rm 
 
-? Going to remove kafka, zookeeper (y/N) -> y
-[+] Running 2/0
- ⠿ Container zookeeper  Removed
- ⠿ Container kafka      Removed
+[tabs]
+====
+Podman::
++
+--
+[.console-input]
+[source, bash-shell,subs="+macros,+attributes"]
 ----
-
-[.lines_1]
-[source, bash-session]
+podman compose down
 ----
-docker compose up --remove-orphans
-
-kafka      | [2022-12-15 08:59:25,688] INFO Kafka version: 3.3.1 (org.apache.kafka.common.utils.AppInfoParser)
-kafka      | [2022-12-15 08:59:25,688] INFO Kafka commitId: e23c59d00e687ff5 (org.apache.kafka.common.utils.AppInfoParser)
-kafka      | [2022-12-15 08:59:25,688] INFO Kafka startTimeMs: 1671094765681 (org.apache.kafka.common.utils.AppInfoParser)
-kafka      | [2022-12-15 08:59:25,689] INFO [KafkaServer id=0] started (kafka.server.KafkaServer)
-kafka      | [2022-12-15 08:59:25,750] INFO [BrokerToControllerChannelManager broker=0 name=forwarding]: Recorded new controller, from now on will use broker kafka:9092 (id: 0 rack: null) (kafka.server.BrokerToControllerRequestThread)
-kafka      | [2022-12-15 08:59:25,751] INFO [BrokerToControllerChannelManager broker=0 name=alterPartition]: Recorded new controller, from now on will use broker kafka:9092 (id: 0 rack: null) (kafka.server.BrokerToControllerRequestThread)
+[.console-output]
+[source, bash-shell,subs="+macros,+attributes"]
 ----
+podman-compose version: 1.0.6
+['podman', '--version', '']
+using podman version: 5.0.1
+** excluding:  set()
+podman stop -t 10 kafka
+kafka
+exit code: 0
+podman rm kafka
+kafka
+exit code: 0
+----
+[.console-input]
+[source, bash-shell,subs="+macros,+attributes"]
+----
+podman compose up
+----
+[.console-output]
+[source, bash-shell,subs="+macros,+attributes"]
+----
+...
+[2024-05-13 15:36:17,976] INFO Awaiting socket connections on kafka:9092. (kafka.network.DataPlaneAcceptor)
+[2024-05-13 15:36:17,976] INFO Awaiting socket connections on 0.0.0.0:29092. (kafka.network.DataPlaneAcceptor)
+[2024-05-13 15:36:17,977] INFO [BrokerServer id=1] Waiting for all of the authorizer futures to be completed (kafka.server.BrokerServer)
+[2024-05-13 15:36:17,977] INFO [BrokerServer id=1] Finished waiting for all of the authorizer futures to be completed (kafka.server.BrokerServer)
+[2024-05-13 15:36:17,978] INFO [BrokerServer id=1] Waiting for all of the SocketServer Acceptors to be started (kafka.server.BrokerServer)
+[2024-05-13 15:36:17,978] INFO [BrokerServer id=1] Finished waiting for all of the SocketServer Acceptors to be started (kafka.server.BrokerServer)
+[2024-05-13 15:36:17,978] INFO [BrokerServer id=1] Transition from STARTING to STARTED (kafka.server.BrokerServer)
+[2024-05-13 15:36:17,978] INFO Kafka version: 3.7.0 (org.apache.kafka.common.utils.AppInfoParser)
+[2024-05-13 15:36:17,978] INFO Kafka commitId: 2ae524ed625438c5 (org.apache.kafka.common.utils.AppInfoParser)
+[2024-05-13 15:36:17,978] INFO Kafka startTimeMs: 1715614577978 (org.apache.kafka.common.utils.AppInfoParser)
+[2024-05-13 15:36:17,978] INFO [KafkaRaftServer nodeId=1] Kafka Server started (kafka.server.KafkaRaftServer)
+----
+--
+Docker::
++
+--
+[.console-input]
+[source, bash-shell,subs="+macros,+attributes"]
+----
+docker compose down
+----
+[.console-output]
+[source, bash-shell,subs="+macros,+attributes"]
+----
+...
+----
+[.console-input]
+[source, bash-shell,subs="+macros,+attributes"]
+----
+docker compose up
+----
+[.console-output]
+[source, bash-shell,subs="+macros,+attributes"]
+----
+...
+[2024-05-13 15:36:17,976] INFO Awaiting socket connections on kafka:9092. (kafka.network.DataPlaneAcceptor)
+[2024-05-13 15:36:17,976] INFO Awaiting socket connections on 0.0.0.0:29092. (kafka.network.DataPlaneAcceptor)
+[2024-05-13 15:36:17,977] INFO [BrokerServer id=1] Waiting for all of the authorizer futures to be completed (kafka.server.BrokerServer)
+[2024-05-13 15:36:17,977] INFO [BrokerServer id=1] Finished waiting for all of the authorizer futures to be completed (kafka.server.BrokerServer)
+[2024-05-13 15:36:17,978] INFO [BrokerServer id=1] Waiting for all of the SocketServer Acceptors to be started (kafka.server.BrokerServer)
+[2024-05-13 15:36:17,978] INFO [BrokerServer id=1] Finished waiting for all of the SocketServer Acceptors to be started (kafka.server.BrokerServer)
+[2024-05-13 15:36:17,978] INFO [BrokerServer id=1] Transition from STARTING to STARTED (kafka.server.BrokerServer)
+[2024-05-13 15:36:17,978] INFO Kafka version: 3.7.0 (org.apache.kafka.common.utils.AppInfoParser)
+[2024-05-13 15:36:17,978] INFO Kafka commitId: 2ae524ed625438c5 (org.apache.kafka.common.utils.AppInfoParser)
+[2024-05-13 15:36:17,978] INFO Kafka startTimeMs: 1715614577978 (org.apache.kafka.common.utils.AppInfoParser)
+[2024-05-13 15:36:17,978] INFO [KafkaRaftServer nodeId=1] Kafka Server started (kafka.server.KafkaRaftServer)
+----
+--
+====

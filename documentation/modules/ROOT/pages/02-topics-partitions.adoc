@@ -82,16 +82,24 @@ Inside the container, create a topic with the name `songs` having a single parti
 [source, bash-shell]
 ----
 ./bin/kafka-topics.sh --create --bootstrap-server kafka:9092 --replication-factor 1 --partitions 1 --topic songs
+----
+[.console-output]
+[source,bash,subs="+macros,+attributes"]
+----
+Created topic songs.
+----
+[.console-input]
+[source, bash-shell]
+----
 ./bin/kafka-topics.sh --list --bootstrap-server kafka:9092
 ----
-
 [.console-output]
 [source,bash,subs="+macros,+attributes"]
 ----
 songs
 ----
 
-Now that you have valdiated the topic exists you can run the `exit` to leave the container
+Now that you have validated the topic exists you can run `exit` to leave the container
 
 [.console-input]
 [source, bash-shell]
@@ -117,12 +125,31 @@ kcat -b localhost:29092 -L
 [.console-output]
 [source, bash-shell]
 ----
-Metadata for all topics (from broker 0: localhost:29092/0):
+Metadata for all topics (from broker 1: localhost:29092/1):
  1 brokers:
-  broker 0 at localhost:29092 (controller)
+  broker 1 at localhost:29092 (controller)
  1 topics:
   topic "songs" with 1 partitions:
-    partition 0, leader 0, replicas: 0, isrs: 0
+    partition 0, leader 1, replicas: 1, isrs: 1
+----
+--
+kcat in Podman::
++
+--
+[.console-input]
+[source, bash-shell]
+----
+podman run --rm -it --network=kafka-tutorial edenhill/kcat:1.7.1 kcat -b kafka:9092 -L
+----
+[.console-output]
+[source, bash-shell]
+----
+Metadata for all topics (from broker 1: kafka:9092/1):
+ 1 brokers:
+  broker 1 at kafka:9092 (controller)
+ 1 topics:
+  topic "songs" with 1 partitions:
+    partition 0, leader 1, replicas: 1, isrs: 1
 ----
 --
 kcat in Docker::
@@ -136,12 +163,12 @@ docker run --rm -it --network=kafka-tutorial edenhill/kcat:1.7.1 kcat -b kafka:9
 [.console-output]
 [source, bash-shell]
 ----
-Metadata for all topics (from broker 0: kafka:9092/0):
+Metadata for all topics (from broker 1: kafka:9092/1):
  1 brokers:
-  broker 0 at kafka:9092 (controller)
+  broker 1 at kafka:9092 (controller)
  1 topics:
   topic "songs" with 1 partitions:
-    partition 0, leader 0, replicas: 0, isrs: 0
+    partition 0, leader 1, replicas: 1, isrs: 1
 ----
 --
 ====

@@ -55,6 +55,15 @@ kcat::
 kcat -b localhost:29092 -t songs -C -K:
 ----
 --
+kcat in Podman::
++
+--
+[.console-input]
+[source, bash-shell]
+----
+podman run --rm -it --network=kafka-tutorial edenhill/kcat:1.7.1 kcat -b kafka:9092 -t songs -C -K:
+----
+--
 kcat in Docker::
 +
 --
@@ -94,6 +103,15 @@ kcat::
 [source, bash-shell]
 ----
 kcat -b localhost:29092 -t songs -P -l -K: initial_songs
+----
+--
+kcat in Podman::
++
+--
+[.console-input]
+[source, bash-shell]
+----
+podman run --rm -it --network=kafka-tutorial -v $(pwd)/documentation/modules/ROOT/examples/initial_songs.json:/home/initial_songs edenhill/kcat:1.7.1 kcat -b kafka:9092 -t songs -P -l -K: /home/initial_songs
 ----
 --
 kcat in Docker::
@@ -142,6 +160,15 @@ kcat::
 kcat -b localhost:29092 -t songs -C -K:
 ----
 --
+kcat in Podman::
++
+--
+[.console-input]
+[source, bash-shell]
+----
+podman run --rm -it --network=kafka-tutorial edenhill/kcat:1.7.1 kcat -b kafka:9092 -t songs -C -K:
+----
+--
 kcat in Docker::
 +
 --
@@ -179,6 +206,15 @@ kcat -b localhost:29092 -t songs -o 1 -C -K:
 
 ----
 --
+kcat in Podman::
++
+--
+[.console-input]
+[source, bash-shell]
+----
+podman run --rm -it --network=kafka-tutorial edenhill/kcat:1.7.1 kcat -b kafka:9092 -t songs -o 1 -C -K:
+----
+--
 kcat in Docker::
 +
 --
@@ -188,7 +224,6 @@ kcat in Docker::
 docker run --rm -it --network=kafka-tutorial edenhill/kcat:1.7.1 kcat -b kafka:9092 -t songs -o 1 -C -K:
 ----
 --
-
 ====
 
 [.console-output]
@@ -253,6 +288,15 @@ kcat::
 kcat -b localhost:29092 -t songs -C -K:
 ----
 --
+kcat in Podman::
++
+--
+[.console-input]
+[source, bash-shell]
+----
+podman run --rm -it --network=kafka-tutorial edenhill/kcat:1.7.1 kcat -b kafka:9092 -t songs -C -K:
+----
+--
 kcat in Docker::
 +
 --
@@ -273,7 +317,7 @@ The important part is the last line, notice that it returns no messages, but the
 
 Also note, that Kafka brokers have a configuration for `log.retention.check.interval.ms` and this setting must be lower than/equal to a topic's `retention.ms`, otherwise cleaning out offsets will not be effective "immeadiately" but only after the log cleaner ran to do its job. In other words, it may take longer (up to `log.retention.check.interval.ms`) before you can actually observe the data retention happening in the corresponding Kafka topic.
 
-Change retention time to the default one by running in the third terminal (the one you did `docker exec`), the following command:
+Change retention time to the default one by running in the third terminal (the one you did either `podman | docker exec ...`) the following command:
 
 [.console-input]
 [source, bash-shell]
