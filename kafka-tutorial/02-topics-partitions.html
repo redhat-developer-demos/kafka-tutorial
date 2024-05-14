@@ -458,9 +458,32 @@ Although you can configure Apache Kafka to work with larger messages, the defaul
 <div class="paragraph">
 <p>This tool is bundled with the Kafka container image, so let&#8217;s <code>exec</code> a <code>bash</code> terminal inside the running Kafka container.</p>
 </div>
-<div class="listingblock lines_1 console-input">
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset1_podman"></a>Podman</p>
+</li>
+<li>
+<p><a id="tabset1_docker"></a>Docker</p>
+</li>
+</ul>
+</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker exec -it $(docker ps -q --filter "label=com.docker.compose.service=kafka") /bin/bash</code></pre>
+<div class="tab-pane" aria-labelledby="tabset1_podman">
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">podman exec -it kafka /bin/bash</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset1_docker">
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker exec -it kafka /bin/bash</code></pre>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="paragraph">
@@ -468,8 +491,17 @@ Although you can configure Apache Kafka to work with larger messages, the defaul
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">./bin/kafka-topics.sh --create --bootstrap-server kafka:9092 --replication-factor 1 --partitions 1 --topic songs
-./bin/kafka-topics.sh --list --bootstrap-server kafka:9092</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">./bin/kafka-topics.sh --create --bootstrap-server kafka:9092 --replication-factor 1 --partitions 1 --topic songs</code></pre>
+</div>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">Created topic songs.</code></pre>
+</div>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">./bin/kafka-topics.sh --list --bootstrap-server kafka:9092</code></pre>
 </div>
 </div>
 <div class="listingblock console-output">
@@ -478,7 +510,7 @@ Although you can configure Apache Kafka to work with larger messages, the defaul
 </div>
 </div>
 <div class="paragraph">
-<p>Now that you have valdiated the topic exists you can run the <code>exit</code> to leave the container</p>
+<p>Now that you have validated the topic exists you can run <code>exit</code> to leave the container</p>
 </div>
 <div class="listingblock console-input">
 <div class="content">
@@ -497,15 +529,18 @@ Although you can configure Apache Kafka to work with larger messages, the defaul
 <div class="ulist tabs">
 <ul>
 <li>
-<p><a id="tabset1_kcat"></a>kcat</p>
+<p><a id="tabset2_kcat"></a>kcat</p>
 </li>
 <li>
-<p><a id="tabset1_kcat-in-docker"></a>kcat in Docker</p>
+<p><a id="tabset2_kcat-in-podman"></a>kcat in Podman</p>
+</li>
+<li>
+<p><a id="tabset2_kcat-in-docker"></a>kcat in Docker</p>
 </li>
 </ul>
 </div>
 <div class="content">
-<div class="tab-pane" aria-labelledby="tabset1_kcat">
+<div class="tab-pane" aria-labelledby="tabset2_kcat">
 <div class="listingblock console-input">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">kcat -b localhost:29092 -L</code></pre>
@@ -513,16 +548,33 @@ Although you can configure Apache Kafka to work with larger messages, the defaul
 </div>
 <div class="listingblock console-output">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">Metadata for all topics (from broker 0: localhost:29092/0):
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">Metadata for all topics (from broker 1: localhost:29092/1):
  1 brokers:
-  broker 0 at localhost:29092 (controller)
+  broker 1 at localhost:29092 (controller)
  1 topics:
   topic "songs" with 1 partitions:
-    partition 0, leader 0, replicas: 0, isrs: 0</code></pre>
+    partition 0, leader 1, replicas: 1, isrs: 1</code></pre>
 </div>
 </div>
 </div>
-<div class="tab-pane" aria-labelledby="tabset1_kcat-in-docker">
+<div class="tab-pane" aria-labelledby="tabset2_kcat-in-podman">
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">podman run --rm -it --network=kafka-tutorial edenhill/kcat:1.7.1 kcat -b kafka:9092 -L</code></pre>
+</div>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">Metadata for all topics (from broker 1: kafka:9092/1):
+ 1 brokers:
+  broker 1 at kafka:9092 (controller)
+ 1 topics:
+  topic "songs" with 1 partitions:
+    partition 0, leader 1, replicas: 1, isrs: 1</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset2_kcat-in-docker">
 <div class="listingblock console-input">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker run --rm -it --network=kafka-tutorial edenhill/kcat:1.7.1 kcat -b kafka:9092 -L</code></pre>
@@ -530,12 +582,12 @@ Although you can configure Apache Kafka to work with larger messages, the defaul
 </div>
 <div class="listingblock console-output">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">Metadata for all topics (from broker 0: kafka:9092/0):
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">Metadata for all topics (from broker 1: kafka:9092/1):
  1 brokers:
-  broker 0 at kafka:9092 (controller)
+  broker 1 at kafka:9092 (controller)
  1 topics:
   topic "songs" with 1 partitions:
-    partition 0, leader 0, replicas: 0, isrs: 0</code></pre>
+    partition 0, leader 1, replicas: 1, isrs: 1</code></pre>
 </div>
 </div>
 </div>

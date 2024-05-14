@@ -360,6 +360,9 @@ Well, it depends on the scenario:</p>
 <p><a id="tabset1_kcat"></a>kcat</p>
 </li>
 <li>
+<p><a id="tabset1_kcat-in-podman"></a>kcat in Podman</p>
+</li>
+<li>
 <p><a id="tabset1_kcat-in-docker"></a>kcat in Docker</p>
 </li>
 </ul>
@@ -371,67 +374,46 @@ Well, it depends on the scenario:</p>
 <pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">kcat -b localhost:29092 -L</code></pre>
 </div>
 </div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">Metadata for all topics (from broker 1: localhost:29092/1):
+ 1 brokers:
+  broker 1 at localhost:29092 (controller)
+ 0 topics:</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset1_kcat-in-podman">
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">podman run --rm -it --network=kafka-tutorial edenhill/kcat:1.7.1 -b kafka:9092 -L</code></pre>
+</div>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">Metadata for all topics (from broker 1: kafka:9092/1):
+ 1 brokers:
+  broker 1 at kafka:9092 (controller)
+ 0 topics:</code></pre>
+</div>
+</div>
 </div>
 <div class="tab-pane" aria-labelledby="tabset1_kcat-in-docker">
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker run --rm -it --network=kafka-tutorial edenhill/kcat:1.7.1 -b localhost:29092 -L</code></pre>
-</div>
-</div>
-</div>
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker run --rm -it --network=kafka-tutorial edenhill/kcat:1.7.1 -b kafka:9092 -L</code></pre>
 </div>
 </div>
 <div class="listingblock console-output">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">Metadata for all topics (from broker 0: localhost:29092/0):
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">Metadata for all topics (from broker 1: kafka:9092/1):
  1 brokers:
-  broker 0 at localhost:29092 (controller)
+  broker 1 at kafka:9092 (controller)
  0 topics:</code></pre>
 </div>
 </div>
-<div class="tabset is-loading">
-<div class="ulist tabs">
-<ul>
-<li>
-<p><a id="tabset2_kcat"></a>kcat</p>
-</li>
-<li>
-<p><a id="tabset2_kcat-in-docker"></a>kcat in Docker</p>
-</li>
-</ul>
-</div>
-<div class="content">
-<div class="tab-pane" aria-labelledby="tabset2_kcat">
-<div class="listingblock console-input">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">kcat -b localhost:9092 -L</code></pre>
 </div>
 </div>
-</div>
-<div class="tab-pane" aria-labelledby="tabset2_kcat-in-docker">
-<div class="listingblock console-input">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker run --rm -it --network=kafka-tutorial edenhill/kcat:1.7.1 -b localhost:9092 -L</code></pre>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="listingblock console-output">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">Metadata for all topics (from broker -1: localhost:9092/bootstrap):
- 1 brokers:
-  broker 0 at kafka:9092 (controller) <i class="conum" data-value="1"></i><b>(1)</b>
- 0 topics:</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Notice that when the leader is queried using port <code>9092</code>, then the hostname returned is <code>kafka:9092</code>.</td>
-</tr>
-</table>
 </div>
 <nav class="pagination">
   <span class="prev"><a href="04-java-consumer-producer.html">Developing Consumers and Producers in Java</a></span>

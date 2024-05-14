@@ -315,8 +315,17 @@ This service is not using Kafka Streams but instead just uses the Kafka producer
 <div class="paragraph">
 <p>The second service is a Kafka Stream application that joins the <code>songs</code> and <code>played-songs</code> topics, to get the song name. Also it computes the number of times that each particular song has been played by aggregating the joined records based on the song&#8217;s id.</p>
 </div>
-<div class="paragraph">
-<p>Remember you need to have both, ZooKeeper and Apache Kafka correctly configured as well as up and running. If not, you can follow the <a href="#Setup Kafka">[Setup Kafka]</a> section to learn how to do it using <em>docker compose</em>.</p>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Remember you need to have Apache Kafka successfully up and running. If not, you can follow the <a href="01-setup.html#kafka" class="xref page">Kafka Setup</a> section to learn how to do it using <code>podman | docker compose</code>.
+</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
 <p>You need to open 2 terminal windows to run this example, one for each service.</p>
@@ -332,120 +341,131 @@ This service is not using Kafka Streams but instead just uses the Kafka producer
 <div class="sect2">
 <h3 id="deploying-player-app"><a class="anchor" href="#deploying-player-app"></a>Deploying Player Service</h3>
 <div class="paragraph">
-<p>In this case, the Quarkus service is deployed to produce played songs.
-You&#8217;ve got two options, using the existing Docker image or building the service and image yourself. Note, that due to the configured Quarkus extension <code>quarkus-container-image-jib</code> the container image will be build automatically when you trigger the local build.
-In terminal 1, run one of these two options:</p>
+<p>In this case, the Quarkus service is deployed to produce played songs.</p>
+</div>
+<div class="paragraph">
+<p>You&#8217;ve got different options, using either pre-built container images run with Podman / Docker or building the application and image on your local machine from the sources.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Due to the configured Quarkus extension <code>quarkus-container-image-jib</code> the container image will be built automatically when you trigger the local build.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>In terminal 1, run one of these two options:</p>
 </div>
 <div class="tabset is-loading">
 <div class="ulist tabs">
 <ul>
 <li>
-<p><a id="tabset1_building-amp-run"></a>Building &amp; Run</p>
+<p><a id="tabset1_optional-local-build-amp-run-podman"></a>[Optional] Local Build &amp; Run Podman</p>
 </li>
 <li>
-<p><a id="tabset1_docker"></a>Docker</p>
+<p><a id="tabset1_optional-local-build-amp-run-docker"></a>[Optional] Local Build &amp; Run Docker</p>
 </li>
 </ul>
 </div>
 <div class="content">
-<div class="tab-pane" aria-labelledby="tabset1_building-amp-run">
+<div class="tab-pane" aria-labelledby="tabset1_optional-local-build-amp-run-podman">
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">cd $TUTORIAL_HOME/apps/player-app/quarkus/player-app
-./mvnw clean package</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">cd $TUTORIAL_HOME/apps/player-app/quarkus/player-app</code></pre>
 </div>
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker run --rm --network=kafka-tutorial quay.io/rhdevelopers/kafka-tutorial-player-app-quarkus:v23.01</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">./mvnw clean package -DskipTests</code></pre>
 </div>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">podman run --rm -it --network=kafka-tutorial quay.io/rhdevelopers/kafka-tutorial-player-app-quarkus:v24.05</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset1_optional-local-build-amp-run-docker">
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">cd $TUTORIAL_HOME/apps/player-app/quarkus/player-app</code></pre>
+</div>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">./mvnw clean package -DskipTests</code></pre>
+</div>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker run --rm -it --network=kafka-tutorial quay.io/rhdevelopers/kafka-tutorial-player-app-quarkus:v24.05</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset2_pre-built-image-with-podman"></a>Pre-built image with Podman</p>
+</li>
+<li>
+<p><a id="tabset2_pre-built-image-with-docker"></a>Pre-built image with Docker</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset2_pre-built-image-with-podman">
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">podman run --rm -it --network=kafka-tutorial quay.io/rhdevelopers/kafka-tutorial-player-app-quarkus:v24.05-xa</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset2_pre-built-image-with-docker">
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker run --rm -it --network=kafka-tutorial quay.io/rhdevelopers/kafka-tutorial-player-app-quarkus:v24.05-xa</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>Console output when running the containerized application looks as follows:</p>
 </div>
 <div class="listingblock console-output">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">__  ____  __  _____   ___  __ ____  ______
- --/ __ \/ / / / _ | / _ \/ //_/ / / / __/
- -/ /_/ / /_/ / __ |/ , _/ ,&lt; / /_/ /\ \
---\___\_\____/_/ |_/_/|_/_/|_|\____/___/
-2023-01-09 08:45:18,099 INFO  [io.sma.rea.mes.kafka] (smallrye-kafka-producer-thread-0) SRMSG18258: Kafka producer kafka-producer-songs, connected to Kafka brokers 'kafka:9092', is configured to write records to 'songs'
-2023-01-09 08:45:18,471 INFO  [io.sma.rea.mes.kafka] (smallrye-kafka-producer-thread-1) SRMSG18258: Kafka producer kafka-producer-played-songs, connected to Kafka brokers 'kafka:9092', is configured to write records to 'played-songs'
-2023-01-09 08:45:18,573 INFO  [org.acm.PlaySongsGenerator] (main) creating song reference data
-2023-01-09 08:45:18,691 INFO  [org.acm.PlaySongsGenerator] (main) starting to play random songs every 2500 ms
-2023-01-09 08:45:18,739 INFO  [org.acm.PlaySongsGenerator] (main) producing -&gt; Song[id=1, name=The Good The Bad And The Ugly, author=Ennio Morricone]
-2023-01-09 08:45:19,675 INFO  [org.acm.PlaySongsGenerator] (main) producing -&gt; Song[id=2, name=Believe, author=Cher]
-2023-01-09 08:45:19,686 INFO  [org.acm.PlaySongsGenerator] (main) producing -&gt; Song[id=3, name=Still Loving You, author=Scorpions]
-2023-01-09 08:45:19,689 INFO  [org.acm.PlaySongsGenerator] (main) producing -&gt; Song[id=4, name=Bohemian Rhapsody, author=Queen]
-2023-01-09 08:45:19,691 INFO  [org.acm.PlaySongsGenerator] (main) producing -&gt; Song[id=5, name=Sometimes, author=James]
-2023-01-09 08:45:19,692 INFO  [org.acm.PlaySongsGenerator] (main) producing -&gt; Song[id=6, name=Into The Unknown, author=Frozen II]
-2023-01-09 08:45:19,694 INFO  [org.acm.PlaySongsGenerator] (main) producing -&gt; Song[id=7, name=Fox On The Run, author=Sweet]
-2023-01-09 08:45:19,696 INFO  [org.acm.PlaySongsGenerator] (main) producing -&gt; Song[id=8, name=Perfect, author=Ed Sheeran]
-2023-01-09 08:45:19,761 INFO  [org.acm.PlaySongsGenerator] (executor-thread-0) Played song id 8 (Perfect) for user Edson
-2023-01-09 08:45:19,785 INFO  [io.quarkus] (main) player-app 1.0.0-SNAPSHOT on JVM (powered by Quarkus 2.15.2.Final) started in 7.027s.
-2023-01-09 08:45:19,787 INFO  [io.quarkus] (main) Profile prod activated.
-2023-01-09 08:45:19,788 INFO  [io.quarkus] (main) Installed features: [cdi, kafka-client, smallrye-context-propagation, smallrye-reactive-messaging, smallrye-reactive-messaging-kafka, vertx]
-2023-01-09 08:45:20,102 WARN  [org.apa.kaf.cli.NetworkClient] (kafka-producer-network-thread | kafka-producer-played-songs) [Producer clientId=kafka-producer-played-songs] Error while fetching metadata with correlation id 1 : {played-songs=LEADER_NOT_AVAILABLE}
-2023-01-09 08:45:20,106 WARN  [org.apa.kaf.cli.NetworkClient] (kafka-producer-network-thread | kafka-producer-songs) [Producer clientId=kafka-producer-songs] Error while fetching metadata with correlation id 1 : {songs=LEADER_NOT_AVAILABLE}
-2023-01-09 08:45:20,213 WARN  [org.apa.kaf.cli.NetworkClient] (kafka-producer-network-thread | kafka-producer-songs) [Producer clientId=kafka-producer-songs] Error while fetching metadata with correlation id 3 : {songs=LEADER_NOT_AVAILABLE}
-2023-01-09 08:45:20,220 WARN  [org.apa.kaf.cli.NetworkClient] (kafka-producer-network-thread | kafka-producer-played-songs) [Producer clientId=kafka-producer-played-songs] Error while fetching metadata with correlation id 3 : {played-songs=LEADER_NOT_AVAILABLE}
-2023-01-09 08:45:22,231 INFO  [org.acm.PlaySongsGenerator] (executor-thread-0) Played song id 5 (Sometimes) for user Edson
-2023-01-09 08:45:24,729 INFO  [org.acm.PlaySongsGenerator] (executor-thread-0) Played song id 7 (Fox On The Run) for user Burr
-2023-01-09 08:45:27,230 INFO  [org.acm.PlaySongsGenerator] (executor-thread-0) Played song id 3 (Still Loving You) for user Edson
-2023-01-09 08:45:29,735 INFO  [org.acm.PlaySongsGenerator] (executor-thread-0) Played song id 2 (Believe) for user Edson
-2023-01-09 08:45:32,238 INFO  [org.acm.PlaySongsGenerator] (executor-thread-0) Played song id 8 (Perfect) for user Alex
-2023-01-09 08:45:34,743 INFO  [org.acm.PlaySongsGenerator] (executor-thread-0) Played song id 7 (Fox On The Run) for user Kamesh
-2023-01-09 08:45:37,230 INFO  [org.acm.PlaySongsGenerator] (executor-thread-0) Played song id 3 (Still Loving You) for user Kamesh
-2023-01-09 08:45:39,728 INFO  [org.acm.PlaySongsGenerator] (executor-thread-0) Played song id 3 (Still Loving You) for user Sebi
-2023-01-09 08:45:42,229 INFO  [org.acm.PlaySongsGenerator] (executor-thread-0) Played song id 4 (Bohemian Rhapsody) for user Edson
-2023-01-09 08:45:44,726 INFO  [org.acm.PlaySongsGenerator] (executor-thread-0) Played song id 2 (Believe) for user Burr
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">...
+2024-05-14 06:46:09,940 INFO  [io.sma.rea.mes.kafka] (smallrye-kafka-producer-thread-1) SRMSG18258: Kafka producer kafka-producer-played-songs, connected to Kafka brokers 'kafka:9092', is configured to write records to 'played-songs'
+2024-05-14 06:46:10,021 INFO  [org.acm.PlaySongsGenerator] (main) starting to play random songs every 2500 ms
+2024-05-14 06:46:10,050 INFO  [org.acm.PlaySongsGenerator] (main) creating song reference data
+2024-05-14 06:46:10,123 INFO  [org.acm.PlaySongsGenerator] (executor-thread-1) Played song id 7 (Fox On The Run) for user Sebi
+2024-05-14 06:46:10,131 INFO  [org.acm.PlaySongsGenerator] (main) producing -&gt; Song[id=1, name=The Good The Bad And The Ugly, author=Ennio Morricone]
+2024-05-14 06:46:10,871 INFO  [org.acm.PlaySongsGenerator] (main) producing -&gt; Song[id=2, name=Believe, author=Cher]
+2024-05-14 06:46:10,890 INFO  [org.acm.PlaySongsGenerator] (main) producing -&gt; Song[id=3, name=Still Loving You, author=Scorpions]
+2024-05-14 06:46:10,904 INFO  [org.acm.PlaySongsGenerator] (main) producing -&gt; Song[id=4, name=Bohemian Rhapsody, author=Queen]
+2024-05-14 06:46:10,906 INFO  [org.acm.PlaySongsGenerator] (main) producing -&gt; Song[id=5, name=Sometimes, author=James]
+2024-05-14 06:46:10,908 INFO  [org.acm.PlaySongsGenerator] (main) producing -&gt; Song[id=6, name=Into The Unknown, author=Frozen II]
+2024-05-14 06:46:10,909 INFO  [org.acm.PlaySongsGenerator] (main) producing -&gt; Song[id=7, name=Fox On The Run, author=Sweet]
+2024-05-14 06:46:10,911 INFO  [org.acm.PlaySongsGenerator] (main) producing -&gt; Song[id=8, name=Perfect, author=Ed Sheeran]
+2024-05-14 06:46:10,970 INFO  [io.quarkus] (main) player-app 1.0.0-SNAPSHOT on JVM (powered by Quarkus 3.9.5) started in 7.370s.
+2024-05-14 06:46:10,972 INFO  [io.quarkus] (main) Profile prod activated.
+2024-05-14 06:46:10,973 INFO  [io.quarkus] (main) Installed features: [cdi, kafka-client, messaging, messaging-kafka, smallrye-context-propagation, vertx]
+2024-05-14 06:46:11,481 WARN  [org.apa.kaf.cli.NetworkClient] (kafka-producer-network-thread | kafka-producer-played-songs) [Producer clientId=kafka-producer-played-songs] Error while fetching metadata with correlation id 1 : {played-songs=UNKNOWN_TOPIC_OR_PARTITION}
+2024-05-14 06:46:11,481 WARN  [org.apa.kaf.cli.NetworkClient] (kafka-producer-network-thread | kafka-producer-songs) [Producer clientId=kafka-producer-songs] Error while fetching metadata with correlation id 1 : {songs=UNKNOWN_TOPIC_OR_PARTITION}
+2024-05-14 06:46:12,631 INFO  [org.acm.PlaySongsGenerator] (executor-thread-1) Played song id 1 (The Good The Bad And The Ugly) for user Alex
+2024-05-14 06:46:15,129 INFO  [org.acm.PlaySongsGenerator] (executor-thread-1) Played song id 3 (Still Loving You) for user Burr
+2024-05-14 06:46:17,622 INFO  [org.acm.PlaySongsGenerator] (executor-thread-1) Played song id 2 (Believe) for user Alex
+2024-05-14 06:46:20,123 INFO  [org.acm.PlaySongsGenerator] (executor-thread-1) Played song id 5 (Sometimes) for user Edson
+2024-05-14 06:46:22,625 INFO  [org.acm.PlaySongsGenerator] (executor-thread-1) Played song id 3 (Still Loving You) for user Edson
 ...</code></pre>
-</div>
-</div>
-</div>
-<div class="tab-pane" aria-labelledby="tabset1_docker">
-<div class="listingblock console-input">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker run --rm --network=kafka-tutorial quay.io/rhdevelopers/kafka-tutorial-player-app-quarkus:v23.01</code></pre>
-</div>
-</div>
-<div class="listingblock console-output">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">__  ____  __  _____   ___  __ ____  ______
- --/ __ \/ / / / _ | / _ \/ //_/ / / / __/
- -/ /_/ / /_/ / __ |/ , _/ ,&lt; / /_/ /\ \
---\___\_\____/_/ |_/_/|_/_/|_|\____/___/
-2023-01-09 08:45:18,099 INFO  [io.sma.rea.mes.kafka] (smallrye-kafka-producer-thread-0) SRMSG18258: Kafka producer kafka-producer-songs, connected to Kafka brokers 'kafka:9092', is configured to write records to 'songs'
-2023-01-09 08:45:18,471 INFO  [io.sma.rea.mes.kafka] (smallrye-kafka-producer-thread-1) SRMSG18258: Kafka producer kafka-producer-played-songs, connected to Kafka brokers 'kafka:9092', is configured to write records to 'played-songs'
-2023-01-09 08:45:18,573 INFO  [org.acm.PlaySongsGenerator] (main) creating song reference data
-2023-01-09 08:45:18,691 INFO  [org.acm.PlaySongsGenerator] (main) starting to play random songs every 2500 ms
-2023-01-09 08:45:18,739 INFO  [org.acm.PlaySongsGenerator] (main) producing -&gt; Song[id=1, name=The Good The Bad And The Ugly, author=Ennio Morricone]
-2023-01-09 08:45:19,675 INFO  [org.acm.PlaySongsGenerator] (main) producing -&gt; Song[id=2, name=Believe, author=Cher]
-2023-01-09 08:45:19,686 INFO  [org.acm.PlaySongsGenerator] (main) producing -&gt; Song[id=3, name=Still Loving You, author=Scorpions]
-2023-01-09 08:45:19,689 INFO  [org.acm.PlaySongsGenerator] (main) producing -&gt; Song[id=4, name=Bohemian Rhapsody, author=Queen]
-2023-01-09 08:45:19,691 INFO  [org.acm.PlaySongsGenerator] (main) producing -&gt; Song[id=5, name=Sometimes, author=James]
-2023-01-09 08:45:19,692 INFO  [org.acm.PlaySongsGenerator] (main) producing -&gt; Song[id=6, name=Into The Unknown, author=Frozen II]
-2023-01-09 08:45:19,694 INFO  [org.acm.PlaySongsGenerator] (main) producing -&gt; Song[id=7, name=Fox On The Run, author=Sweet]
-2023-01-09 08:45:19,696 INFO  [org.acm.PlaySongsGenerator] (main) producing -&gt; Song[id=8, name=Perfect, author=Ed Sheeran]
-2023-01-09 08:45:19,761 INFO  [org.acm.PlaySongsGenerator] (executor-thread-0) Played song id 8 (Perfect) for user Edson
-2023-01-09 08:45:19,785 INFO  [io.quarkus] (main) player-app 1.0.0-SNAPSHOT on JVM (powered by Quarkus 2.15.2.Final) started in 7.027s.
-2023-01-09 08:45:19,787 INFO  [io.quarkus] (main) Profile prod activated.
-2023-01-09 08:45:19,788 INFO  [io.quarkus] (main) Installed features: [cdi, kafka-client, smallrye-context-propagation, smallrye-reactive-messaging, smallrye-reactive-messaging-kafka, vertx]
-2023-01-09 08:45:20,102 WARN  [org.apa.kaf.cli.NetworkClient] (kafka-producer-network-thread | kafka-producer-played-songs) [Producer clientId=kafka-producer-played-songs] Error while fetching metadata with correlation id 1 : {played-songs=LEADER_NOT_AVAILABLE}
-2023-01-09 08:45:20,106 WARN  [org.apa.kaf.cli.NetworkClient] (kafka-producer-network-thread | kafka-producer-songs) [Producer clientId=kafka-producer-songs] Error while fetching metadata with correlation id 1 : {songs=LEADER_NOT_AVAILABLE}
-2023-01-09 08:45:20,213 WARN  [org.apa.kaf.cli.NetworkClient] (kafka-producer-network-thread | kafka-producer-songs) [Producer clientId=kafka-producer-songs] Error while fetching metadata with correlation id 3 : {songs=LEADER_NOT_AVAILABLE}
-2023-01-09 08:45:20,220 WARN  [org.apa.kaf.cli.NetworkClient] (kafka-producer-network-thread | kafka-producer-played-songs) [Producer clientId=kafka-producer-played-songs] Error while fetching metadata with correlation id 3 : {played-songs=LEADER_NOT_AVAILABLE}
-2023-01-09 08:45:22,231 INFO  [org.acm.PlaySongsGenerator] (executor-thread-0) Played song id 5 (Sometimes) for user Edson
-2023-01-09 08:45:24,729 INFO  [org.acm.PlaySongsGenerator] (executor-thread-0) Played song id 7 (Fox On The Run) for user Burr
-2023-01-09 08:45:27,230 INFO  [org.acm.PlaySongsGenerator] (executor-thread-0) Played song id 3 (Still Loving You) for user Edson
-2023-01-09 08:45:29,735 INFO  [org.acm.PlaySongsGenerator] (executor-thread-0) Played song id 2 (Believe) for user Edson
-2023-01-09 08:45:32,238 INFO  [org.acm.PlaySongsGenerator] (executor-thread-0) Played song id 8 (Perfect) for user Alex
-2023-01-09 08:45:34,743 INFO  [org.acm.PlaySongsGenerator] (executor-thread-0) Played song id 7 (Fox On The Run) for user Kamesh
-2023-01-09 08:45:37,230 INFO  [org.acm.PlaySongsGenerator] (executor-thread-0) Played song id 3 (Still Loving You) for user Kamesh
-2023-01-09 08:45:39,728 INFO  [org.acm.PlaySongsGenerator] (executor-thread-0) Played song id 3 (Still Loving You) for user Sebi
-2023-01-09 08:45:42,229 INFO  [org.acm.PlaySongsGenerator] (executor-thread-0) Played song id 4 (Bohemian Rhapsody) for user Edson
-2023-01-09 08:45:44,726 INFO  [org.acm.PlaySongsGenerator] (executor-thread-0) Played song id 2 (Believe) for user Burr
-...</code></pre>
-</div>
-</div>
-</div>
 </div>
 </div>
 </div>
@@ -460,95 +480,127 @@ In terminal 1, run one of these two options:</p>
 <div class="sect2">
 <h3 id="deploying-music-chart"><a class="anchor" href="#deploying-music-chart"></a>Deploying Music Chart Service</h3>
 <div class="paragraph">
-<p>In this case, the Quarkus service is deployed to use Kafka Streams.
-You&#8217;ve got two options, using the existing Docker image or building the service and image yourself. Note, that due to the configured Quarkus extension <code>quarkus-container-image-jib</code> the container image will be created automatically when you trigger the local build.
-In terminal 2, run one of these two options:</p>
+<p>In this case, the Quarkus service makes use of Kafka Streams.</p>
+</div>
+<div class="paragraph">
+<p>You&#8217;ve got different options, using either pre-built container images run with Podman / Docker or building the application and image on your local machine from the sources.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Due to the configured Quarkus extension <code>quarkus-container-image-jib</code> the container image will be built automatically when you trigger the local build.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>In terminal 2, run one of these two options:</p>
 </div>
 <div class="tabset is-loading">
 <div class="ulist tabs">
 <ul>
 <li>
-<p><a id="tabset2_building-amp-run"></a>Building &amp; Run</p>
+<p><a id="tabset3_optional-local-build-amp-run-podman"></a>[Optional] Local Build &amp; Run Podman</p>
 </li>
 <li>
-<p><a id="tabset2_docker"></a>Docker</p>
+<p><a id="tabset3_optional-local-build-amp-run-docker"></a>[Optional] Local Build &amp; Run Docker</p>
 </li>
 </ul>
 </div>
 <div class="content">
-<div class="tab-pane" aria-labelledby="tabset2_building-amp-run">
+<div class="tab-pane" aria-labelledby="tabset3_optional-local-build-amp-run-podman">
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">cd $TUTORIAL_HOME/apps/music-chart-app/quarkus/music-chart-app
-./mvnw clean package</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">cd $TUTORIAL_HOME/apps/music-chart-app/quarkus/music-chart-app</code></pre>
 </div>
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker run --rm --network=kafka-tutorial quay.io/rhdevelopers/kafka-tutorial-music-chart-app-quarkus:v23.01</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">./mvnw clean package -DskipTests</code></pre>
 </div>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">podman run --rm -it --network=kafka-tutorial quay.io/rhdevelopers/kafka-tutorial-music-chart-app-quarkus:v24.05</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset3_optional-local-build-amp-run-docker">
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">cd $TUTORIAL_HOME/apps/music-chart-app/quarkus/music-chart-app</code></pre>
+</div>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">./mvnw clean package -DskipTests</code></pre>
+</div>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker run --rm -it --network=kafka-tutorial quay.io/rhdevelopers/kafka-tutorial-music-chart-app-quarkus:v24.05</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset4_pre-built-image-with-podman"></a>Pre-built image with Podman</p>
+</li>
+<li>
+<p><a id="tabset4_pre-built-image-with-docker"></a>Pre-built image with Docker</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset4_pre-built-image-with-podman">
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">podman run --rm -it --network=kafka-tutorial quay.io/rhdevelopers/kafka-tutorial-music-chart-app-quarkus:v24.05-xa</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset4_pre-built-image-with-docker">
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker run --rm -it --network=kafka-tutorial quay.io/rhdevelopers/kafka-tutorial-music-chart-app-quarkus:v24.05-xa</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>Console output when running the containerized application looks as follows:</p>
 </div>
 <div class="listingblock console-output">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">__  ____  __  _____   ___  __ ____  ______
- --/ __ \/ / / / _ | / _ \/ //_/ / / / __/
- -/ /_/ / /_/ / __ |/ , _/ ,&lt; / /_/ /\ \
---\___\_\____/_/ |_/_/|_/_/|_|\____/___/
-2023-01-09 08:45:54,755 WARN  [org.apa.kaf.cli.adm.AdminClientConfig] (main) These configurations '[ssl.endpoint.identification.algorithm]' were supplied but are not used yet.
-2023-01-09 08:45:55,340 INFO  [org.apa.kaf.str.StreamsConfig] (main) StreamsConfig values:
-        acceptable.recovery.lag = 10000
-        application.id = music-chart
-        application.server = localhost:9090
-        bootstrap.servers = [kafka:9092]
-...
-2023-01-09 08:46:00,952 INFO  [org.apa.kaf.str.pro.int.StreamThread] (music-chart-08427007-2905-4d91-b260-44bcb8ac5c6a-StreamThread-1) stream-thread [music-chart-08427007-2905-4d91-b260-44bcb8ac5c6a-StreamThread-1] State transition from PARTITIONS_ASSIGNED to RUNNING
-2023-01-09 08:46:00,958 INFO  [org.apa.kaf.str.KafkaStreams] (music-chart-08427007-2905-4d91-b260-44bcb8ac5c6a-StreamThread-1) stream-client [music-chart-08427007-2905-4d91-b260-44bcb8ac5c6a] State transition from REBALANCING to RUNNING
-2023-01-09 08:46:02,098 INFO  [org.acm.MusicChartTopologyProducer] (music-chart-08427007-2905-4d91-b260-44bcb8ac5c6a-StreamThread-1) music chart updated for song id 5 -&gt; PlayedSong [count=1, songName=Sometimes]
-2023-01-09 08:46:02,128 INFO  [org.acm.MusicChartTopologyProducer] (music-chart-08427007-2905-4d91-b260-44bcb8ac5c6a-StreamThread-1) music chart updated for song id 8 -&gt; PlayedSong [count=2, songName=Perfect]
-2023-01-09 08:46:02,133 INFO  [org.acm.MusicChartTopologyProducer] (music-chart-08427007-2905-4d91-b260-44bcb8ac5c6a-StreamThread-1) music chart updated for song id 7 -&gt; PlayedSong [count=2, songName=Fox On The Run]
-2023-01-09 08:46:02,135 INFO  [org.acm.MusicChartTopologyProducer] (music-chart-08427007-2905-4d91-b260-44bcb8ac5c6a-StreamThread-1) music chart updated for song id 3 -&gt; PlayedSong [count=3, songName=Still Loving You]
-2023-01-09 08:46:02,137 INFO  [org.acm.MusicChartTopologyProducer] (music-chart-08427007-2905-4d91-b260-44bcb8ac5c6a-StreamThread-1) music chart updated for song id 4 -&gt; PlayedSong [count=1, songName=Bohemian Rhapsody]
-2023-01-09 08:46:02,140 INFO  [org.acm.MusicChartTopologyProducer] (music-chart-08427007-2905-4d91-b260-44bcb8ac5c6a-StreamThread-1) music chart updated for song id 2 -&gt; PlayedSong [count=2, songName=Believe]</code></pre>
-</div>
-</div>
-</div>
-<div class="tab-pane" aria-labelledby="tabset2_docker">
-<div class="listingblock console-input">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker run --rm --network=kafka-tutorial quay.io/rhdevelopers/kafka-tutorial-music-chart-app-quarkus:v23.01</code></pre>
-</div>
-</div>
-<div class="listingblock console-output">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">__  ____  __  _____   ___  __ ____  ______
- --/ __ \/ / / / _ | / _ \/ //_/ / / / __/
- -/ /_/ / /_/ / __ |/ , _/ ,&lt; / /_/ /\ \
---\___\_\____/_/ |_/_/|_/_/|_|\____/___/
-2023-01-09 08:45:54,755 WARN  [org.apa.kaf.cli.adm.AdminClientConfig] (main) These configurations '[ssl.endpoint.identification.algorithm]' were supplied but are not used yet.
-2023-01-09 08:45:55,340 INFO  [org.apa.kaf.str.StreamsConfig] (main) StreamsConfig values:
-        acceptable.recovery.lag = 10000
-        application.id = music-chart
-        application.server = localhost:9090
-        bootstrap.servers = [kafka:9092]
-...
-2023-01-09 08:46:00,952 INFO  [org.apa.kaf.str.pro.int.StreamThread] (music-chart-08427007-2905-4d91-b260-44bcb8ac5c6a-StreamThread-1) stream-thread [music-chart-08427007-2905-4d91-b260-44bcb8ac5c6a-StreamThread-1] State transition from PARTITIONS_ASSIGNED to RUNNING
-2023-01-09 08:46:00,958 INFO  [org.apa.kaf.str.KafkaStreams] (music-chart-08427007-2905-4d91-b260-44bcb8ac5c6a-StreamThread-1) stream-client [music-chart-08427007-2905-4d91-b260-44bcb8ac5c6a] State transition from REBALANCING to RUNNING
-2023-01-09 08:46:02,098 INFO  [org.acm.MusicChartTopologyProducer] (music-chart-08427007-2905-4d91-b260-44bcb8ac5c6a-StreamThread-1) music chart updated for song id 5 -&gt; PlayedSong [count=1, songName=Sometimes]
-2023-01-09 08:46:02,128 INFO  [org.acm.MusicChartTopologyProducer] (music-chart-08427007-2905-4d91-b260-44bcb8ac5c6a-StreamThread-1) music chart updated for song id 8 -&gt; PlayedSong [count=2, songName=Perfect]
-2023-01-09 08:46:02,133 INFO  [org.acm.MusicChartTopologyProducer] (music-chart-08427007-2905-4d91-b260-44bcb8ac5c6a-StreamThread-1) music chart updated for song id 7 -&gt; PlayedSong [count=2, songName=Fox On The Run]
-2023-01-09 08:46:02,135 INFO  [org.acm.MusicChartTopologyProducer] (music-chart-08427007-2905-4d91-b260-44bcb8ac5c6a-StreamThread-1) music chart updated for song id 3 -&gt; PlayedSong [count=3, songName=Still Loving You]
-2023-01-09 08:46:02,137 INFO  [org.acm.MusicChartTopologyProducer] (music-chart-08427007-2905-4d91-b260-44bcb8ac5c6a-StreamThread-1) music chart updated for song id 4 -&gt; PlayedSong [count=1, songName=Bohemian Rhapsody]
-2023-01-09 08:46:02,140 INFO  [org.acm.MusicChartTopologyProducer] (music-chart-08427007-2905-4d91-b260-44bcb8ac5c6a-StreamThread-1) music chart updated for song id 2 -&gt; PlayedSong [count=2, songName=Believe]</code></pre>
-</div>
-</div>
-</div>
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">...
+2024-05-14 06:56:34,609 INFO  [org.apa.kaf.str.pro.int.StreamThread] (music-chart-7bc6bbdb-fee1-4d18-89f5-6839bd86c580-StreamThread-1) stream-thread [music-chart-7bc6bbdb-fee1-4d18-89f5-6839bd86c580-StreamThread-1] State transition from PARTITIONS_ASSIGNED to RUNNING
+2024-05-14 06:56:34,610 INFO  [org.apa.kaf.str.KafkaStreams] (music-chart-7bc6bbdb-fee1-4d18-89f5-6839bd86c580-StreamThread-1) stream-client [music-chart-7bc6bbdb-fee1-4d18-89f5-6839bd86c580] State transition from REBALANCING to RUNNING
+2024-05-14 06:56:35,728 INFO  [org.acm.MusicChartTopologyProducer] (music-chart-7bc6bbdb-fee1-4d18-89f5-6839bd86c580-StreamThread-1) music chart updated for song id 7 -&gt; PlayedSong [count=1, songName=Fox On The Run]
+2024-05-14 06:56:35,731 INFO  [org.acm.MusicChartTopologyProducer] (music-chart-7bc6bbdb-fee1-4d18-89f5-6839bd86c580-StreamThread-1) music chart updated for song id 8 -&gt; PlayedSong [count=1, songName=Perfect]
+2024-05-14 06:56:35,731 INFO  [org.acm.MusicChartTopologyProducer] (music-chart-7bc6bbdb-fee1-4d18-89f5-6839bd86c580-StreamThread-1) music chart updated for song id 1 -&gt; PlayedSong [count=1, songName=The Good The Bad And The Ugly]
+2024-05-14 06:56:35,732 INFO  [org.acm.MusicChartTopologyProducer] (music-chart-7bc6bbdb-fee1-4d18-89f5-6839bd86c580-StreamThread-1) music chart updated for song id 5 -&gt; PlayedSong [count=2, songName=Sometimes]
+2024-05-14 06:56:35,732 INFO  [org.acm.MusicChartTopologyProducer] (music-chart-7bc6bbdb-fee1-4d18-89f5-6839bd86c580-StreamThread-1) music chart updated for song id 4 -&gt; PlayedSong [count=3, songName=Bohemian Rhapsody]
+2024-05-14 06:56:35,733 INFO  [org.acm.MusicChartTopologyProducer] (music-chart-7bc6bbdb-fee1-4d18-89f5-6839bd86c580-StreamThread-1) music chart updated for song id 6 -&gt; PlayedSong [count=3, songName=Into The Unknown]
+2024-05-14 06:56:35,733 INFO  [org.acm.MusicChartTopologyProducer] (music-chart-7bc6bbdb-fee1-4d18-89f5-6839bd86c580-StreamThread-1) music chart updated for song id 2 -&gt; PlayedSong [count=3, songName=Believe]
+2024-05-14 06:56:36,849 INFO  [org.acm.MusicChartTopologyProducer] (music-chart-7bc6bbdb-fee1-4d18-89f5-6839bd86c580-StreamThread-1) music chart updated for song id 6 -&gt; PlayedSong [count=4, songName=Into The Unknown]
+2024-05-14 06:56:38,968 INFO  [org.acm.MusicChartTopologyProducer] (music-chart-7bc6bbdb-fee1-4d18-89f5-6839bd86c580-StreamThread-1) music chart updated for song id 7 -&gt; PlayedSong [count=2, songName=Fox On The Run]
+...</code></pre>
 </div>
 </div>
 </div>
 <div class="sect2">
 <h3 id="music-chart-result"><a class="anchor" href="#music-chart-result"></a>Music Chart Result</h3>
 <div class="paragraph">
-<p>If you inspect the output of Music Chart service, you see how many times a concrete song has been played, and every time a new song is played, the counter is updated.</p>
+<p>If you inspect the output of Music Chart service, you see how many times a specific song has been played, and every time a new song is played, the respective song counter is updated.</p>
 </div>
 </div>
 </div>
@@ -560,31 +612,98 @@ In terminal 2, run one of these two options:</p>
 <p>Stop both services by typing <span class="keyseq"><kbd>Ctrl</kbd>+<kbd>C</kbd></span> in both terminals 1 and 2.</p>
 </div>
 <div class="paragraph">
-<p>To restart Kafka (and ZooKeeper) go to the <code>docker compose</code> terminal and stop the process by typing <span class="keyseq"><kbd>Ctrl</kbd>+<kbd>C</kbd></span>.</p>
+<p>To restart Kafka go to the <code>podman | docker compose</code> terminal and stop the process by typing <span class="keyseq"><kbd>Ctrl</kbd>+<kbd>C</kbd></span>.</p>
 </div>
 <div class="paragraph">
 <p>Then run:</p>
 </div>
-<div class="listingblock lines_1">
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset5_podman"></a>Podman</p>
+</li>
+<li>
+<p><a id="tabset5_docker"></a>Docker</p>
+</li>
+</ul>
+</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-session hljs" data-lang="bash-session">docker compose rm
-
-? Going to remove kafka, zookeeper (y/N) -&gt; y
-[+] Running 2/0
- ⠿ Container zookeeper  Removed
- ⠿ Container kafka      Removed</code></pre>
+<div class="tab-pane" aria-labelledby="tabset5_podman">
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">podman compose down</code></pre>
 </div>
 </div>
-<div class="listingblock lines_1">
+<div class="listingblock console-output">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-session hljs" data-lang="bash-session">docker compose up --remove-orphans
-
-kafka      | [2022-12-15 08:59:25,688] INFO Kafka version: 3.3.1 (org.apache.kafka.common.utils.AppInfoParser)
-kafka      | [2022-12-15 08:59:25,688] INFO Kafka commitId: e23c59d00e687ff5 (org.apache.kafka.common.utils.AppInfoParser)
-kafka      | [2022-12-15 08:59:25,688] INFO Kafka startTimeMs: 1671094765681 (org.apache.kafka.common.utils.AppInfoParser)
-kafka      | [2022-12-15 08:59:25,689] INFO [KafkaServer id=0] started (kafka.server.KafkaServer)
-kafka      | [2022-12-15 08:59:25,750] INFO [BrokerToControllerChannelManager broker=0 name=forwarding]: Recorded new controller, from now on will use broker kafka:9092 (id: 0 rack: null) (kafka.server.BrokerToControllerRequestThread)
-kafka      | [2022-12-15 08:59:25,751] INFO [BrokerToControllerChannelManager broker=0 name=alterPartition]: Recorded new controller, from now on will use broker kafka:9092 (id: 0 rack: null) (kafka.server.BrokerToControllerRequestThread)</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">podman-compose version: 1.0.6
+['podman', '--version', '']
+using podman version: 5.0.1
+** excluding:  set()
+podman stop -t 10 kafka
+kafka
+exit code: 0
+podman rm kafka
+kafka
+exit code: 0</code></pre>
+</div>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">podman compose up</code></pre>
+</div>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">...
+[2024-05-13 15:36:17,976] INFO Awaiting socket connections on kafka:9092. (kafka.network.DataPlaneAcceptor)
+[2024-05-13 15:36:17,976] INFO Awaiting socket connections on 0.0.0.0:29092. (kafka.network.DataPlaneAcceptor)
+[2024-05-13 15:36:17,977] INFO [BrokerServer id=1] Waiting for all of the authorizer futures to be completed (kafka.server.BrokerServer)
+[2024-05-13 15:36:17,977] INFO [BrokerServer id=1] Finished waiting for all of the authorizer futures to be completed (kafka.server.BrokerServer)
+[2024-05-13 15:36:17,978] INFO [BrokerServer id=1] Waiting for all of the SocketServer Acceptors to be started (kafka.server.BrokerServer)
+[2024-05-13 15:36:17,978] INFO [BrokerServer id=1] Finished waiting for all of the SocketServer Acceptors to be started (kafka.server.BrokerServer)
+[2024-05-13 15:36:17,978] INFO [BrokerServer id=1] Transition from STARTING to STARTED (kafka.server.BrokerServer)
+[2024-05-13 15:36:17,978] INFO Kafka version: 3.7.0 (org.apache.kafka.common.utils.AppInfoParser)
+[2024-05-13 15:36:17,978] INFO Kafka commitId: 2ae524ed625438c5 (org.apache.kafka.common.utils.AppInfoParser)
+[2024-05-13 15:36:17,978] INFO Kafka startTimeMs: 1715614577978 (org.apache.kafka.common.utils.AppInfoParser)
+[2024-05-13 15:36:17,978] INFO [KafkaRaftServer nodeId=1] Kafka Server started (kafka.server.KafkaRaftServer)</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset5_docker">
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker compose down</code></pre>
+</div>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">...</code></pre>
+</div>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker compose up</code></pre>
+</div>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">...
+[2024-05-13 15:36:17,976] INFO Awaiting socket connections on kafka:9092. (kafka.network.DataPlaneAcceptor)
+[2024-05-13 15:36:17,976] INFO Awaiting socket connections on 0.0.0.0:29092. (kafka.network.DataPlaneAcceptor)
+[2024-05-13 15:36:17,977] INFO [BrokerServer id=1] Waiting for all of the authorizer futures to be completed (kafka.server.BrokerServer)
+[2024-05-13 15:36:17,977] INFO [BrokerServer id=1] Finished waiting for all of the authorizer futures to be completed (kafka.server.BrokerServer)
+[2024-05-13 15:36:17,978] INFO [BrokerServer id=1] Waiting for all of the SocketServer Acceptors to be started (kafka.server.BrokerServer)
+[2024-05-13 15:36:17,978] INFO [BrokerServer id=1] Finished waiting for all of the SocketServer Acceptors to be started (kafka.server.BrokerServer)
+[2024-05-13 15:36:17,978] INFO [BrokerServer id=1] Transition from STARTING to STARTED (kafka.server.BrokerServer)
+[2024-05-13 15:36:17,978] INFO Kafka version: 3.7.0 (org.apache.kafka.common.utils.AppInfoParser)
+[2024-05-13 15:36:17,978] INFO Kafka commitId: 2ae524ed625438c5 (org.apache.kafka.common.utils.AppInfoParser)
+[2024-05-13 15:36:17,978] INFO Kafka startTimeMs: 1715614577978 (org.apache.kafka.common.utils.AppInfoParser)
+[2024-05-13 15:36:17,978] INFO [KafkaRaftServer nodeId=1] Kafka Server started (kafka.server.KafkaRaftServer)</code></pre>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>

@@ -470,37 +470,88 @@ Although they are used in the tutorial, you could use others without any problem
 <h2 id="kafka"><a class="anchor" href="#kafka"></a>Run Kafka</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Assuming you&#8217;ve got <a href="https://docs.docker.com/get-docker/">Docker &amp; Docker Compose installed</a>.</p>
+<p>Assuming you&#8217;ve got either <a href="https://docs.docker.com/get-docker/">Docker (Desktop) &amp; Docker Compose installed</a> or <a href="https://podman-desktop.io/">Podman (Desktop) &amp; Podman Compose installed</a></p>
 </div>
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset1_podman"></a>Podman</p>
+</li>
+<li>
+<p><a id="tabset1_docker"></a>Docker</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset1_podman">
 <div class="listingblock console-input">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">cd $TUTORIAL_HOME/apps/it
-docker compose up --remove-orphans</code></pre>
+podman compose up</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset1_docker">
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">cd $TUTORIAL_HOME/apps/it
+docker compose up</code></pre>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="listingblock console-output">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">...
 
-kafka      | [2022-12-09 08:29:01,867] INFO [Transaction Marker Channel Manager 0]: Starting (kafka.coordinator.transaction.TransactionMarkerChannelManager)
-kafka      | [2022-12-09 08:29:01,878] INFO [MetadataCache brokerId=0] Updated cache from existing &lt;empty&gt; to latest FinalizedFeaturesAndEpoch(features=Map(), epoch=0). (kafka.server.metadata.ZkMetadataCache)
-kafka      | [2022-12-09 08:29:01,893] INFO [ExpirationReaper-0-AlterAcls]: Starting (kafka.server.DelayedOperationPurgatory$ExpiredOperationReaper)
-kafka      | [2022-12-09 08:29:01,929] INFO [/config/changes-event-process-thread]: Starting (kafka.common.ZkNodeChangeNotificationListener$ChangeEventProcessThread)
-kafka      | [2022-12-09 08:29:01,946] INFO [SocketServer listenerType=ZK_BROKER, nodeId=0] Enabling request processing. (kafka.network.SocketServer)
-kafka      | [2022-12-09 08:29:01,974] INFO Kafka version: 3.3.1 (org.apache.kafka.common.utils.AppInfoParser)
-kafka      | [2022-12-09 08:29:01,974] INFO Kafka commitId: e23c59d00e687ff5 (org.apache.kafka.common.utils.AppInfoParser)
-kafka      | [2022-12-09 08:29:01,974] INFO Kafka startTimeMs: 1670574541958 (org.apache.kafka.common.utils.AppInfoParser)
-kafka      | [2022-12-09 08:29:01,975] INFO [KafkaServer id=0] started (kafka.server.KafkaServer)
-kafka      | [2022-12-09 08:29:02,093] INFO [BrokerToControllerChannelManager broker=0 name=forwarding]: Recorded new controller, from now on will use broker kafka:9092 (id: 0 rack: null) (kafka.server.BrokerToControllerRequestThread)
-kafka      | [2022-12-09 08:29:02,113] INFO [BrokerToControllerChannelManager broker=0 name=alterPartition]: Recorded new controller, from now on will use broker kafka:9092 (id: 0 rack: null) (kafka.server.BrokerToControllerRequestThread)</code></pre>
+[2024-05-13 12:46:44,110] INFO [SocketServer listenerType=BROKER, nodeId=1] Enabling request processing. (kafka.network.SocketServer)
+[2024-05-13 12:46:44,110] INFO Awaiting socket connections on kafka:9092. (kafka.network.DataPlaneAcceptor)
+[2024-05-13 12:46:44,111] INFO Awaiting socket connections on 0.0.0.0:29092. (kafka.network.DataPlaneAcceptor)
+[2024-05-13 12:46:44,112] INFO [BrokerServer id=1] Waiting for all of the authorizer futures to be completed (kafka.server.BrokerServer)
+[2024-05-13 12:46:44,112] INFO [BrokerServer id=1] Finished waiting for all of the authorizer futures to be completed (kafka.server.BrokerServer)
+[2024-05-13 12:46:44,112] INFO [BrokerServer id=1] Waiting for all of the SocketServer Acceptors to be started (kafka.server.BrokerServer)
+[2024-05-13 12:46:44,112] INFO [BrokerServer id=1] Finished waiting for all of the SocketServer Acceptors to be started (kafka.server.BrokerServer)
+[2024-05-13 12:46:44,112] INFO [BrokerServer id=1] Transition from STARTING to STARTED (kafka.server.BrokerServer)
+[2024-05-13 12:46:44,112] INFO Kafka version: 3.7.0 (org.apache.kafka.common.utils.AppInfoParser)
+[2024-05-13 12:46:44,112] INFO Kafka commitId: 2ae524ed625438c5 (org.apache.kafka.common.utils.AppInfoParser)
+[2024-05-13 12:46:44,112] INFO Kafka startTimeMs: 1715604404112 (org.apache.kafka.common.utils.AppInfoParser)
+[2024-05-13 12:46:44,113] INFO [KafkaRaftServer nodeId=1] Kafka Server started (kafka.server.KafkaRaftServer)</code></pre>
 </div>
 </div>
 <div class="paragraph">
 <p>Open a new terminal to run Kafka commands:</p>
 </div>
 <div class="paragraph">
-<p>Verify that Zookeeper and Apache Kafka containers are up and running:</p>
+<p>Verify that the Apache Kafka container is up and running:</p>
 </div>
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset2_podman"></a>Podman</p>
+</li>
+<li>
+<p><a id="tabset2_docker"></a>Docker</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset2_podman">
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">podman ps</code></pre>
+</div>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">CONTAINER ID  IMAGE                                     COMMAND               CREATED             STATUS             PORTS                                             NAMES
+8558952ed132  quay.io/strimzi/kafka:0.40.0-kafka-3.7.0  sh -c ./bin/kafka...  About a minute ago  Up About a minute  0.0.0.0:9092-&gt;9092/tcp, 0.0.0.0:29092-&gt;29092/tcp  kafka</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset2_docker">
 <div class="listingblock console-input">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker ps</code></pre>
@@ -509,8 +560,10 @@ kafka      | [2022-12-09 08:29:02,113] INFO [BrokerToControllerChannelManager br
 <div class="listingblock console-output">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">CONTAINER ID   IMAGE                                      COMMAND                  CREATED         STATUS         PORTS                                              NAMES
-0d4bc6ec2ddf   quay.io/strimzi/kafka:0.32.0-kafka-3.3.1   "sh -c 'bin/kafka-se…"   2 minutes ago   Up 2 minutes   0.0.0.0:9092-&gt;9092/tcp, 0.0.0.0:29092-&gt;29092/tcp   kafka
-d8fdbab971c6   quay.io/strimzi/kafka:0.32.0-kafka-3.3.1   "sh -c 'bin/zookeepe…"   2 minutes ago   Up 2 minutes   0.0.0.0:2181-&gt;2181/tcp                             zookeeper</code></pre>
+0d4bc6ec2ddf   quay.io/strimzi/kafka:0.40.0-kafka-3.7.0  "sh -c ./bin/kafka..."   2 minutes ago   Up 2 minutes   0.0.0.0:9092-&gt;9092/tcp, 0.0.0.0:29092-&gt;29092/tcp   kafka</code></pre>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="admonitionblock important">
@@ -532,15 +585,18 @@ Notice that the Kafka container is exposing two ports to outside. The reason is 
 <div class="ulist tabs">
 <ul>
 <li>
-<p><a id="tabset1_kcat"></a>kcat</p>
+<p><a id="tabset3_kcat"></a>kcat</p>
 </li>
 <li>
-<p><a id="tabset1_kcat-in-docker"></a>kcat in Docker</p>
+<p><a id="tabset3_kcat-in-podman"></a>kcat in Podman</p>
+</li>
+<li>
+<p><a id="tabset3_kcat-in-docker"></a>kcat in Docker</p>
 </li>
 </ul>
 </div>
 <div class="content">
-<div class="tab-pane" aria-labelledby="tabset1_kcat">
+<div class="tab-pane" aria-labelledby="tabset3_kcat">
 <div class="listingblock console-input">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">kcat -b localhost:29092 -L</code></pre>
@@ -555,7 +611,22 @@ Notice that the Kafka container is exposing two ports to outside. The reason is 
 </div>
 </div>
 </div>
-<div class="tab-pane" aria-labelledby="tabset1_kcat-in-docker">
+<div class="tab-pane" aria-labelledby="tabset3_kcat-in-podman">
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">podman run --rm -it --network=kafka-tutorial edenhill/kcat:1.7.1 -b kafka:9092 -L</code></pre>
+</div>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">Metadata for all topics (from broker 1: kafka:9092/1):
+ 1 brokers:
+  broker 1 at kafka:9092 (controller)
+ 0 topics:</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset3_kcat-in-docker">
 <div class="listingblock console-input">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker run --rm -it --network=kafka-tutorial edenhill/kcat:1.7.1 -b kafka:9092 -L</code></pre>
@@ -563,9 +634,9 @@ Notice that the Kafka container is exposing two ports to outside. The reason is 
 </div>
 <div class="listingblock console-output">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">Metadata for all topics (from broker 0: kafka:9092/0):
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">Metadata for all topics (from broker 1: kafka:9092/1):
  1 brokers:
-  broker 0 at kafka:9092 (controller)
+  broker 1 at kafka:9092 (controller)
  0 topics:</code></pre>
 </div>
 </div>

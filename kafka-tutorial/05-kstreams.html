@@ -397,8 +397,17 @@ There is two kinds of tables:</p>
 <div class="paragraph">
 <p>Pre-built releases can be downloaded from the GitHub repository&#8217;s <a href="https://github.com/lordofthejars/kstreamscat/releases">release page</a>. In case you want to work with the latest version simply clone the repo and and build the tool by running <code>./mvnw package</code>. The <code>target</code> directory will contain a runnable JAR file named <code>kstreamscat-&lt;version&gt;-jar-with-dependencies.jar</code>.</p>
 </div>
-<div class="paragraph">
-<p>Remember you need to have both, ZooKeeper and Apache Kafka correctly configured as well as up and running. If not, you can follow the <a href="#Setup Kafka">[Setup Kafka]</a> section to learn how to do it using <em>docker compose</em>.</p>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Remember you need to have Apache Kafka successfully up and running. If not, you can follow the <a href="01-setup.html#kafka" class="xref page">Kafka Setup</a> section to learn how to do it using <code>podman | docker compose</code>.
+</td>
+</tr>
+</table>
 </div>
 </div>
 <div class="sect2">
@@ -428,6 +437,9 @@ The number before the <code>:</code> is taken as an id.</p>
 <p><a id="tabset1_kcat"></a>kcat</p>
 </li>
 <li>
+<p><a id="tabset1_kcat-in-podman"></a>kcat in Podman</p>
+</li>
+<li>
 <p><a id="tabset1_kcat-in-docker"></a>kcat in Docker</p>
 </li>
 </ul>
@@ -437,6 +449,13 @@ The number before the <code>:</code> is taken as an id.</p>
 <div class="listingblock console-input">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">kcat -b localhost:29092 -t songs -P -l -K: update_songs</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset1_kcat-in-podman">
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">podman run --rm -it --network=kafka-tutorial -v $(pwd)/documentation/modules/ROOT/examples/update_songs.json:/home/update_songs edenhill/kcat:1.7.1 kcat -b kafka:9092 -t songs -P -l -K: /home/update_songs</code></pre>
 </div>
 </div>
 </div>
@@ -459,6 +478,9 @@ The number before the <code>:</code> is taken as an id.</p>
 <p><a id="tabset2_kcat"></a>kcat</p>
 </li>
 <li>
+<p><a id="tabset2_kcat-in-podman"></a>kcat in Podman</p>
+</li>
+<li>
 <p><a id="tabset2_kcat-in-docker"></a>kcat in Docker</p>
 </li>
 </ul>
@@ -468,6 +490,13 @@ The number before the <code>:</code> is taken as an id.</p>
 <div class="listingblock console-input">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">kcat -b localhost:29092 -t songs -C -K:</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset2_kcat-in-podman">
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">podman run --rm -it --network=kafka-tutorial edenhill/kcat:1.7.1 kcat -b kafka:9092 -t songs -C -K:</code></pre>
 </div>
 </div>
 </div>
@@ -534,6 +563,9 @@ So let&#8217;s fix this.</p>
 <p><a id="tabset3_kcat"></a>kcat</p>
 </li>
 <li>
+<p><a id="tabset3_kcat-in-podman"></a>kcat in Podman</p>
+</li>
+<li>
 <p><a id="tabset3_kcat-in-docker"></a>kcat in Docker</p>
 </li>
 </ul>
@@ -543,6 +575,13 @@ So let&#8217;s fix this.</p>
 <div class="listingblock console-input">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">kcat -b localhost:29092 -t songs -P -l -K: update2_songs</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset3_kcat-in-podman">
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">podman run --rm -it --network=kafka-tutorial -v $(pwd)/documentation/modules/ROOT/examples/update2_songs.json:/home/update2_songs edenhill/kcat:1.7.1 kcat -b kafka:9092 -t songs -P -l -K: /home/update2_songs</code></pre>
 </div>
 </div>
 </div>
@@ -565,6 +604,9 @@ So let&#8217;s fix this.</p>
 <p><a id="tabset4_kcat"></a>kcat</p>
 </li>
 <li>
+<p><a id="tabset4_kcat-in-podman"></a>kcat in Podman</p>
+</li>
+<li>
 <p><a id="tabset4_kcat-in-docker"></a>kcat in Docker</p>
 </li>
 </ul>
@@ -577,10 +619,17 @@ So let&#8217;s fix this.</p>
 </div>
 </div>
 </div>
+<div class="tab-pane" aria-labelledby="tabset4_kcat-in-podman">
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">podman run --rm -it --network=kafka-tutorial edenhill/kcat:1.7.1 kcat -b kafka:9092 -t songs -C -K:</code></pre>
+</div>
+</div>
+</div>
 <div class="tab-pane" aria-labelledby="tabset4_kcat-in-docker">
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker run --rm -it --network=kafka-tutorial edenhill/kcat:1.7.1 kcat -b kafka:29092 -t songs -C -K:</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker run --rm -it --network=kafka-tutorial edenhill/kcat:1.7.1 kcat -b kafka:9092 -t songs -C -K:</code></pre>
 </div>
 </div>
 </div>
@@ -627,31 +676,98 @@ For this reason, only the update event of <em>The Imperial March</em> (key=5/"id
 <div class="sect3">
 <h4 id="_clean_up"><a class="anchor" href="#_clean_up"></a>Clean Up</h4>
 <div class="paragraph">
-<p>To restart Kafka (and ZooKeeper) go to the <code>docker compose</code> terminal and stop the process by typing <span class="keyseq"><kbd>Ctrl</kbd>+<kbd>C</kbd></span>.</p>
+<p>To restart Kafka go to the <code>podman | docker compose</code> terminal and stop the process by typing <span class="keyseq"><kbd>Ctrl</kbd>+<kbd>C</kbd></span>.</p>
 </div>
 <div class="paragraph">
 <p>Then run:</p>
 </div>
-<div class="listingblock lines_1">
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset5_podman"></a>Podman</p>
+</li>
+<li>
+<p><a id="tabset5_docker"></a>Docker</p>
+</li>
+</ul>
+</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-session hljs" data-lang="bash-session">docker compose rm
-
-? Going to remove kafka, zookeeper (y/N) -&gt; y
-[+] Running 2/0
- ⠿ Container zookeeper  Removed
- ⠿ Container kafka      Removed</code></pre>
+<div class="tab-pane" aria-labelledby="tabset5_podman">
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">podman compose down</code></pre>
 </div>
 </div>
-<div class="listingblock lines_1">
+<div class="listingblock console-output">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-session hljs" data-lang="bash-session">docker compose up --remove-orphans
-
-kafka      | [2022-12-15 08:59:25,688] INFO Kafka version: 3.3.1 (org.apache.kafka.common.utils.AppInfoParser)
-kafka      | [2022-12-15 08:59:25,688] INFO Kafka commitId: e23c59d00e687ff5 (org.apache.kafka.common.utils.AppInfoParser)
-kafka      | [2022-12-15 08:59:25,688] INFO Kafka startTimeMs: 1671094765681 (org.apache.kafka.common.utils.AppInfoParser)
-kafka      | [2022-12-15 08:59:25,689] INFO [KafkaServer id=0] started (kafka.server.KafkaServer)
-kafka      | [2022-12-15 08:59:25,750] INFO [BrokerToControllerChannelManager broker=0 name=forwarding]: Recorded new controller, from now on will use broker kafka:9092 (id: 0 rack: null) (kafka.server.BrokerToControllerRequestThread)
-kafka      | [2022-12-15 08:59:25,751] INFO [BrokerToControllerChannelManager broker=0 name=alterPartition]: Recorded new controller, from now on will use broker kafka:9092 (id: 0 rack: null) (kafka.server.BrokerToControllerRequestThread)</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">podman-compose version: 1.0.6
+['podman', '--version', '']
+using podman version: 5.0.1
+** excluding:  set()
+podman stop -t 10 kafka
+kafka
+exit code: 0
+podman rm kafka
+kafka
+exit code: 0</code></pre>
+</div>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">podman compose up</code></pre>
+</div>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">...
+[2024-05-13 15:36:17,976] INFO Awaiting socket connections on kafka:9092. (kafka.network.DataPlaneAcceptor)
+[2024-05-13 15:36:17,976] INFO Awaiting socket connections on 0.0.0.0:29092. (kafka.network.DataPlaneAcceptor)
+[2024-05-13 15:36:17,977] INFO [BrokerServer id=1] Waiting for all of the authorizer futures to be completed (kafka.server.BrokerServer)
+[2024-05-13 15:36:17,977] INFO [BrokerServer id=1] Finished waiting for all of the authorizer futures to be completed (kafka.server.BrokerServer)
+[2024-05-13 15:36:17,978] INFO [BrokerServer id=1] Waiting for all of the SocketServer Acceptors to be started (kafka.server.BrokerServer)
+[2024-05-13 15:36:17,978] INFO [BrokerServer id=1] Finished waiting for all of the SocketServer Acceptors to be started (kafka.server.BrokerServer)
+[2024-05-13 15:36:17,978] INFO [BrokerServer id=1] Transition from STARTING to STARTED (kafka.server.BrokerServer)
+[2024-05-13 15:36:17,978] INFO Kafka version: 3.7.0 (org.apache.kafka.common.utils.AppInfoParser)
+[2024-05-13 15:36:17,978] INFO Kafka commitId: 2ae524ed625438c5 (org.apache.kafka.common.utils.AppInfoParser)
+[2024-05-13 15:36:17,978] INFO Kafka startTimeMs: 1715614577978 (org.apache.kafka.common.utils.AppInfoParser)
+[2024-05-13 15:36:17,978] INFO [KafkaRaftServer nodeId=1] Kafka Server started (kafka.server.KafkaRaftServer)</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset5_docker">
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker compose down</code></pre>
+</div>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">...</code></pre>
+</div>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker compose up</code></pre>
+</div>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">...
+[2024-05-13 15:36:17,976] INFO Awaiting socket connections on kafka:9092. (kafka.network.DataPlaneAcceptor)
+[2024-05-13 15:36:17,976] INFO Awaiting socket connections on 0.0.0.0:29092. (kafka.network.DataPlaneAcceptor)
+[2024-05-13 15:36:17,977] INFO [BrokerServer id=1] Waiting for all of the authorizer futures to be completed (kafka.server.BrokerServer)
+[2024-05-13 15:36:17,977] INFO [BrokerServer id=1] Finished waiting for all of the authorizer futures to be completed (kafka.server.BrokerServer)
+[2024-05-13 15:36:17,978] INFO [BrokerServer id=1] Waiting for all of the SocketServer Acceptors to be started (kafka.server.BrokerServer)
+[2024-05-13 15:36:17,978] INFO [BrokerServer id=1] Finished waiting for all of the SocketServer Acceptors to be started (kafka.server.BrokerServer)
+[2024-05-13 15:36:17,978] INFO [BrokerServer id=1] Transition from STARTING to STARTED (kafka.server.BrokerServer)
+[2024-05-13 15:36:17,978] INFO Kafka version: 3.7.0 (org.apache.kafka.common.utils.AppInfoParser)
+[2024-05-13 15:36:17,978] INFO Kafka commitId: 2ae524ed625438c5 (org.apache.kafka.common.utils.AppInfoParser)
+[2024-05-13 15:36:17,978] INFO Kafka startTimeMs: 1715614577978 (org.apache.kafka.common.utils.AppInfoParser)
+[2024-05-13 15:36:17,978] INFO [KafkaRaftServer nodeId=1] Kafka Server started (kafka.server.KafkaRaftServer)</code></pre>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -753,22 +869,32 @@ Retention configures the time that a window might remain open to process events 
 <div class="ulist tabs">
 <ul>
 <li>
-<p><a id="tabset5_kcat"></a>kcat</p>
+<p><a id="tabset6_kcat"></a>kcat</p>
 </li>
 <li>
-<p><a id="tabset5_kcat-in-docker"></a>kcat in Docker</p>
+<p><a id="tabset6_kcat-in-podman"></a>kcat in Podman</p>
+</li>
+<li>
+<p><a id="tabset6_kcat-in-docker"></a>kcat in Docker</p>
 </li>
 </ul>
 </div>
 <div class="content">
-<div class="tab-pane" aria-labelledby="tabset5_kcat">
+<div class="tab-pane" aria-labelledby="tabset6_kcat">
 <div class="listingblock console-input">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">kcat -b localhost:29092 -t played -P -l -K: apps/windowing/first-batch.json</code></pre>
 </div>
 </div>
 </div>
-<div class="tab-pane" aria-labelledby="tabset5_kcat-in-docker">
+<div class="tab-pane" aria-labelledby="tabset6_kcat-in-podman">
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">podman run --rm -it --network=kafka-tutorial -v $(pwd)/apps/windowing/first-batch.json:/home/first-batch edenhill/kcat:1.7.1 kcat -b kafka:9092 -t played -P -l -K: /home/first-batch</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset6_kcat-in-docker">
 <div class="listingblock console-input">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker run --rm -it --network=kafka-tutorial -v $(pwd)/apps/windowing/first-batch.json:/home/first-batch edenhill/kcat:1.7.1 kcat -b kafka:9092 -t played -P -l -K: /home/first-batch</code></pre>
@@ -803,22 +929,32 @@ Window: 1673267640000 -&gt; Key: sebi = 1</code></pre>
 <div class="ulist tabs">
 <ul>
 <li>
-<p><a id="tabset6_kcat"></a>kcat</p>
+<p><a id="tabset7_kcat"></a>kcat</p>
 </li>
 <li>
-<p><a id="tabset6_kcat-in-docker"></a>kcat in Docker</p>
+<p><a id="tabset7_kcat-in-podman"></a>kcat in Podman</p>
+</li>
+<li>
+<p><a id="tabset7_kcat-in-docker"></a>kcat in Docker</p>
 </li>
 </ul>
 </div>
 <div class="content">
-<div class="tab-pane" aria-labelledby="tabset6_kcat">
+<div class="tab-pane" aria-labelledby="tabset7_kcat">
 <div class="listingblock console-input">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">kcat -b localhost:29092 -t played -P -l -K: apps/windowing/first-batch.json</code></pre>
 </div>
 </div>
 </div>
-<div class="tab-pane" aria-labelledby="tabset6_kcat-in-docker">
+<div class="tab-pane" aria-labelledby="tabset7_kcat-in-podman">
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">podman run --rm -it --network=kafka-tutorial -v $(pwd)/apps/windowing/first-batch.json:/home/first-batch edenhill/kcat:1.7.1 kcat -b kafka:9092 -t played -P -l -K: /home/first-batch</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset7_kcat-in-docker">
 <div class="listingblock console-input">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker run --rm -it --network=kafka-tutorial -v $(pwd)/apps/windowing/first-batch.json:/home/first-batch edenhill/kcat:1.7.1 kcat -b kafka:9092 -t played -P -l -K: /home/first-batch</code></pre>
@@ -850,22 +986,32 @@ Window: 1673267640000 -&gt; Key: sebi = 2</code></pre>
 <div class="ulist tabs">
 <ul>
 <li>
-<p><a id="tabset7_kcat"></a>kcat</p>
+<p><a id="tabset8_kcat"></a>kcat</p>
 </li>
 <li>
-<p><a id="tabset7_kcat-in-docker"></a>kcat in Docker</p>
+<p><a id="tabset8_kcat-in-podman"></a>kcat in Podman</p>
+</li>
+<li>
+<p><a id="tabset8_kcat-in-docker"></a>kcat in Docker</p>
 </li>
 </ul>
 </div>
 <div class="content">
-<div class="tab-pane" aria-labelledby="tabset7_kcat">
+<div class="tab-pane" aria-labelledby="tabset8_kcat">
 <div class="listingblock console-input">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">kcat -b localhost:29092 -t played -P -l -K: apps/windowing/first-batch.json</code></pre>
 </div>
 </div>
 </div>
-<div class="tab-pane" aria-labelledby="tabset7_kcat-in-docker">
+<div class="tab-pane" aria-labelledby="tabset8_kcat-in-podman">
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">podman run --rm -it --network=kafka-tutorial -v $(pwd)/apps/windowing/first-batch.json:/home/first-batch edenhill/kcat:1.7.1 kcat -b kafka:9092 -t played -P -l -K: /home/first-batch</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset8_kcat-in-docker">
 <div class="listingblock console-input">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker run --rm -it --network=kafka-tutorial -v $(pwd)/apps/windowing/first-batch.json:/home/first-batch edenhill/kcat:1.7.1 kcat -b kafka:9092 -t played -P -l -K: /home/first-batch</code></pre>
@@ -896,31 +1042,98 @@ Window: 1673267820000 -&gt; Key: sebi = 1</code></pre>
 <p>Stop <code>kstreamscat</code> process by typing <span class="keyseq"><kbd>Ctrl</kbd>+<kbd>C</kbd></span> in the terminal 2.</p>
 </div>
 <div class="paragraph">
-<p>To restart Kafka (and ZooKeeper) go to the <code>docker compose</code> terminal and stop the process by typing <span class="keyseq"><kbd>Ctrl</kbd>+<kbd>C</kbd></span>.</p>
+<p>To restart Kafka go to the <code>podman | docker compose</code> terminal and stop the process by typing <span class="keyseq"><kbd>Ctrl</kbd>+<kbd>C</kbd></span>.</p>
 </div>
 <div class="paragraph">
 <p>Then run:</p>
 </div>
-<div class="listingblock lines_1">
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset9_podman"></a>Podman</p>
+</li>
+<li>
+<p><a id="tabset9_docker"></a>Docker</p>
+</li>
+</ul>
+</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-session hljs" data-lang="bash-session">docker compose rm
-
-? Going to remove kafka, zookeeper (y/N) -&gt; y
-[+] Running 2/0
- ⠿ Container zookeeper  Removed
- ⠿ Container kafka      Removed</code></pre>
+<div class="tab-pane" aria-labelledby="tabset9_podman">
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">podman compose down</code></pre>
 </div>
 </div>
-<div class="listingblock lines_1">
+<div class="listingblock console-output">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-session hljs" data-lang="bash-session">docker compose up --remove-orphans
-
-kafka      | [2022-12-15 08:59:25,688] INFO Kafka version: 3.3.1 (org.apache.kafka.common.utils.AppInfoParser)
-kafka      | [2022-12-15 08:59:25,688] INFO Kafka commitId: e23c59d00e687ff5 (org.apache.kafka.common.utils.AppInfoParser)
-kafka      | [2022-12-15 08:59:25,688] INFO Kafka startTimeMs: 1671094765681 (org.apache.kafka.common.utils.AppInfoParser)
-kafka      | [2022-12-15 08:59:25,689] INFO [KafkaServer id=0] started (kafka.server.KafkaServer)
-kafka      | [2022-12-15 08:59:25,750] INFO [BrokerToControllerChannelManager broker=0 name=forwarding]: Recorded new controller, from now on will use broker kafka:9092 (id: 0 rack: null) (kafka.server.BrokerToControllerRequestThread)
-kafka      | [2022-12-15 08:59:25,751] INFO [BrokerToControllerChannelManager broker=0 name=alterPartition]: Recorded new controller, from now on will use broker kafka:9092 (id: 0 rack: null) (kafka.server.BrokerToControllerRequestThread)</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">podman-compose version: 1.0.6
+['podman', '--version', '']
+using podman version: 5.0.1
+** excluding:  set()
+podman stop -t 10 kafka
+kafka
+exit code: 0
+podman rm kafka
+kafka
+exit code: 0</code></pre>
+</div>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">podman compose up</code></pre>
+</div>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">...
+[2024-05-13 15:36:17,976] INFO Awaiting socket connections on kafka:9092. (kafka.network.DataPlaneAcceptor)
+[2024-05-13 15:36:17,976] INFO Awaiting socket connections on 0.0.0.0:29092. (kafka.network.DataPlaneAcceptor)
+[2024-05-13 15:36:17,977] INFO [BrokerServer id=1] Waiting for all of the authorizer futures to be completed (kafka.server.BrokerServer)
+[2024-05-13 15:36:17,977] INFO [BrokerServer id=1] Finished waiting for all of the authorizer futures to be completed (kafka.server.BrokerServer)
+[2024-05-13 15:36:17,978] INFO [BrokerServer id=1] Waiting for all of the SocketServer Acceptors to be started (kafka.server.BrokerServer)
+[2024-05-13 15:36:17,978] INFO [BrokerServer id=1] Finished waiting for all of the SocketServer Acceptors to be started (kafka.server.BrokerServer)
+[2024-05-13 15:36:17,978] INFO [BrokerServer id=1] Transition from STARTING to STARTED (kafka.server.BrokerServer)
+[2024-05-13 15:36:17,978] INFO Kafka version: 3.7.0 (org.apache.kafka.common.utils.AppInfoParser)
+[2024-05-13 15:36:17,978] INFO Kafka commitId: 2ae524ed625438c5 (org.apache.kafka.common.utils.AppInfoParser)
+[2024-05-13 15:36:17,978] INFO Kafka startTimeMs: 1715614577978 (org.apache.kafka.common.utils.AppInfoParser)
+[2024-05-13 15:36:17,978] INFO [KafkaRaftServer nodeId=1] Kafka Server started (kafka.server.KafkaRaftServer)</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset9_docker">
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker compose down</code></pre>
+</div>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">...</code></pre>
+</div>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker compose up</code></pre>
+</div>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">...
+[2024-05-13 15:36:17,976] INFO Awaiting socket connections on kafka:9092. (kafka.network.DataPlaneAcceptor)
+[2024-05-13 15:36:17,976] INFO Awaiting socket connections on 0.0.0.0:29092. (kafka.network.DataPlaneAcceptor)
+[2024-05-13 15:36:17,977] INFO [BrokerServer id=1] Waiting for all of the authorizer futures to be completed (kafka.server.BrokerServer)
+[2024-05-13 15:36:17,977] INFO [BrokerServer id=1] Finished waiting for all of the authorizer futures to be completed (kafka.server.BrokerServer)
+[2024-05-13 15:36:17,978] INFO [BrokerServer id=1] Waiting for all of the SocketServer Acceptors to be started (kafka.server.BrokerServer)
+[2024-05-13 15:36:17,978] INFO [BrokerServer id=1] Finished waiting for all of the SocketServer Acceptors to be started (kafka.server.BrokerServer)
+[2024-05-13 15:36:17,978] INFO [BrokerServer id=1] Transition from STARTING to STARTED (kafka.server.BrokerServer)
+[2024-05-13 15:36:17,978] INFO Kafka version: 3.7.0 (org.apache.kafka.common.utils.AppInfoParser)
+[2024-05-13 15:36:17,978] INFO Kafka commitId: 2ae524ed625438c5 (org.apache.kafka.common.utils.AppInfoParser)
+[2024-05-13 15:36:17,978] INFO Kafka startTimeMs: 1715614577978 (org.apache.kafka.common.utils.AppInfoParser)
+[2024-05-13 15:36:17,978] INFO [KafkaRaftServer nodeId=1] Kafka Server started (kafka.server.KafkaRaftServer)</code></pre>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -945,22 +1158,32 @@ kafka      | [2022-12-15 08:59:25,751] INFO [BrokerToControllerChannelManager br
 <div class="ulist tabs">
 <ul>
 <li>
-<p><a id="tabset8_kcat"></a>kcat</p>
+<p><a id="tabset10_kcat"></a>kcat</p>
 </li>
 <li>
-<p><a id="tabset8_kcat-in-docker"></a>kcat in Docker</p>
+<p><a id="tabset10_kcat-in-podman"></a>kcat in Podman</p>
+</li>
+<li>
+<p><a id="tabset10_kcat-in-docker"></a>kcat in Docker</p>
 </li>
 </ul>
 </div>
 <div class="content">
-<div class="tab-pane" aria-labelledby="tabset8_kcat">
+<div class="tab-pane" aria-labelledby="tabset10_kcat">
 <div class="listingblock console-input">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">kcat -b localhost:29092 -t played -P -l -K: apps/windowing/first-batch.json</code></pre>
 </div>
 </div>
 </div>
-<div class="tab-pane" aria-labelledby="tabset8_kcat-in-docker">
+<div class="tab-pane" aria-labelledby="tabset10_kcat-in-podman">
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">podman run --rm -it --network=kafka-tutorial -v $(pwd)/apps/windowing/first-batch.json:/home/first-batch edenhill/kcat:1.7.1 kcat -b kafka:9092 -t played -P -l -K: /home/first-batch</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset10_kcat-in-docker">
 <div class="listingblock console-input">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker run --rm -it --network=kafka-tutorial -v $(pwd)/apps/windowing/first-batch.json:/home/first-batch edenhill/kcat:1.7.1 kcat -b kafka:9092 -t played -P -l -K: /home/first-batch</code></pre>
@@ -1051,31 +1274,98 @@ The new session window is only created before producing the last batch of song p
 <p>Stop <code>kstreamscat</code> process by typing <span class="keyseq"><kbd>Ctrl</kbd>+<kbd>C</kbd></span> in the terminal 2.</p>
 </div>
 <div class="paragraph">
-<p>To restart Kafka (and ZooKeeper) go to the <code>docker compose</code> terminal and stop the process by typing <span class="keyseq"><kbd>Ctrl</kbd>+<kbd>C</kbd></span>.</p>
+<p>To restart Kafka go to the <code>podman | docker compose</code> terminal and stop the process by typing <span class="keyseq"><kbd>Ctrl</kbd>+<kbd>C</kbd></span>.</p>
 </div>
 <div class="paragraph">
 <p>Then run:</p>
 </div>
-<div class="listingblock lines_1">
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset11_podman"></a>Podman</p>
+</li>
+<li>
+<p><a id="tabset11_docker"></a>Docker</p>
+</li>
+</ul>
+</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-session hljs" data-lang="bash-session">docker compose rm
-
-? Going to remove kafka, zookeeper (y/N) -&gt; y
-[+] Running 2/0
- ⠿ Container zookeeper  Removed
- ⠿ Container kafka      Removed</code></pre>
+<div class="tab-pane" aria-labelledby="tabset11_podman">
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">podman compose down</code></pre>
 </div>
 </div>
-<div class="listingblock lines_1">
+<div class="listingblock console-output">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-session hljs" data-lang="bash-session">docker compose up --remove-orphans
-
-kafka      | [2022-12-15 08:59:25,688] INFO Kafka version: 3.3.1 (org.apache.kafka.common.utils.AppInfoParser)
-kafka      | [2022-12-15 08:59:25,688] INFO Kafka commitId: e23c59d00e687ff5 (org.apache.kafka.common.utils.AppInfoParser)
-kafka      | [2022-12-15 08:59:25,688] INFO Kafka startTimeMs: 1671094765681 (org.apache.kafka.common.utils.AppInfoParser)
-kafka      | [2022-12-15 08:59:25,689] INFO [KafkaServer id=0] started (kafka.server.KafkaServer)
-kafka      | [2022-12-15 08:59:25,750] INFO [BrokerToControllerChannelManager broker=0 name=forwarding]: Recorded new controller, from now on will use broker kafka:9092 (id: 0 rack: null) (kafka.server.BrokerToControllerRequestThread)
-kafka      | [2022-12-15 08:59:25,751] INFO [BrokerToControllerChannelManager broker=0 name=alterPartition]: Recorded new controller, from now on will use broker kafka:9092 (id: 0 rack: null) (kafka.server.BrokerToControllerRequestThread)</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">podman-compose version: 1.0.6
+['podman', '--version', '']
+using podman version: 5.0.1
+** excluding:  set()
+podman stop -t 10 kafka
+kafka
+exit code: 0
+podman rm kafka
+kafka
+exit code: 0</code></pre>
+</div>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">podman compose up</code></pre>
+</div>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">...
+[2024-05-13 15:36:17,976] INFO Awaiting socket connections on kafka:9092. (kafka.network.DataPlaneAcceptor)
+[2024-05-13 15:36:17,976] INFO Awaiting socket connections on 0.0.0.0:29092. (kafka.network.DataPlaneAcceptor)
+[2024-05-13 15:36:17,977] INFO [BrokerServer id=1] Waiting for all of the authorizer futures to be completed (kafka.server.BrokerServer)
+[2024-05-13 15:36:17,977] INFO [BrokerServer id=1] Finished waiting for all of the authorizer futures to be completed (kafka.server.BrokerServer)
+[2024-05-13 15:36:17,978] INFO [BrokerServer id=1] Waiting for all of the SocketServer Acceptors to be started (kafka.server.BrokerServer)
+[2024-05-13 15:36:17,978] INFO [BrokerServer id=1] Finished waiting for all of the SocketServer Acceptors to be started (kafka.server.BrokerServer)
+[2024-05-13 15:36:17,978] INFO [BrokerServer id=1] Transition from STARTING to STARTED (kafka.server.BrokerServer)
+[2024-05-13 15:36:17,978] INFO Kafka version: 3.7.0 (org.apache.kafka.common.utils.AppInfoParser)
+[2024-05-13 15:36:17,978] INFO Kafka commitId: 2ae524ed625438c5 (org.apache.kafka.common.utils.AppInfoParser)
+[2024-05-13 15:36:17,978] INFO Kafka startTimeMs: 1715614577978 (org.apache.kafka.common.utils.AppInfoParser)
+[2024-05-13 15:36:17,978] INFO [KafkaRaftServer nodeId=1] Kafka Server started (kafka.server.KafkaRaftServer)</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset11_docker">
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker compose down</code></pre>
+</div>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">...</code></pre>
+</div>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker compose up</code></pre>
+</div>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">...
+[2024-05-13 15:36:17,976] INFO Awaiting socket connections on kafka:9092. (kafka.network.DataPlaneAcceptor)
+[2024-05-13 15:36:17,976] INFO Awaiting socket connections on 0.0.0.0:29092. (kafka.network.DataPlaneAcceptor)
+[2024-05-13 15:36:17,977] INFO [BrokerServer id=1] Waiting for all of the authorizer futures to be completed (kafka.server.BrokerServer)
+[2024-05-13 15:36:17,977] INFO [BrokerServer id=1] Finished waiting for all of the authorizer futures to be completed (kafka.server.BrokerServer)
+[2024-05-13 15:36:17,978] INFO [BrokerServer id=1] Waiting for all of the SocketServer Acceptors to be started (kafka.server.BrokerServer)
+[2024-05-13 15:36:17,978] INFO [BrokerServer id=1] Finished waiting for all of the SocketServer Acceptors to be started (kafka.server.BrokerServer)
+[2024-05-13 15:36:17,978] INFO [BrokerServer id=1] Transition from STARTING to STARTED (kafka.server.BrokerServer)
+[2024-05-13 15:36:17,978] INFO Kafka version: 3.7.0 (org.apache.kafka.common.utils.AppInfoParser)
+[2024-05-13 15:36:17,978] INFO Kafka commitId: 2ae524ed625438c5 (org.apache.kafka.common.utils.AppInfoParser)
+[2024-05-13 15:36:17,978] INFO Kafka startTimeMs: 1715614577978 (org.apache.kafka.common.utils.AppInfoParser)
+[2024-05-13 15:36:17,978] INFO [KafkaRaftServer nodeId=1] Kafka Server started (kafka.server.KafkaRaftServer)</code></pre>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>

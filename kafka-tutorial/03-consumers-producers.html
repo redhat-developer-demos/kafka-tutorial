@@ -391,6 +391,9 @@ If you add more consumers in a consumer group than the number of partitions for 
 <p><a id="tabset1_kcat"></a>kcat</p>
 </li>
 <li>
+<p><a id="tabset1_kcat-in-podman"></a>kcat in Podman</p>
+</li>
+<li>
 <p><a id="tabset1_kcat-in-docker"></a>kcat in Docker</p>
 </li>
 </ul>
@@ -400,6 +403,13 @@ If you add more consumers in a consumer group than the number of partitions for 
 <div class="listingblock console-input">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">kcat -b localhost:29092 -t songs -C -K:</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset1_kcat-in-podman">
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">podman run --rm -it --network=kafka-tutorial edenhill/kcat:1.7.1 kcat -b kafka:9092 -t songs -C -K:</code></pre>
 </div>
 </div>
 </div>
@@ -440,6 +450,9 @@ If you add more consumers in a consumer group than the number of partitions for 
 <p><a id="tabset2_kcat"></a>kcat</p>
 </li>
 <li>
+<p><a id="tabset2_kcat-in-podman"></a>kcat in Podman</p>
+</li>
+<li>
 <p><a id="tabset2_kcat-in-docker"></a>kcat in Docker</p>
 </li>
 </ul>
@@ -449,6 +462,13 @@ If you add more consumers in a consumer group than the number of partitions for 
 <div class="listingblock console-input">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">kcat -b localhost:29092 -t songs -P -l -K: initial_songs</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset2_kcat-in-podman">
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">podman run --rm -it --network=kafka-tutorial -v $(pwd)/documentation/modules/ROOT/examples/initial_songs.json:/home/initial_songs edenhill/kcat:1.7.1 kcat -b kafka:9092 -t songs -P -l -K: /home/initial_songs</code></pre>
 </div>
 </div>
 </div>
@@ -495,6 +515,9 @@ Still on <em>terminal 1</em>, stop the <code>kcat</code> process by typing <span
 <p><a id="tabset3_kcat"></a>kcat</p>
 </li>
 <li>
+<p><a id="tabset3_kcat-in-podman"></a>kcat in Podman</p>
+</li>
+<li>
 <p><a id="tabset3_kcat-in-docker"></a>kcat in Docker</p>
 </li>
 </ul>
@@ -504,6 +527,13 @@ Still on <em>terminal 1</em>, stop the <code>kcat</code> process by typing <span
 <div class="listingblock console-input">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">kcat -b localhost:29092 -t songs -C -K:</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset3_kcat-in-podman">
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">podman run --rm -it --network=kafka-tutorial edenhill/kcat:1.7.1 kcat -b kafka:9092 -t songs -C -K:</code></pre>
 </div>
 </div>
 </div>
@@ -539,6 +569,9 @@ Still on <em>terminal 1</em>, stop the <code>kcat</code> process by typing <span
 <p><a id="tabset4_kcat"></a>kcat</p>
 </li>
 <li>
+<p><a id="tabset4_kcat-in-podman"></a>kcat in Podman</p>
+</li>
+<li>
 <p><a id="tabset4_kcat-in-docker"></a>kcat in Docker</p>
 </li>
 </ul>
@@ -548,6 +581,13 @@ Still on <em>terminal 1</em>, stop the <code>kcat</code> process by typing <span
 <div class="listingblock console-input">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">kcat -b localhost:29092 -t songs -o 1 -C -K:</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset4_kcat-in-podman">
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">podman run --rm -it --network=kafka-tutorial edenhill/kcat:1.7.1 kcat -b kafka:9092 -t songs -o 1 -C -K:</code></pre>
 </div>
 </div>
 </div>
@@ -584,9 +624,32 @@ Still on <em>terminal 1</em>, stop the <code>kcat</code> process by typing <span
 <div class="paragraph">
 <p>This tool is bundled with the Kafka container image, so let&#8217;s <code>exec</code> a <code>bash</code> terminal inside the running Kafka container.</p>
 </div>
-<div class="listingblock lines_1 console-input">
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset5_podman"></a>Podman</p>
+</li>
+<li>
+<p><a id="tabset5_docker"></a>Docker</p>
+</li>
+</ul>
+</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker exec -it $(docker ps -q --filter "label=com.docker.compose.service=kafka") /bin/bash</code></pre>
+<div class="tab-pane" aria-labelledby="tabset5_podman">
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">podman exec -it kafka /bin/bash</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset5_docker">
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker exec -it kafka /bin/bash</code></pre>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="paragraph">
@@ -623,22 +686,32 @@ Still on <em>terminal 1</em>, stop the <code>kcat</code> process by typing <span
 <div class="ulist tabs">
 <ul>
 <li>
-<p><a id="tabset5_kcat"></a>kcat</p>
+<p><a id="tabset6_kcat"></a>kcat</p>
 </li>
 <li>
-<p><a id="tabset5_kcat-in-docker"></a>kcat in Docker</p>
+<p><a id="tabset6_kcat-in-podman"></a>kcat in Podman</p>
+</li>
+<li>
+<p><a id="tabset6_kcat-in-docker"></a>kcat in Docker</p>
 </li>
 </ul>
 </div>
 <div class="content">
-<div class="tab-pane" aria-labelledby="tabset5_kcat">
+<div class="tab-pane" aria-labelledby="tabset6_kcat">
 <div class="listingblock console-input">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">kcat -b localhost:29092 -t songs -C -K:</code></pre>
 </div>
 </div>
 </div>
-<div class="tab-pane" aria-labelledby="tabset5_kcat-in-docker">
+<div class="tab-pane" aria-labelledby="tabset6_kcat-in-podman">
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">podman run --rm -it --network=kafka-tutorial edenhill/kcat:1.7.1 kcat -b kafka:9092 -t songs -C -K:</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset6_kcat-in-docker">
 <div class="listingblock console-input">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker run --rm -it --network=kafka-tutorial edenhill/kcat:1.7.1 kcat -b kafka:9092 -t songs -C -K:</code></pre>
@@ -659,7 +732,7 @@ Still on <em>terminal 1</em>, stop the <code>kcat</code> process by typing <span
 <p>Also note, that Kafka brokers have a configuration for <code>log.retention.check.interval.ms</code> and this setting must be lower than/equal to a topic&#8217;s <code>retention.ms</code>, otherwise cleaning out offsets will not be effective "immeadiately" but only after the log cleaner ran to do its job. In other words, it may take longer (up to <code>log.retention.check.interval.ms</code>) before you can actually observe the data retention happening in the corresponding Kafka topic.</p>
 </div>
 <div class="paragraph">
-<p>Change retention time to the default one by running in the third terminal (the one you did <code>docker exec</code>), the following command:</p>
+<p>Change retention time to the default one by running in the third terminal (the one you did either <code>podman | docker exec &#8230;&#8203;</code>) the following command:</p>
 </div>
 <div class="listingblock console-input">
 <div class="content">
@@ -680,9 +753,32 @@ Still on <em>terminal 1</em>, stop the <code>kcat</code> process by typing <span
 <div class="paragraph">
 <p>This tool is bundled with the Kafka container image, so let&#8217;s <code>exec</code> a <code>bash</code> terminal inside the running Kafka container.</p>
 </div>
-<div class="listingblock lines_1 console-input">
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset7_podman"></a>Podman</p>
+</li>
+<li>
+<p><a id="tabset7_docker"></a>Docker</p>
+</li>
+</ul>
+</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker exec -it $(docker ps -q --filter "label=com.docker.compose.service=kafka") /bin/bash</code></pre>
+<div class="tab-pane" aria-labelledby="tabset7_podman">
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">podman exec -it kafka /bin/bash</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset7_docker">
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash-shell hljs" data-lang="bash-shell">docker exec -it kafka /bin/bash</code></pre>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="paragraph">
