@@ -64,26 +64,33 @@ kubectl apply -f 'https://strimzi.io/install/latest?namespace=default' -n defaul
 [.console-output]
 [source, bash-shell,subs="+macros,+attributes"]
 ----
-customresourcedefinition.apiextensions.k8s.io/kafkas.kafka.strimzi.io created
-rolebinding.rbac.authorization.k8s.io/strimzi-cluster-operator-entity-operator-delegation created
-clusterrolebinding.rbac.authorization.k8s.io/strimzi-cluster-operator created
-rolebinding.rbac.authorization.k8s.io/strimzi-cluster-operator-topic-operator-delegation created
-customresourcedefinition.apiextensions.k8s.io/kafkausers.kafka.strimzi.io created
-customresourcedefinition.apiextensions.k8s.io/kafkamirrormaker2s.kafka.strimzi.io created
-clusterrole.rbac.authorization.k8s.io/strimzi-entity-operator created
-clusterrole.rbac.authorization.k8s.io/strimzi-cluster-operator-global created
 clusterrolebinding.rbac.authorization.k8s.io/strimzi-cluster-operator-kafka-broker-delegation created
-rolebinding.rbac.authorization.k8s.io/strimzi-cluster-operator created
-clusterrole.rbac.authorization.k8s.io/strimzi-cluster-operator-namespaced created
-clusterrole.rbac.authorization.k8s.io/strimzi-topic-operator created
 serviceaccount/strimzi-cluster-operator created
-clusterrole.rbac.authorization.k8s.io/strimzi-kafka-broker created
 customresourcedefinition.apiextensions.k8s.io/kafkatopics.kafka.strimzi.io created
-customresourcedefinition.apiextensions.k8s.io/kafkabridges.kafka.strimzi.io created
+clusterrole.rbac.authorization.k8s.io/strimzi-entity-operator created
+clusterrole.rbac.authorization.k8s.io/strimzi-kafka-broker created
+rolebinding.rbac.authorization.k8s.io/strimzi-cluster-operator-watched created
+rolebinding.rbac.authorization.k8s.io/strimzi-cluster-operator-entity-operator-delegation created
+rolebinding.rbac.authorization.k8s.io/strimzi-cluster-operator-leader-election created
+clusterrole.rbac.authorization.k8s.io/strimzi-cluster-operator-global created
+clusterrole.rbac.authorization.k8s.io/strimzi-cluster-operator-leader-election created
+clusterrole.rbac.authorization.k8s.io/strimzi-cluster-operator-namespaced created
+customresourcedefinition.apiextensions.k8s.io/kafkas.kafka.strimzi.io created
 deployment.apps/strimzi-cluster-operator created
 customresourcedefinition.apiextensions.k8s.io/kafkaconnectors.kafka.strimzi.io created
-customresourcedefinition.apiextensions.k8s.io/kafkaconnects2is.kafka.strimzi.io created
+customresourcedefinition.apiextensions.k8s.io/strimzipodsets.core.strimzi.io created
+clusterrolebinding.rbac.authorization.k8s.io/strimzi-cluster-operator created
 customresourcedefinition.apiextensions.k8s.io/kafkaconnects.kafka.strimzi.io created
+customresourcedefinition.apiextensions.k8s.io/kafkarebalances.kafka.strimzi.io created
+customresourcedefinition.apiextensions.k8s.io/kafkamirrormaker2s.kafka.strimzi.io created
+clusterrolebinding.rbac.authorization.k8s.io/strimzi-cluster-operator-kafka-client-delegation created
+customresourcedefinition.apiextensions.k8s.io/kafkanodepools.kafka.strimzi.io created
+customresourcedefinition.apiextensions.k8s.io/kafkausers.kafka.strimzi.io created
+rolebinding.rbac.authorization.k8s.io/strimzi-cluster-operator created
+clusterrole.rbac.authorization.k8s.io/strimzi-cluster-operator-watched created
+clusterrole.rbac.authorization.k8s.io/strimzi-kafka-client created
+customresourcedefinition.apiextensions.k8s.io/kafkabridges.kafka.strimzi.io created
+configmap/strimzi-cluster-operator created
 customresourcedefinition.apiextensions.k8s.io/kafkamirrormakers.kafka.strimzi.io created
 ----
 
@@ -96,8 +103,17 @@ kubectl get pods
 [.console-output]
 [source, bash-shell,subs="+macros,+attributes"]
 ----
-NAME                                          READY   STATUS    RESTARTS   AGE
-strimzi-cluster-operator-f696c85f7-9fggx      1/1     Running   0          6m53s
+NAME                                        READY   STATUS              RESTARTS   AGE
+strimzi-cluster-operator-79fb75cb8d-7k9rj   0/1     ContainerCreating   0          27s
+----
+
+After a while the pod becomes ready and is running fine.
+
+[.console-output]
+[source, bash-shell,subs="+macros,+attributes"]
+----
+NAME                                        READY   STATUS    RESTARTS   AGE
+strimzi-cluster-operator-79fb75cb8d-7k9rj   1/1     Running   0          97s
 ----
 --
 OpenShift::
@@ -122,15 +138,16 @@ kubectl get crds | grep kafka
 [source, bash-shell,subs="+macros,+attributes"]
 ----
 NAME                                  CREATED AT
-kafkabridges.kafka.strimzi.io         2022-12-19T07:16:50Z
-kafkaconnectors.kafka.strimzi.io      2022-12-19T07:16:50Z
-kafkaconnects.kafka.strimzi.io        2022-12-19T07:16:50Z
-kafkamirrormaker2s.kafka.strimzi.io   2022-12-19T07:16:50Z
-kafkamirrormakers.kafka.strimzi.io    2022-12-19T07:16:50Z
-kafkarebalances.kafka.strimzi.io      2022-12-19T07:16:50Z
-kafkas.kafka.strimzi.io               2022-12-19T07:16:50Z
-kafkatopics.kafka.strimzi.io          2022-12-19T07:16:50Z
-kafkausers.kafka.strimzi.io           2022-12-19T07:16:50Z
+kafkabridges.kafka.strimzi.io                 2024-05-14T07:06:10Z
+kafkaconnectors.kafka.strimzi.io              2024-05-14T07:06:10Z
+kafkaconnects.kafka.strimzi.io                2024-05-14T07:06:10Z
+kafkamirrormaker2s.kafka.strimzi.io           2024-05-14T07:06:10Z
+kafkamirrormakers.kafka.strimzi.io            2024-05-14T07:06:10Z
+kafkanodepools.kafka.strimzi.io               2024-05-14T07:06:10Z
+kafkarebalances.kafka.strimzi.io              2024-05-14T07:06:10Z
+kafkas.kafka.strimzi.io                       2024-05-14T07:06:10Z
+kafkatopics.kafka.strimzi.io                  2024-05-14T07:06:10Z
+kafkausers.kafka.strimzi.io                   2024-05-14T07:06:10Z
 ----
 
 [#deploy-kafka]
@@ -188,15 +205,15 @@ kubectl get pods
 [.console-output]
 [source, bash-shell,subs="+macros,+attributes"]
 ----
-NAME                                          READY   STATUS    RESTARTS      AGE
-my-cluster-entity-operator-7dfb85ccf9-28dqd   3/3     Running   0             95s
-my-cluster-kafka-0                            1/1     Running   0             118s
-my-cluster-kafka-1                            1/1     Running   0             118s
-my-cluster-kafka-2                            1/1     Running   0             118s
-my-cluster-zookeeper-0                        1/1     Running   0             2m21s
-my-cluster-zookeeper-1                        1/1     Running   0             2m21s
-my-cluster-zookeeper-2                        1/1     Running   0             2m21s
-strimzi-cluster-operator-f696c85f7-9fggx      1/1     Running   0             7m49s
+NAME                                          READY   STATUS    RESTARTS   AGE
+my-cluster-entity-operator-5f6c66f65c-k2vww   2/2     Running   0          29s
+my-cluster-kafka-0                            1/1     Running   0          52s
+my-cluster-kafka-1                            1/1     Running   0          52s
+my-cluster-kafka-2                            1/1     Running   0          52s
+my-cluster-zookeeper-0                        1/1     Running   0          2m53s
+my-cluster-zookeeper-1                        1/1     Running   0          2m53s
+my-cluster-zookeeper-2                        1/1     Running   0          2m53s
+strimzi-cluster-operator-79fb75cb8d-7k9rj     1/1     Running   0          6m12s
 ----
 
 And services:
@@ -210,19 +227,19 @@ kubectl get services
 [.console-output]
 [source, bash-shell,subs="+macros,+attributes"]
 ----
-NAME                          TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)                               AGE
-kubernetes                    ClusterIP   10.96.0.1       <none>        443/TCP                               10m33s
-my-cluster-kafka-bootstrap    ClusterIP   10.98.94.157    <none>        9091/TCP,9092/TCP,9093/TCP            3m12s
-my-cluster-kafka-brokers      ClusterIP   None            <none>        9090/TCP,9091/TCP,9092/TCP,9093/TCP   3m12s
-my-cluster-zookeeper-client   ClusterIP   10.104.185.52   <none>        2181/TCP                              3m35s
-my-cluster-zookeeper-nodes    ClusterIP   None            <none>        2181/TCP,2888/TCP,3888/TCP            3m35s
+NAME                          TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)                                        AGE
+kubernetes                    ClusterIP   10.96.0.1       <none>        443/TCP                                        12h
+my-cluster-kafka-bootstrap    ClusterIP   10.96.137.128   <none>        9091/TCP,9092/TCP,9093/TCP                     72s
+my-cluster-kafka-brokers      ClusterIP   None            <none>        9090/TCP,9091/TCP,8443/TCP,9092/TCP,9093/TCP   72s
+my-cluster-zookeeper-client   ClusterIP   10.96.88.171    <none>        2181/TCP                                       3m13s
+my-cluster-zookeeper-nodes    ClusterIP   None            <none>        2181/TCP,2888/TCP,3888/TCP                     3m13s
 ----
 
 [#deploy-service-strimzi]
 == Deploying Services
 
-Let's deploy the example done at <<Developing Consumers and Producers in Java>>, but in Kubernetes instead of Docker.
-This time, the Quarkus versions of the `song` / `song-indexer` applications are deployed.
+Let's deploy the example done at xref:04-java-consumer-producer.adoc##developing-consumers-producers-java[Developing Consumers and Producers in Java], but in Kubernetes instead of Docker.
+This time, the Quarkus versions of the `song-app` and `song-indexer-app` are deployed.
 
 [#kubernetes-song-app]
 === Deploy Song Service
@@ -233,7 +250,7 @@ To deploy the `song-app` service go to its folder and build the application
 [source, bash-shell]
 ----
 cd $TUTORIAL_HOME/apps/song-app/quarkus/song-app
-./mvnw clean package
+./mvnw clean package -DskipTests
 ----
 
 After a successful build use `kubectl` to deploy it:
@@ -247,8 +264,8 @@ kubectl apply -f target/kubernetes/kubernetes.yml
 [.console-output]
 [source, bash-shell,subs="+macros,+attributes"]
 ----
-service/kafka-tutorial-song-app-quarkus created
-deployment.apps/kafka-tutorial-song-app-quarkus created
+service/song-app created
+deployment.apps/song-app created
 ----
 
 Verify that the service has been deployed correctly:
@@ -262,16 +279,16 @@ kubectl get pods
 [.console-output]
 [source, bash-shell,subs="+macros,+attributes"]
 ----
-NAME                                                       READY   STATUS    RESTARTS      AGE
-kafka-tutorial-song-app-quarkus-55df95589f-fg5v2           1/1     Running   0             7m23s
-my-cluster-entity-operator-7dfb85ccf9-28dqd                3/3     Running   0             21m
-my-cluster-kafka-0                                         1/1     Running   0             21m
-my-cluster-kafka-1                                         1/1     Running   0             21m
-my-cluster-kafka-2                                         1/1     Running   0             21m
-my-cluster-zookeeper-0                                     1/1     Running   0             22m
-my-cluster-zookeeper-1                                     1/1     Running   0             22m
-my-cluster-zookeeper-2                                     1/1     Running   0             22m
-strimzi-cluster-operator-f696c85f7-9fggx                   1/1     Running   0             37m49s
+NAME                                          READY   STATUS    RESTARTS   AGE
+my-cluster-entity-operator-5f6c66f65c-k2vww   2/2     Running   0          12m
+my-cluster-kafka-0                            1/1     Running   0          13m
+my-cluster-kafka-1                            1/1     Running   0          13m
+my-cluster-kafka-2                            1/1     Running   0          13m
+my-cluster-zookeeper-0                        1/1     Running   0          15m
+my-cluster-zookeeper-1                        1/1     Running   0          15m
+my-cluster-zookeeper-2                        1/1     Running   0          15m
+song-app-566b5f7bf5-pdl4b                     1/1     Running   0          2m12s
+strimzi-cluster-operator-79fb75cb8d-7k9rj     1/1     Running   0          18m
 ----
 
 [#kubernetes-song-indexer-app]
@@ -283,7 +300,7 @@ To deploy the `song-indexer-app` service go to its folder and build the applicat
 [source, bash-shell]
 ----
 cd $TUTORIAL_HOME/apps/song-indexer-app/quarkus/song-indexer-app
-./mvnw clean package
+./mvnw clean package -DskipTests
 ----
 
 And use `kubectl` to deploy the it:
@@ -297,8 +314,8 @@ kubectl apply -f target/kubernetes/kubernetes.yml
 [.console-output]
 [source, bash-shell,subs="+macros,+attributes"]
 ----
-service/kafka-tutorial-song-indexer-app-quarkus created
-deployment.apps/kafka-tutorial-song-indexer-app-quarkus created
+service/song-indexer-app created
+deployment.apps/song-indexer-app created
 ----
 
 Verify that the service has been deployed correctly:
@@ -312,17 +329,17 @@ kubectl get pods
 [.console-output]
 [source, bash-shell,subs="+macros,+attributes"]
 ----
-NAME                                                       READY   STATUS    RESTARTS      AGE
-kafka-tutorial-song-app-quarkus-55df95589f-fg5v2           1/1     Running   0             9m21s
-kafka-tutorial-song-indexer-app-quarkus-6c4b56f448-xgshm   1/1     Running   0             1m10s
-my-cluster-entity-operator-7dfb85ccf9-28dqd                3/3     Running   0             23m
-my-cluster-kafka-0                                         1/1     Running   0             23m
-my-cluster-kafka-1                                         1/1     Running   0             23m
-my-cluster-kafka-2                                         1/1     Running   0             23m
-my-cluster-zookeeper-0                                     1/1     Running   0             24m
-my-cluster-zookeeper-1                                     1/1     Running   0             24m
-my-cluster-zookeeper-2                                     1/1     Running   0             24m
-strimzi-cluster-operator-f696c85f7-9fggx                   1/1     Running   0             39m33s
+NAME                                          READY   STATUS    RESTARTS   AGE
+my-cluster-entity-operator-5f6c66f65c-k2vww   2/2     Running   0          15m
+my-cluster-kafka-0                            1/1     Running   0          15m
+my-cluster-kafka-1                            1/1     Running   0          15m
+my-cluster-kafka-2                            1/1     Running   0          15m
+my-cluster-zookeeper-0                        1/1     Running   0          17m
+my-cluster-zookeeper-1                        1/1     Running   0          17m
+my-cluster-zookeeper-2                        1/1     Running   0          17m
+song-app-566b5f7bf5-pdl4b                     1/1     Running   0          4m29s
+song-indexer-app-578bfb4d74-6j8sc             1/1     Running   0          26s
+strimzi-cluster-operator-79fb75cb8d-7k9rj     1/1     Running   0          20m
 ----
 
 [#kubernetes-testing]
@@ -337,7 +354,7 @@ In a separate terminal window run the following:
 [.console-input]
 [source, bash-shell]
 ----
-minikube service kafka-tutorial-song-indexer-app-quarkus
+minikube service song-app
 ----
 
 Your console output should look similar (minikube IP and ports in use may vary of course). In case a browser window opens automatically you can close it because it's not needed in our case.
@@ -348,15 +365,15 @@ Your console output should look similar (minikube IP and ports in use may vary o
 |-----------|---------------------------------|-------------|---------------------------|
 | NAMESPACE |              NAME               | TARGET PORT |            URL            |
 |-----------|---------------------------------|-------------|---------------------------|
-| default   | kafka-tutorial-song-app-quarkus | http/80     | http://192.168.49.2:30588 |
+| default   | song-app                        | http/80     | http://192.168.49.2:30588 |
 |-----------|---------------------------------|-------------|---------------------------|
 🏃  Starting tunnel for service kafka-tutorial-song-app-quarkus.
 |-----------|---------------------------------|-------------|------------------------|
 | NAMESPACE |              NAME               | TARGET PORT |          URL           |
 |-----------|---------------------------------|-------------|------------------------|
-| default   | kafka-tutorial-song-app-quarkus |             | http://127.0.0.1:65000 |
+| default   | song-app                        |             | http://127.0.0.1:65000 |
 |-----------|---------------------------------|-------------|------------------------|
-🎉  Opening service default/kafka-tutorial-song-app-quarkus in default browser...
+🎉  Opening service default/song-app in default browser...
 ----
 
 The important part is shown in the lower right box, namely use `127.0.0.1:65000` as host and port for any HTTP commands against the `song-app`.
@@ -366,7 +383,7 @@ Again, in a separate terminal window run the following:
 [.console-input]
 [source, bash-shell]
 ----
-minikube service kafka-tutorial-song-indexer-app-quarkus
+minikube service song-indexer-app
 ----
 
 Your console output should look similar (minikube IP and ports in use may vary of course). In case a browser window opens automatically you can close it because it's not needed in our case.
@@ -377,15 +394,15 @@ Your console output should look similar (minikube IP and ports in use may vary o
 |-----------|-----------------------------------------|-------------|---------------------------|
 | NAMESPACE |                  NAME                   | TARGET PORT |            URL            |
 |-----------|-----------------------------------------|-------------|---------------------------|
-| default   | kafka-tutorial-song-indexer-app-quarkus | http/80     | http://192.168.49.2:32548 |
+| default   | song-indexer-app                        | http/80     | http://192.168.49.2:32548 |
 |-----------|-----------------------------------------|-------------|---------------------------|
-🏃  Starting tunnel for service kafka-tutorial-song-indexer-app-quarkus.
+🏃  Starting tunnel for service song-indexer-app
 |-----------|-----------------------------------------|-------------|------------------------|
 | NAMESPACE |                  NAME                   | TARGET PORT |          URL           |
 |-----------|-----------------------------------------|-------------|------------------------|
-| default   | kafka-tutorial-song-indexer-app-quarkus |             | http://127.0.0.1:64938 |
+| default   | song-indexer-app                        |             | http://127.0.0.1:64938 |
 |-----------|-----------------------------------------|-------------|------------------------|
-🎉  Opening service default/kafka-tutorial-song-indexer-app-quarkus in default browser...
+🎉  Opening service default/song-indexer-app in default browser...
 ----
 
 The important part is shown in the lower right box, namely use `127.0.0.1:64938` as host and port for any HTTP commands against the `song-indexer-app`.

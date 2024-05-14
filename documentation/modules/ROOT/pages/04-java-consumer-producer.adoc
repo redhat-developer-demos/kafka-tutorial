@@ -1,3 +1,4 @@
+[#developing-consumers-producers-java]
 = Developing Consumers and Producers in Java
 include::_attributes.adoc[]
 
