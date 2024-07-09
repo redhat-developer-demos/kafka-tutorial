@@ -3,3 +3,4 @@
 :source-highlighter: highlightjs
 :github-repo: https://github.com/redhat-developer-demos/kafka-tutorial
 :apps-folder: /blob/master/apps
+:tutorial-url: https://github.com/redhat-developer-demos/kafka-tutorial.git
